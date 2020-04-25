@@ -1,0 +1,83 @@
+ROI.Name,,x.mni,y.mni,z.mni,network,hemi,index,Degree_AllCovars
+L bank of the superior temporal sulcus,bankssts,-50,-42,6,Somatomotor,L,1,0
+L caudal anterior cingulate,caudalanteriorcingulate,-3,21,27,Ventral Attention,L,2,0
+L caudal middle frontal gyrus,caudalmiddlefrontal,-43,14,43,Dorsal Attention,L,3,2
+L cuneus,cuneus,-3,-81,19,Visual,L,4,7
+L entorhinal,entorhinal,-21,-4,-32,Limbic,L,5,0
+L fusiform,fusiform,-33,-52,-19,Visual,L,6,0
+L inferior parietal lobule,inferiorparietal,-48,-67,29,Default,L,7,3
+L inferior temporal gyrus,inferiortemporal,-61,-31,-27,Frontoparietal,L,8,0
+L isthmus cingulate cortex,isthmuscingulate,-1,-48,26,Default,L,9,2
+L lateral occipital gyrus,lateraloccipital,-38,-88,1,Visual,L,10,0
+L lateral orbitofrontal,lateralorbitofrontal,-20,38,-21,Limbic,L,11,0
+L lingual,lingual,-5,-69,-1,Visual,L,12,7
+L medial orbitofrontal,medialorbitofrontal,-7,45,-13,Limbic,L,13,0
+L middle temporal gyrus,middletemporal,-69,-24,-14,Default,L,14,0
+L parahippocampal,parahippocampal,-20,-29,-17,Default,L,15,0
+L paracentral,paracentral,-4,-25,61,Somatomotor,L,16,0
+L pars opercularis,parsopercularis,-57,15,17,Ventral Attention,L,17,0
+L pars orbitalis,parsorbitalis,-49,40,-13,Default,L,18,1
+L pars triangularis,parstriangularis,-55,31,5,Default,L,19,0
+L pericalcarine,pericalcarine,-14,-85,5,Visual,L,20,0
+L postcentral,postcentral,-51,-23,56,Somatomotor,L,21,0
+L posterior cingulate cortex,posteriorcingulate,-1,-16,37,Frontoparietal,L,22,9
+L precentral,precentral,-47,-9,54,Somatomotor,L,23,0
+L precuneus,precuneus,-7,-57,41,Default,L,24,0
+L rostral anterior cingulate cortex,rostralanteriorcingulate,-4,38,4,Default,L,25,0
+L rostral middle frontal gyrus,rostralmiddlefrontal,-43,45,21,Frontoparietal,L,26,4
+L superior frontal gyrus,superiorfrontal,-16,34,53,Default,L,27,1
+L superior parietal lobule,superiorparietal,-17,-65,59,Dorsal Attention,L,28,2
+L superior temporal gyrus,superiortemporal,-67,-12,-1,Somatomotor,L,29,0
+L supramarginal gyrus,supramarginal,-65,-36,35,Ventral Attention,L,30,0
+L frontal pole,frontalpole,-9,64,-13,Default,L,31,7
+L temporal pole,temporalpole,-37,21,-38,Limbic,L,32,0
+L transverse temporal,transversetemporal,-45,-25,11,Somatomotor,L,33,0
+L insula,insula,-43,12,-6,Ventral Attention,L,34,0
+L thalamus,Thalamus,-13,-17.55,8.09,Subcortical,L,35,3
+L caudate,Caudate,-14.84,12.07,9.42,Subcortical,L,36,1
+L putamen,Putamen,-27.78,4.91,2.46,Subcortical,L,37,0
+L pallidum,Pallidum,-21.2,0.18,0.23,Subcortical,L,38,0
+L hippocampus,Hippocampus,-26,-14,-20,Subcortical,L,39,0
+L amygdala,Amygdala,-28,-2,-21,Subcortical,L,40,0
+L accumbens,Accumbens,-15,19,-3,Subcortical,L,41,0
+R bank of the superior temporal sulcus,bankssts,50,-42,6,Somatomotor,R,42,2
+R caudal anterior cingulate,caudalanteriorcingulate,3,21,27,Ventral Attention,R,43,2
+R caudal middle frontal gyrus,caudalmiddlefrontal,43,14,43,Dorsal Attention,R,44,1
+R cuneus,cuneus,3,-81,19,Visual,R,45,4
+R entorhinal,entorhinal,21,-4,-32,Limbic,R,46,0
+R fusiform,fusiform,33,-52,-19,Visual,R,47,1
+R inferior parietal lobule,inferiorparietal,48,-67,29,Default,R,48,5
+R inferior temporal gyrus,inferiortemporal,61,-31,-27,Frontoparietal,R,49,3
+R isthmus cingulate cortex,isthmuscingulate,1,-48,26,Default,R,50,1
+R lateral occipital gyrus,lateraloccipital,38,-88,1,Visual,R,51,1
+R lateral orbitofrontal,lateralorbitofrontal,20,38,-21,Limbic,R,52,1
+R lingual,lingual,5,-69,-1,Visual,R,53,2
+R medial orbitofrontal,medialorbitofrontal,7,45,-13,Limbic,R,54,0
+R middle temporal gyrus,middletemporal,69,-24,-14,Default,R,55,1
+R parahippocampal,parahippocampal,20,-29,-17,Default,R,56,0
+R paracentral,paracentral,4,-25,61,Somatomotor,R,57,0
+R pars opercularis,parsopercularis,57,15,17,Ventral Attention,R,58,0
+R pars orbitalis,parsorbitalis,49,40,-13,Default,R,59,3
+R pars triangularis,parstriangularis,55,31,5,Default,R,60,0
+R pericalcarine,pericalcarine,14,-85,5,Visual,R,61,0
+R postcentral,postcentral,51,-23,56,Somatomotor,R,62,1
+R posterior cingulate cortex,posteriorcingulate,1,-16,37,Frontoparietal,R,63,2
+R precentral,precentral,47,-9,54,Somatomotor,R,64,0
+R precuneus,precuneus,7,-57,41,Default,R,65,0
+R rostral anterior cingulate cortex,rostralanteriorcingulate,4,38,4,Default,R,66,0
+R rostral middle frontal gyrus,rostralmiddlefrontal,43,45,21,Frontoparietal,R,67,2
+R superior frontal gyrus,superiorfrontal,16,34,53,Default,R,68,2
+R superior parietal lobule,superiorparietal,17,-65,59,Dorsal Attention,R,69,2
+R superior temporal gyrus,superiortemporal,67,-12,-1,Somatomotor,R,70,0
+R supramarginal gyrus,supramarginal,65,-36,35,Ventral Attention,R,71,0
+R frontal pole,frontalpole,9,64,-13,Default,R,72,2
+R temporal pole,temporalpole,37,21,-38,Limbic,R,73,5
+R transverse temporal,transversetemporal,45,-25,11,Somatomotor,R,74,0
+R insula,insula,43,12,-6,Ventral Attention,R,75,0
+R thalamus,Thalamus,13,-17.55,8.09,Subcortical,R,76,0
+R caudate,Caudate,14.84,12.07,9.42,Subcortical,R,77,1
+R putamen,Putamen,27.78,4.91,2.46,Subcortical,R,78,0
+R pallidum,Pallidum,21.2,0.18,0.23,Subcortical,R,79,0
+R hippocampus,Hippocampus,26,-14,-20,Subcortical,R,80,0
+R amygdala,Amygdala,28,-2,-21,Subcortical,R,81,1
+R accumbens,Accumbens,15,19,-3,Subcortical,R,82,0

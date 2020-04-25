@@ -1,11 +1,13 @@
-Package: ggconn
-Type: Package
-Title: Plots Brain Connectivity Data in 2D and 3D
-Version: 0.1.0
-Author: Sidhant Chopra <sid.chopra@monash.edu>
-Maintainer: Sidhant Chopra <sid.chopra@monash.edu>
-Description: Provides functionality for visualising, exploring and plotting brain connectivity data, in the form of connectivity matrices, in 2D and 3D.
-License: GPL-3
-Encoding: UTF-8
+Package: brainconn
+Title: What The Package Does (one line, title case required)
+Version: 0.1
+Authors@R: person("First", "Last", email = "first.last@example.com",
+                  role = c("aut", "cre"))
+Description: What the package does (one paragraph)
+Depends: R (>= 3.1.0),
+  ggraph
+License: What license is it under?
 LazyData: true
 RoxygenNote: 6.1.1
+Imports: 
+    ggplot2

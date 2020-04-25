@@ -1,0 +1,201 @@
+ROI.Name,x.mni,y.mni,z.mni,network,hemi,index
+Inferior Occipital G,-39.7283,-85.3526,0.26012,Occipital,L,1
+Angular G,-49.7727,-60.6136,22.2159,Parietal,L,2
+Precuneus,13.148,-64.722,23.5776,Parietal,R,3
+Insula,-36.9079,-13.4079,-3.5395,Insula,L,4
+Anterior cingulate,-6.8959,45.6516,6.5837,Cingulate,L,5
+Precuneus,9.0112,-36.0781,46.5502,Parietal,R,6
+Angular G,55.6107,-47.2992,39.8484,Parietal,R,7
+Postcentral G,-40.8289,-21.1184,52.9079,Parietal,L,8
+Cerebellum,-19.3224,-62.0939,-27.3551,Cerebellum,L,9
+Cerebellum,43.0633,-55.3165,-33.4557,Cerebellum,R,10
+Middle temporal G,-58.5281,-30.2584,-3.7528,Temporal,L,11
+Frontal pole,27.5455,58.5734,-2.6224,Frontal,R,12
+Medial Frontal G,2.9492,12.4322,48.6483,Frontal,R,13
+Angular G,53.7553,-55.3298,22.5638,Parietal,R,14
+Putamen,13.3443,12.4262,-7.377,SCGM,R,15
+Inferior Occipital G,-48.9844,-65.5781,-6.0586,Occipital,L,16
+Precentral,46.2108,8.8386,30.7399,Frontal,R,17
+Thalamus,11.9077,-20.5231,8.1692,SCGM,R,18
+Precuneus,-9.8253,-67.2268,21.4796,Parietal,L,19
+Insula,-32.7044,19.5074,1.3892,Insula,L,20
+Postcentral G,-9.3255,-37.9104,68.0236,Parietal,L,21
+Anterior cingulate,6.52,42.2133,4.5867,Cingulate,R,22
+Middle frontal G,-41.8358,41.7313,12.7612,Frontal,L,23
+Superior temporal G,-58.4579,-27.3785,14.4813,Temporal,L,24
+Middle frontal G,44.5189,40.8113,13.8821,Frontal,R,25
+Inferior Occipital G,43.417,-73.7617,-11.7064,Occipital,R,26
+Parahippocampal G,-30.3273,-5.1818,-33.2727,Temporal,L,27
+Postcentral G,29.424,-33.42,62.448,Parietal,R,28
+CINGULATE G,1.625,-15.9167,33.375,Cingulate,R,29
+Brainstem,2.8586,-27.8325,-36.6126,Brainstem,Brainstem,30
+Superior Parietal Lobule,30.1714,-54.5429,58.6143,Parietal,R,31
+Temporal pole,43.5608,9.5676,-38.1081,Temporal,R,32
+Supramarginal G,-56.8608,-43.3763,25.3763,Parietal,L,33
+Precentral,-45.6,7.8769,30.9077,Frontal,L,34
+Insula,40.8534,-5.2618,9.6754,Insula,R,35
+Cerebellum,-40.2834,-52.4599,-34.7487,Cerebellum,L,36
+Thalamus,-13.3562,-31.9589,0.15068,SCGM,L,37
+Middle frontal G,42.5455,24.2851,36.6074,Frontal,R,38
+Middle temporal G,62.656,-42.8394,-8.9587,Temporal,R,39
+Anterior cingulate,1.7338,33.3799,23.6006,Cingulate,R,40
+Cerebellum,30.4972,-39.4309,-32.3867,Cerebellum,R,41
+Frontal pole,-27.8333,48.9444,-14.1111,Frontal,L,42
+Temporal pole,-39,6.0745,-40.0435,Temporal,L,43
+Occipital pole,13.583,-94.4043,1.4809,Occipital,R,44
+Thalamus,-8.1989,-17.9148,9,SCGM,L,45
+Posterior Cingulate,1.894,-38.1843,31.4101,Cingulate,R,46
+Caudate,-13.795,12.8159,-3.8787,SCGM,L,47
+Parahippocampal G,19.0837,-34.6388,-2.8943,Temporal,R,48
+Middle temporal G,61.8086,-20.799,-16.8086,Temporal,R,49
+Superior frontal G,-27.9802,-6.5792,56.9554,Frontal,L,50
+Anterior cingulate,-0.34404,38.8486,-13.7339,Cingulate,L,51
+Brainstem,-6.5068,-45.9932,-40.1554,Brainstem,Brainstem,52
+Frontal Orbital G,44.507,29.5211,-10.9155,Frontal,R,53
+Cuneus,-5.3447,-87.3072,24.5631,Occipital,L,54
+Anterior cingulate,0.5,16.369,31.1548,Cingulate,R,55
+Angular G,-51.8911,-50.2426,40.9455,Parietal,L,56
+Frontal Orbital G,-27.3453,31.1439,-16.1223,Frontal,L,57
+Precuneus,1.65,-52.5625,14.3125,Parietal,R,58
+Insula,36.5865,17.3459,2.5038,Insula,R,59
+Postcentral G,43.3626,-20.1298,52.6031,Parietal,R,60
+Middle frontal G,-38.8519,20.4074,41.3889,Frontal,L,61
+Fusiform,33.9028,-31.4583,-17.4028,Temporal,R,62
+Fusiform,-43.6773,-51.9545,-19.1318,Temporal,L,63
+Middle frontal G,28.5421,-0.53271,55.7664,Frontal,R,64
+Superior Parietal Lobule,12.381,-45.0833,67,Parietal,R,65
+Superior temporal G,61.3333,-17.4583,11.6146,Temporal,R,66
+Putamen,-27.9025,1.1822,2.6949,SCGM,L,67
+Midbrain,1.2324,-20.5519,-8.5768,Brainstem,Brainstem,68
+Middle temporal G,59.7253,-44.4725,9.7033,Temporal,R,69
+Lingual G,-11.3445,-69.7941,5.3445,Occipital,L,70
+Frontal Orbital G,29.135,24.8282,-16.0675,Frontal,R,71
+Middle temporal G,-56.4952,-15.4615,-16.9038,Temporal,L,72
+Precentral,-43.0669,0.85356,46.7448,Frontal,L,73
+Frontal Orbital G,-44.0103,33.2629,-9.3866,Frontal,L,74
+Frontal pole,31.9891,54.8967,13.5,Frontal,R,75
+Posterior Cingulate,-7.709,-33.5164,44.9877,Cingulate,L,76
+Cerebellum,17.1743,-80.3257,-29.2294,Cerebellum,R,77
+Temporal pole,-40.575,12.7125,-28.6687,Temporal,L,78
+Anterior cingulate,-0.15126,-0.22689,41.2185,Cingulate,L,79
+Cerebellum,-36.5245,-70.9091,-32.958,Cerebellum,L,80
+Cuneus,13.3003,-77.6519,37.9659,Occipital,R,81
+Angular G,-43.0556,-67.1528,38.875,Parietal,L,82
+Superior temporal G,47.6068,7.5874,-10.7184,Temporal,R,83
+Caudate,-12.4679,5.4771,12.2752,SCGM,L,84
+Inferior Occipital G,46.6901,-73.7606,14.6761,Occipital,R,85
+Brainstem,8.4,-44.6182,-37.8545,Brainstem,Brainstem,86
+Fusiform,37.7021,-12.7447,-27.0426,Temporal,R,87
+Postcentral G,-57.4912,-8.5439,24.8421,Parietal,L,88
+Lingual G,8.0657,-73.8,5.0314,Occipital,R,89
+Precentral,-17.8884,-16.1302,68.6651,Frontal,L,90
+Medial Frontal G,0.92537,51.7612,25.597,Frontal,R,91
+Amygdala,-18.5455,-7.4727,-16.7455,SCGM,L,92
+Supramarginal G,40.9732,-42.9463,47.7785,Parietal,R,93
+Caudate,14.5385,-0.49451,17.2747,SCGM,R,94
+Superior frontal G,-26.2885,12.0593,55.2569,Frontal,L,95
+Postcentral G,-29.1972,-36.0423,61.2113,Parietal,L,96
+Superior Occipital G,-33.7949,-81.5,25.141,Occipital,L,97
+Precentral,60.3043,-1.3623,24.7681,Frontal,R,98
+Inferior Temporal G,-57.9,-48.3,-9.4,Temporal,L,99
+Inferior Temporal G,48.1579,-52.6692,-17.3459,Temporal,R,100
+Inferior Temporal G,-51.4756,-4.0244,-29.0305,Temporal,L,101
+Inferior Occipital G,35.747,-87.0542,9.0542,Occipital,R,102
+Cerebellum,-29,-40.0357,-31.4107,Cerebellum,L,103
+Frontal pole,-9.3018,62.2189,12.6923,Frontal,L,104
+Lingual G,18.15,-55.6179,2.4321,Occipital,R,105
+Middle frontal G,28.4235,34.5459,40.8827,Frontal,R,106
+Middle temporal G,55.2267,-28.3846,-1.0081,Temporal,R,107
+Lingual G,-6.786,-93.3653,0.8524,Occipital,L,108
+Frontal pole,1.5346,56.0461,-8.5438,Frontal,R,109
+Temporal pole,31.0571,6.2143,-19.6286,Temporal,R,110
+Precentral,2.0508,-23.6484,66.9609,Frontal,R,111
+Frontal Orbital G,-28.7281,12.2627,-17.5576,Frontal,L,112
+Middle frontal G,42.9206,49.0476,-6.1587,Frontal,R,113
+Superior Occipital G,-25.6678,-73.8102,39.7831,Occipital,L,114
+Precentral,44.305,1.3668,48.7181,Frontal,R,115
+Postcentral G,-55.9565,-28.7446,36.4239,Parietal,L,116
+Middle temporal G,-56.7422,-48.1523,7.9336,Temporal,L,117
+Cerebellum,21.1004,-58.9182,-26.4535,Cerebellum,R,118
+Inferior Frontal G,55.9154,4.2231,4.8923,Frontal,R,119
+Cerebellum,-17.6786,-81.2619,-31.5833,Cerebellum,L,120
+Insula,-39.7018,-13.7339,11.6147,Insula,L,121
+Parahippocampal G,-27.4397,-38.3276,-12.0517,Temporal,L,122
+Paracentral lobule,0.46084,-15.2169,51.1084,Frontal,R,123
+Frontal pole,27.8155,44.2136,-15.2039,Frontal,R,124
+Middle frontal G,-30.1061,38.0152,32.6515,Frontal,L,125
+Cerebellum,35.4298,-72.781,-31.6116,Cerebellum,R,126
+Middle frontal G,30.7464,17.8995,51.5024,Frontal,R,127
+Inferior Parietal G,61.3322,-31.6888,25.4895,Parietal,R,128
+Superior temporal G,-44.1696,-0.89732,-15.4955,Temporal,L,129
+Midbrain,0.59694,-3.5204,-9.8724,Brainstem,Brainstem,130
+Inferior Occipital G,-25.4521,-92.7766,11.6489,Occipital,L,131
+Superior Parietal G,29.7379,-67.8495,46.3107,Parietal,R,132
+Superior frontal G,-9.0558,46.5628,38.9442,Frontal,L,133
+Precentral,24.2368,-13.5,66.9158,Frontal,R,134
+Caudate,15.5143,14.1857,6.5357,SCGM,R,135
+Superior Occipital G,-14.4,-65.9609,55.0565,Occipital,L,136
+Insula,40.6017,-10.7415,-5.3771,Insula,R,137
+Fusiform,22.0874,-69.4466,-12.3204,Temporal,R,138
+Frontal pole,10.4185,62.8533,8.837,Frontal,R,139
+Middle temporal G,55.1732,-4.0223,-27.0838,Temporal,R,140
+Inferior Frontal G,-49.3417,22.7789,8.6683,Frontal,L,141
+Middle Occipital G,18.3708,-89.3933,21.691,Occipital,R,142
+Inferior Occipital G,53.2326,-61.5,0.4186,Occipital,R,143
+Inferior Frontal G,52.1935,27.5161,3.871,Frontal,R,144
+Parahippocampal G,-31.6047,-21.3663,-18.9419,Temporal,L,145
+Superior temporal G,-56.2163,-10.5918,3.5878,Temporal,L,146
+Precuneus,-7.6996,-74.7554,39.8627,Parietal,L,147
+Thalamus,1.5549,-4.3354,4.4634,SCGM,R,148
+Medial Frontal G,-0.1336,30.9231,44.7935,Frontal,L,149
+Inferior Occipital G,-46.5215,-71.555,10.9091,Occipital,L,150
+Middle frontal G,-44.3033,26.1754,25.3791,Frontal,L,151
+Cerebellum,1.4477,-56.8713,-13.3834,Cerebellum,R,152
+Superior temporal G,58.4625,-7.625,-9.2,Temporal,R,153
+Postcentral G,-51.6283,-14.1518,39.3298,Parietal,L,154
+Parahippocampal G,21.3708,-11.8764,-17.382,Temporal,R,155
+Superior Parietal Lobule,-34,-53.8701,49.2857,Parietal,L,156
+Postcentral G,54.3982,-12.146,38.1504,Parietal,R,157
+Occipital pole,-21.0533,-92.16,-13.0533,Occipital,L,158
+Fusiform,-36.2174,-77.942,-16.029,Temporal,L,159
+Anterior cingulate,0.42568,21.2838,-8.5338,Cingulate,R,160
+Superior frontal G,10.8106,1.5463,65.6828,Frontal,R,161
+Cerebellum,-8.9874,-44.1429,-25.6008,Cerebellum,L,162
+Precuneus,10.1842,-63.2143,55.2857,Parietal,R,163
+Inferior Frontal G,51.9038,20.6109,20.3724,Frontal,R,164
+Precentral,-53.6292,7.3483,16.6348,Frontal,L,165
+Angular G,45.1786,-65.5,38.3095,Parietal,R,166
+Inferior Frontal G,-25.2439,52.1268,22.1122,Frontal,L,167
+Middle frontal G,32.5049,44.7524,27.2767,Frontal,R,168
+Inferior Frontal G,-40.8649,48.6216,-4.3243,Frontal,L,169
+Superior Occipital G,33.1216,-77.9054,29.9189,Occipital,R,170
+Superior Parietal Lobule,-42.4104,-37.9953,47.434,Parietal,L,171
+Fusiform,27.9958,-49.1975,-13.8151,Temporal,R,172
+Superior frontal G,-8.3651,20,58.746,Frontal,L,173
+Precuneus,-0.80508,-55.178,37.7966,Parietal,L,174
+Inferior Occipital cortex,31.117,-87.766,-11.2979,Occipital,R,175
+Cerebellum,1.0645,-63.1573,-35.0444,Cerebellum,R,176
+Lingual G,-14.1691,-74.2338,-10.9317,Occipital,L,177
+Putamen,27.098,0.85714,-0.39184,SCGM,R,178
+Lingual G,-13.249,-52.9102,-1.2612,Occipital,L,179
+Postcentral G,56.0047,-29.3033,43.1517,Parietal,R,180
+Temporal pole,45.2055,13.2534,-25.3151,Temporal,R,181
+Supplementary motor cortex,-8.4181,0.89224,65.5603,Frontal,L,182
+Frontal pole,-27.9034,56.8295,3.8864,Frontal,L,183
+Insula,-46.514,5.1308,1.3738,Insula,L,184
+Transverse Temporal G,44.4464,-24.6567,15.4378,Temporal,R,185
+Superior frontal G,12.3034,42.8933,44.6629,Frontal,R,186
+Superior frontal G,13.5606,21.9697,58.0303,Frontal,R,187
+Superior Parietal Lobule,-18.0798,-52.6277,64.7872,Parietal,L,188
+Fusiform,-27.049,-58.0653,-14.4612,Temporal,L,189
+Brainstem,16.1279,-33.8721,-22.5349,Brainstem,Brainstem,190
+Superior frontal G,-21.5519,29.8868,46.3019,Frontal,L,191
+Cerebellum,-0.54185,-77.6432,-24.1586,Cerebellum,L,192
+Superior frontal G,14.9038,56.4615,28.3269,Frontal,R,193
+Midbrain,1.0263,-31.3263,-18.1737,Brainstem,Brainstem,194
+Lingual G,8.2934,-87.0372,-13.4504,Occipital,R,195
+Insula,-46.4262,14.2295,-12.3934,Insula,L,196
+Precuneus,-4.1803,-52.377,57.0246,Parietal,L,197
+Fusiform,30.9091,-1.5455,-37.3091,Temporal,R,198
+Brainstem,-15.1885,-30.5026,-19.9476,Brainstem,L,199
+Transverse Temporal G,-42.1239,-31.5,14.5459,Temporal,L,200

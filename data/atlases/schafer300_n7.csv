@@ -1,0 +1,301 @@
+ROI.Name,x.mni,y.mni,z.mni,network,hemi,index
+LH_Vis_1,-34,-41,-21,Visual,L,1
+LH_Vis_2,-29,-34,-17,Visual,L,2
+LH_Vis_3,-35,-65,-16,Visual,L,3
+LH_Vis_4,-24,-54,-8,Visual,L,4
+LH_Vis_5,-22,-73,-9,Visual,L,5
+LH_Vis_6,-21,-85,-15,Visual,L,6
+LH_Vis_7,-16,-38,-11,Visual,L,7
+LH_Vis_8,-42,-84,-10,Visual,L,8
+LH_Vis_9,-12,-62,-5,Visual,L,9
+LH_Vis_10,-7,-76,-6,Visual,L,10
+LH_Vis_11,-23,-97,-12,Visual,L,11
+LH_Vis_12,-14,-52,-1,Visual,L,12
+LH_Vis_13,-46,-74,6,Visual,L,13
+LH_Vis_14,-6,-94,-4,Visual,L,14
+LH_Vis_15,-26,-95,5,Visual,L,15
+LH_Vis_16,-6,-77,8,Visual,L,16
+LH_Vis_17,-18,-65,7,Visual,L,17
+LH_Vis_18,-40,-84,14,Visual,L,18
+LH_Vis_19,-13,-95,19,Visual,L,19
+LH_Vis_20,-3,-86,23,Visual,L,20
+LH_Vis_21,-11,-73,23,Visual,L,21
+LH_Vis_22,-28,-83,23,Visual,L,22
+LH_Vis_23,-14,-86,37,Visual,L,23
+LH_Vis_24,-23,-79,40,Visual,L,24
+LH_SomMot_1,-49,-11,1,Somatomotor,L,25
+LH_SomMot_2,-54,-23,8,Somatomotor,L,26
+LH_SomMot_3,-38,-13,15,Somatomotor,L,27
+LH_SomMot_4,-35,-26,16,Somatomotor,L,28
+LH_SomMot_5,-51,-13,14,Somatomotor,L,29
+LH_SomMot_6,-56,-38,17,Somatomotor,L,30
+LH_SomMot_7,-44,-30,18,Somatomotor,L,31
+LH_SomMot_8,-61,-4,13,Somatomotor,L,32
+LH_SomMot_9,-59,-19,20,Somatomotor,L,33
+LH_SomMot_10,-58,-7,29,Somatomotor,L,34
+LH_SomMot_11,-59,-21,35,Somatomotor,L,35
+LH_SomMot_12,-51,-8,42,Somatomotor,L,36
+LH_SomMot_13,-50,-17,44,Somatomotor,L,37
+LH_SomMot_14,-8,-11,45,Somatomotor,L,38
+LH_SomMot_15,-42,-13,49,Somatomotor,L,39
+LH_SomMot_16,-49,-28,57,Somatomotor,L,40
+LH_SomMot_17,-43,-21,54,Somatomotor,L,41
+LH_SomMot_18,-5,-24,52,Somatomotor,L,42
+LH_SomMot_19,-36,-20,64,Somatomotor,L,43
+LH_SomMot_20,-4,-7,60,Somatomotor,L,44
+LH_SomMot_21,-31,-47,63,Somatomotor,L,45
+LH_SomMot_22,-31,-29,62,Somatomotor,L,46
+LH_SomMot_23,-27,-38,68,Somatomotor,L,47
+LH_SomMot_24,-21,-12,68,Somatomotor,L,48
+LH_SomMot_25,-8,-42,67,Somatomotor,L,49
+LH_SomMot_26,-4,-25,67,Somatomotor,L,50
+LH_SomMot_27,-17,-48,71,Somatomotor,L,51
+LH_SomMot_28,-19,-31,69,Somatomotor,L,52
+LH_SomMot_29,-17,-25,70,Somatomotor,L,53
+LH_DorsAttn_Post_1,-48,-50,-19,Dorsal Attention,L,54
+LH_DorsAttn_Post_2,-45,-68,-8,Dorsal Attention,L,55
+LH_DorsAttn_Post_3,-55,-63,2,Dorsal Attention,L,56
+LH_DorsAttn_Post_4,-48,-66,15,Dorsal Attention,L,57
+LH_DorsAttn_Post_5,-26,-68,39,Dorsal Attention,L,58
+LH_DorsAttn_Post_6,-55,-31,44,Dorsal Attention,L,59
+LH_DorsAttn_Post_7,-30,-58,48,Dorsal Attention,L,60
+LH_DorsAttn_Post_8,-42,-34,47,Dorsal Attention,L,61
+LH_DorsAttn_Post_9,-33,-48,47,Dorsal Attention,L,62
+LH_DorsAttn_Post_10,-17,-72,54,Dorsal Attention,L,63
+LH_DorsAttn_Post_11,-29,-60,61,Dorsal Attention,L,64
+LH_DorsAttn_Post_12,-13,-59,64,Dorsal Attention,L,65
+LH_DorsAttn_FEF_1,-27,5,56,Dorsal Attention,L,66
+LH_DorsAttn_FEF_2,-32,-5,52,Dorsal Attention,L,67
+LH_DorsAttn_FEF_3,-22,5,64,Dorsal Attention,L,68
+LH_DorsAttn_PrCv_1,-49,2,38,Dorsal Attention,L,69
+LH_SalVentAttn_ParOper_1,-58,-44,27,Ventral Attention,L,70
+LH_SalVentAttn_ParOper_2,-60,-30,24,Ventral Attention,L,71
+LH_SalVentAttn_ParOper_3,-61,-38,39,Ventral Attention,L,72
+LH_SalVentAttn_TempOcc_1,-54,-53,13,Ventral Attention,L,73
+LH_SalVentAttn_FrOperIns_1,-39,-3,-4,Ventral Attention,L,74
+LH_SalVentAttn_FrOperIns_2,-33,24,-1,Ventral Attention,L,75
+LH_SalVentAttn_FrOperIns_3,-33,19,8,Ventral Attention,L,76
+LH_SalVentAttn_FrOperIns_4,-38,1,11,Ventral Attention,L,77
+LH_SalVentAttn_FrOperIns_5,-44,11,2,Ventral Attention,L,78
+LH_SalVentAttn_FrOperIns_6,-52,1,6,Ventral Attention,L,79
+LH_SalVentAttn_FrOperIns_7,-51,7,20,Ventral Attention,L,80
+LH_SalVentAttn_PFCl_1,-27,46,29,Ventral Attention,L,81
+LH_SalVentAttn_Med_1,-6,9,41,Ventral Attention,L,82
+LH_SalVentAttn_Med_2,-12,-33,44,Ventral Attention,L,83
+LH_SalVentAttn_Med_3,-6,-50,56,Ventral Attention,L,84
+LH_SalVentAttn_Med_4,-11,-3,71,Ventral Attention,L,85
+LH_Limbic_OFC_1,-24,22,-20,Limbic,L,86
+LH_Limbic_OFC_2,-8,23,-20,Limbic,L,87
+LH_Limbic_OFC_3,-11,48,-21,Limbic,L,88
+LH_Limbic_TempPole_1,-29,-4,-40,Limbic,L,89
+LH_Limbic_TempPole_2,-52,-17,-34,Limbic,L,90
+LH_Limbic_TempPole_3,-39,-20,-28,Limbic,L,91
+LH_Limbic_TempPole_4,-27,10,-34,Limbic,L,92
+LH_Limbic_TempPole_5,-43,12,-35,Limbic,L,93
+LH_Limbic_TempPole_6,-21,-18,-27,Limbic,L,94
+LH_Limbic_TempPole_7,-42,7,-19,Limbic,L,95
+LH_Cont_Par_1,-54,-50,45,Frontoparietal,L,96
+LH_Cont_Par_2,-33,-66,48,Frontoparietal,L,97
+LH_Cont_Par_3,-42,-52,48,Frontoparietal,L,98
+LH_Cont_Par_4,-45,-41,46,Frontoparietal,L,99
+LH_Cont_Temp_1,-60,-52,-9,Frontoparietal,L,100
+LH_Cont_OFC_1,-32,41,-13,Frontoparietal,L,101
+LH_Cont_PFCl_1,-42,49,-6,Frontoparietal,L,102
+LH_Cont_PFCl_2,-29,57,7,Frontoparietal,L,103
+LH_Cont_PFCl_3,-41,41,14,Frontoparietal,L,104
+LH_Cont_PFCl_4,-45,21,25,Frontoparietal,L,105
+LH_Cont_PFCl_5,-38,33,36,Frontoparietal,L,106
+LH_Cont_PFCl_6,-42,12,34,Frontoparietal,L,107
+LH_Cont_pCun_1,-9,-76,44,Frontoparietal,L,108
+LH_Cont_pCun_2,-5,-65,52,Frontoparietal,L,109
+LH_Cont_Cing_1,-5,-28,28,Frontoparietal,L,110
+LH_Cont_Cing_2,-3,6,29,Frontoparietal,L,111
+LH_Cont_PFCmp_1,-4,27,47,Frontoparietal,L,112
+LH_Default_Temp_1,-58,-8,-21,Default,L,113
+LH_Default_Temp_2,-61,-35,-17,Default,L,114
+LH_Default_Temp_3,-52,8,-12,Default,L,115
+LH_Default_Temp_4,-57,-9,-6,Default,L,116
+LH_Default_Temp_5,-52,-21,-8,Default,L,117
+LH_Default_Temp_6,-61,-35,-3,Default,L,118
+LH_Default_Temp_7,-60,-28,2,Default,L,119
+LH_Default_Temp_8,-56,-44,9,Default,L,120
+LH_Default_Par_1,-45,-61,24,Default,L,121
+LH_Default_Par_2,-38,-81,33,Default,L,122
+LH_Default_Par_3,-57,-54,28,Default,L,123
+LH_Default_Par_4,-46,-66,41,Default,L,124
+LH_Default_PFC_1,-35,20,-13,Default,L,125
+LH_Default_PFC_2,-6,36,-10,Default,L,126
+LH_Default_PFC_3,-46,31,-10,Default,L,127
+LH_Default_PFC_4,-19,63,-8,Default,L,128
+LH_Default_PFC_5,-6,60,-1,Default,L,129
+LH_Default_PFC_6,-48,28,1,Default,L,130
+LH_Default_PFC_7,-6,44,7,Default,L,131
+LH_Default_PFC_8,-54,19,12,Default,L,132
+LH_Default_PFC_9,-18,63,19,Default,L,133
+LH_Default_PFC_10,-6,30,25,Default,L,134
+LH_Default_PFC_11,-4,50,31,Default,L,135
+LH_Default_PFC_12,-14,46,45,Default,L,136
+LH_Default_PFC_13,-23,31,43,Default,L,137
+LH_Default_PFC_14,-39,19,50,Default,L,138
+LH_Default_PFC_15,-42,7,49,Default,L,139
+LH_Default_PFC_16,-25,19,53,Default,L,140
+LH_Default_PFC_17,-12,24,61,Default,L,141
+LH_Default_PFC_18,-6,10,64,Default,L,142
+LH_Default_pCunPCC_1,-11,-51,6,Default,L,143
+LH_Default_pCunPCC_2,-5,-52,16,Default,L,144
+LH_Default_pCunPCC_3,-13,-61,19,Default,L,145
+LH_Default_pCunPCC_4,-5,-56,28,Default,L,146
+LH_Default_pCunPCC_5,-11,-69,31,Default,L,147
+LH_Default_pCunPCC_6,-5,-38,35,Default,L,148
+LH_Default_pCunPCC_7,-3,-17,37,Default,L,149
+LH_Default_pCunPCC_8,-6,-55,41,Default,L,150
+RH_Vis_1,35,-44,-20,Visual,R,151
+RH_Vis_2,28,-28,-20,Visual,R,152
+RH_Vis_3,26,-54,-9,Visual,R,153
+RH_Vis_4,28,-75,-13,Visual,R,154
+RH_Vis_5,18,-36,-12,Visual,R,155
+RH_Vis_6,47,-76,-11,Visual,R,156
+RH_Vis_7,9,-72,-5,Visual,R,157
+RH_Vis_8,13,-58,-3,Visual,R,158
+RH_Vis_9,7,-88,-9,Visual,R,159
+RH_Vis_10,24,-95,-10,Visual,R,160
+RH_Vis_11,17,-45,-1,Visual,R,161
+RH_Vis_12,49,-64,4,Visual,R,162
+RH_Vis_13,10,-95,2,Visual,R,163
+RH_Vis_14,35,-89,1,Visual,R,164
+RH_Vis_15,9,-74,9,Visual,R,165
+RH_Vis_16,22,-60,7,Visual,R,166
+RH_Vis_17,18,-97,14,Visual,R,167
+RH_Vis_18,43,-79,10,Visual,R,168
+RH_Vis_19,9,-88,24,Visual,R,169
+RH_Vis_20,13,-73,26,Visual,R,170
+RH_Vis_21,27,-86,23,Visual,R,171
+RH_Vis_22,35,-77,25,Visual,R,172
+RH_Vis_23,20,-84,41,Visual,R,173
+RH_SomMot_1,53,-10,3,Somatomotor,R,174
+RH_SomMot_2,63,-19,0,Somatomotor,R,175
+RH_SomMot_3,35,-21,14,Somatomotor,R,176
+RH_SomMot_4,40,-10,15,Somatomotor,R,177
+RH_SomMot_5,61,-24,11,Somatomotor,R,178
+RH_SomMot_6,60,-37,12,Somatomotor,R,179
+RH_SomMot_7,42,-28,18,Somatomotor,R,180
+RH_SomMot_8,59,0,11,Somatomotor,R,181
+RH_SomMot_9,54,-14,16,Somatomotor,R,182
+RH_SomMot_10,61,-4,26,Somatomotor,R,183
+RH_SomMot_11,58,-14,35,Somatomotor,R,184
+RH_SomMot_12,52,-8,37,Somatomotor,R,185
+RH_SomMot_13,52,-13,50,Somatomotor,R,186
+RH_SomMot_14,46,-10,48,Somatomotor,R,187
+RH_SomMot_15,50,-24,54,Somatomotor,R,188
+RH_SomMot_16,7,-11,50,Somatomotor,R,189
+RH_SomMot_17,39,-25,57,Somatomotor,R,190
+RH_SomMot_18,33,-41,64,Somatomotor,R,191
+RH_SomMot_19,33,-34,62,Somatomotor,R,192
+RH_SomMot_20,37,-20,64,Somatomotor,R,193
+RH_SomMot_21,9,-40,65,Somatomotor,R,194
+RH_SomMot_22,5,-23,65,Somatomotor,R,195
+RH_SomMot_23,24,-28,66,Somatomotor,R,196
+RH_SomMot_24,23,-35,70,Somatomotor,R,197
+RH_SomMot_25,22,-24,68,Somatomotor,R,198
+RH_SomMot_26,18,-10,71,Somatomotor,R,199
+RH_SomMot_27,12,-37,77,Somatomotor,R,200
+RH_SomMot_28,13,-29,73,Somatomotor,R,201
+RH_DorsAttn_Post_1,50,-53,-16,Dorsal Attention,R,202
+RH_DorsAttn_Post_2,60,-53,-4,Dorsal Attention,R,203
+RH_DorsAttn_Post_3,54,-56,14,Dorsal Attention,R,204
+RH_DorsAttn_Post_4,35,-70,45,Dorsal Attention,R,205
+RH_DorsAttn_Post_5,52,-34,52,Dorsal Attention,R,206
+RH_DorsAttn_Post_6,54,-24,43,Dorsal Attention,R,207
+RH_DorsAttn_Post_7,27,-67,42,Dorsal Attention,R,208
+RH_DorsAttn_Post_8,40,-41,45,Dorsal Attention,R,209
+RH_DorsAttn_Post_9,39,-32,46,Dorsal Attention,R,210
+RH_DorsAttn_Post_10,16,-72,54,Dorsal Attention,R,211
+RH_DorsAttn_Post_11,34,-50,52,Dorsal Attention,R,212
+RH_DorsAttn_Post_12,26,-59,61,Dorsal Attention,R,213
+RH_DorsAttn_Post_13,8,-56,61,Dorsal Attention,R,214
+RH_DorsAttn_Post_14,21,-48,71,Dorsal Attention,R,215
+RH_DorsAttn_FEF_1,35,-4,52,Dorsal Attention,R,216
+RH_DorsAttn_FEF_2,25,8,58,Dorsal Attention,R,217
+RH_DorsAttn_FEF_3,26,-9,62,Dorsal Attention,R,218
+RH_DorsAttn_PrCv_1,49,8,25,Dorsal Attention,R,219
+RH_SalVentAttn_TempOccPar_1,57,-45,9,Ventral Attention,R,220
+RH_SalVentAttn_TempOccPar_2,64,-33,23,Ventral Attention,R,221
+RH_SalVentAttn_TempOccPar_3,53,-29,26,Ventral Attention,R,222
+RH_SalVentAttn_TempOccPar_4,62,-20,24,Ventral Attention,R,223
+RH_SalVentAttn_TempOccPar_5,63,-26,39,Ventral Attention,R,224
+RH_SalVentAttn_PrC_1,51,4,40,Ventral Attention,R,225
+RH_SalVentAttn_FrOperIns_1,40,5,-11,Ventral Attention,R,226
+RH_SalVentAttn_FrOperIns_2,40,-11,-2,Ventral Attention,R,227
+RH_SalVentAttn_FrOperIns_3,38,21,4,Ventral Attention,R,228
+RH_SalVentAttn_FrOperIns_4,39,4,7,Ventral Attention,R,229
+RH_SalVentAttn_FrOperIns_5,50,5,4,Ventral Attention,R,230
+RH_SalVentAttn_FrOperIns_6,53,13,14,Ventral Attention,R,231
+RH_SalVentAttn_Med_1,7,9,41,Ventral Attention,R,232
+RH_SalVentAttn_Med_2,7,-16,40,Ventral Attention,R,233
+RH_SalVentAttn_Med_3,11,-37,45,Ventral Attention,R,234
+RH_SalVentAttn_Med_4,11,-35,53,Ventral Attention,R,235
+RH_SalVentAttn_Med_5,6,0,64,Ventral Attention,R,236
+RH_SalVentAttn_Med_6,16,6,69,Ventral Attention,R,237
+RH_Limbic_OFC_1,13,27,-21,Limbic,R,238
+RH_Limbic_OFC_2,26,21,-20,Limbic,R,239
+RH_Limbic_OFC_3,4,25,-22,Limbic,R,240
+RH_Limbic_OFC_4,10,52,-21,Limbic,R,241
+RH_Limbic_TempPole_1,35,-1,-44,Limbic,R,242
+RH_Limbic_TempPole_2,29,12,-34,Limbic,R,243
+RH_Limbic_TempPole_3,26,-9,-33,Limbic,R,244
+RH_Limbic_TempPole_4,52,-14,-34,Limbic,R,245
+RH_Limbic_TempPole_5,42,-20,-28,Limbic,R,246
+RH_Limbic_TempPole_6,46,10,-16,Limbic,R,247
+RH_Cont_Par_1,62,-38,38,Frontoparietal,R,248
+RH_Cont_Par_2,53,-42,48,Frontoparietal,R,249
+RH_Cont_Par_3,41,-54,48,Frontoparietal,R,250
+RH_Cont_Temp_1,62,-34,-17,Frontoparietal,R,251
+RH_Cont_PFCv_1,34,21,-9,Frontoparietal,R,252
+RH_Cont_PFCl_1,30,42,-14,Frontoparietal,R,253
+RH_Cont_PFCl_2,22,63,-7,Frontoparietal,R,254
+RH_Cont_PFCl_3,42,51,-7,Frontoparietal,R,255
+RH_Cont_PFCl_4,30,57,7,Frontoparietal,R,256
+RH_Cont_PFCl_5,44,44,11,Frontoparietal,R,257
+RH_Cont_PFCl_6,48,31,21,Frontoparietal,R,258
+RH_Cont_PFCl_7,35,45,27,Frontoparietal,R,259
+RH_Cont_PFCl_8,26,51,28,Frontoparietal,R,260
+RH_Cont_PFCl_9,41,15,30,Frontoparietal,R,261
+RH_Cont_PFCl_10,39,33,38,Frontoparietal,R,262
+RH_Cont_PFCl_11,43,15,47,Frontoparietal,R,263
+RH_Cont_PFCl_12,31,17,53,Frontoparietal,R,264
+RH_Cont_pCun_1,14,-70,37,Frontoparietal,R,265
+RH_Cont_pCun_2,5,-66,47,Frontoparietal,R,266
+RH_Cont_Cing_1,6,-26,29,Frontoparietal,R,267
+RH_Cont_Cing_2,5,1,30,Frontoparietal,R,268
+RH_Cont_PFCmp_1,7,30,28,Frontoparietal,R,269
+RH_Cont_PFCmp_2,5,19,54,Frontoparietal,R,270
+RH_Default_Par_1,55,-43,26,Default,R,271
+RH_Default_Par_2,53,-52,24,Default,R,272
+RH_Default_Par_3,47,-69,26,Default,R,273
+RH_Default_Par_4,47,-65,42,Default,R,274
+RH_Default_Par_5,55,-52,41,Default,R,275
+RH_Default_Temp_1,47,13,-32,Default,R,276
+RH_Default_Temp_2,60,-7,-21,Default,R,277
+RH_Default_Temp_3,54,-1,-13,Default,R,278
+RH_Default_Temp_4,50,-19,-9,Default,R,279
+RH_Default_Temp_5,63,-28,-5,Default,R,280
+RH_Default_Temp_6,51,-32,1,Default,R,281
+RH_Default_PFCv_1,42,28,-15,Default,R,282
+RH_Default_PFCv_2,49,32,-4,Default,R,283
+RH_Default_PFCv_3,54,24,7,Default,R,284
+RH_Default_PFCdPFCm_1,5,39,-11,Default,R,285
+RH_Default_PFCdPFCm_2,7,64,-7,Default,R,286
+RH_Default_PFCdPFCm_3,8,43,5,Default,R,287
+RH_Default_PFCdPFCm_4,18,65,16,Default,R,288
+RH_Default_PFCdPFCm_5,6,55,17,Default,R,289
+RH_Default_PFCdPFCm_6,6,25,18,Default,R,290
+RH_Default_PFCdPFCm_7,16,49,41,Default,R,291
+RH_Default_PFCdPFCm_8,5,40,43,Default,R,292
+RH_Default_PFCdPFCm_9,25,30,45,Default,R,293
+RH_Default_PFCdPFCm_10,14,24,60,Default,R,294
+RH_Default_pCunPCC_1,10,-51,10,Default,R,295
+RH_Default_pCunPCC_2,16,-58,21,Default,R,296
+RH_Default_pCunPCC_3,5,-54,24,Default,R,297
+RH_Default_pCunPCC_4,6,-37,36,Default,R,298
+RH_Default_pCunPCC_5,7,-57,35,Default,R,299
+RH_Default_pCunPCC_6,7,-50,45,Default,R,300

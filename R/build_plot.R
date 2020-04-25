@@ -1,20 +1,43 @@
-#function to build static plot
-#featuers to add, optional ledgend for network, optional label
+
+#' Title
+#'
+#' @param conmat
+#' @param data
+#' @param data.row
+#' @param data.col
+#' @param background
+#' @param node.size
+#' @param node.color
+#' @param thr
+#' @param uthr
+#' @param view
+#' @param edge.color
+#' @param edge.alpha
+#' @param edge.width
+#' @param show.legend
+#' @param label.size
+#' @param labels
+#' @param include.vec
+#' @param scale.edge.width
+#' @param ...
+#' @import ggraph
+#' @importFrom ggplot2 aes annotation_custom
+#' @return
+#' @export
+#' @examples
 build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, node.size, node.color="network",
                        thr=NULL, uthr=NULL, view, edge.color, edge.alpha, edge.width, show.legend, label.size,
-                       labels, include.vec=NULL, scale.edge.width, ...) {
-  require(ggraph)
-  require(ggplot2)
-  require(igraph)
+                       labels, include.vec=NULL, scale.edge.width, edge.color.weighted, ...) {
+
 
   if (view =="top"){
     x.mni<-data$x.mni
     y.mni<-data$y.mni
     depth <- data$z.mni
-    xmax = 70
-    xmin = -70
-    ymax = 73
-    ymin = -107
+    xmax = 70  #70
+    xmin = -75 #-70
+    ymax = 73 #73
+    ymin = -107 #-107
   }
 
   if (view =="bottom"){
@@ -81,144 +104,168 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
          weighted <- FALSE,
          weighted <- TRUE)
 
+  #should edges be colored bby weight
+
+#  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
+
   if (!exists("conmat")) stop(print("Please enter a valid connectivity matrix"))
   if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
   if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
 
 
   if(directed == F) {
-    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
+    layout <- ggraph::create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
     layout
-    attributes(layout)
   }
 
 
 
   if(directed == T) {
-    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
+    layout <- ggraph::create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
     layout$facet <- include.vec
-    attributes(layout)
   }
 
 
   #make graph
 
-  if(directed == T && weighted==F){p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(color=edge.color,
+  if(directed == T && weighted==F){p <- ggraph::ggraph(layout) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_parallel(color=edge.color,
                        edge_width = edge.width,
                        edge_alpha = edge.alpha,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle((node.size/2)+0.6, 'mm'))  +
-    #  geom_edge_loop0(aes(strength=node.size*3), color=edge.color, edge_width = edge.width, arrow = arrow(length = unit(1, 'mm'))) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+                       arrow = grid::arrow(length = grid::unit(3, 'mm')),
+                       end_cap = ggraph::circle((node.size/2)+0.6, 'mm'))  +
+    #  ggraph::geom_edge_loop0(aes(strength=node.size*3), color=edge.color, edge_width = edge.width, arrow = arrow(length = unit(1, 'mm'))) +
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == T && weighted==T){p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(color=edge.color,
-                       aes(width = weight),
+  if(directed == T && weighted==T && edge.color.weighted==F){p <- ggraph::ggraph(layout) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_parallel(aes(width=weight),
+                        color=edge.color,
                        edge_alpha = edge.alpha,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle(node.size/2, 'mm'))  +
-    geom_edge_loop0(aes(strength=node.size*3), color=edge.color, edge_width = edge.width, arrow = arrow(length = unit(3, 'mm'))) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+                       arrow = grid::arrow(length = grid::unit(3, 'mm')),
+                       end_cap = ggraph::circle(node.size/2, 'mm'))  +
+    ggraph::geom_edge_loop0(aes(strength=node.size*3, width=weight),
+                            color=edge.color,
+                            edge_alpha = edge.alpha,
+                            arrow = grid::arrow(length = grid::unit(3, 'mm'))) +
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+
+  }
+
+  if(directed == T && weighted==T && edge.color.weighted==T){p <- ggraph::ggraph(layout) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_parallel(aes(color=weight),
+  #                            color=edge.color,
+                               edge_alpha = edge.alpha,
+                                edge_width = edge.width,
+                               arrow = grid::arrow(length = grid::unit(3, 'mm')),
+                               end_cap = ggraph::circle(node.size/2, 'mm'))  +
+    ggraph::geom_edge_loop0(aes(strength=node.size*3, color=weight),
+                            edge_width = edge.width,
+                            edge_alpha = edge.alpha,
+                            arrow = grid::arrow(length = grid::unit(3, 'mm'))) +
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
 
   }
 
 
-  if(directed == F && weighted==F){p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(color=edge.color,
+
+  if(directed == F && weighted==F){p <- ggraph::ggraph(layout, circular = FALSE) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_link(color=edge.color,
                    edge_width = edge.width,
                    edge_alpha = edge.alpha) +
-    geom_edge_loop0(aes(strength=node.size*2), color=edge.color, edge_width = edge.width) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == F && weighted==T){p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(color=edge.color,
-                   aes(width = weight),
+  if(directed == F && weighted==T && edge.color.weighted==F){p <- ggraph::ggraph(layout, circular = FALSE) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_link(aes(width=weight),
+                           color=edge.color,
                    edge_alpha = edge.alpha) +
-    geom_edge_loop0(aes(strength=node.size*2), color=edge.color, edge_width = edge.width) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
+
+  if(directed == F && weighted==T && edge.color.weighted==T){p <- ggraph::ggraph(layout, circular = FALSE) +
+    ggplot2::annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    ggraph::geom_edge_link(aes(colour=weight),
+                           edge_width = edge.width,
+                           edge_alpha = edge.alpha) +
+    #  geom_edge_loop0(aes(strength=node.size*2), color=edge.color, edge_width = edge.width) +
+    ggplot2::coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+  }
+
 
 
   ##scale edge weight for weighted networks
   if (weighted==T && !is.null(scale.edge.width)){
-    p <- p + scale_edge_width(range = scale.edge.width)
+    p <- p + ggraph::scale_edge_width(range = scale.edge.width)
   }
 
 
 
 
-  #adjust xylim for left and right views
+  #adjust xylim for left and right views --- probably can get rid of this with correct inital placement ratios
   if(view=="left") {
-    p <- p + coord_fixed(xlim = c(-64,98), ylim = c(-44,76)) }
+    p <- p + ggplot2::coord_fixed(xlim = c(-64,98), ylim = c(-44,76)) }
   if(view=="right") {
-    p <- p + coord_fixed(xlim = c(-98,64), ylim = c(-44,76)) }
+    p <- p + ggplot2::coord_fixed(xlim = c(-98,64), ylim = c(-44,76)) }
 
-  #set node size with degree option  #### NOT WORKING ###
+#set node size with degree option  #### NOT WORKING ###
   #ifelse(node.size=="degree", node.size <- as.vector((degree(graph_from_adjacency_matrix(conmat)))*0.2), node.size <- node.size)
 
-  #add nodes
+#add nodes
   if(directed == T){
     ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=data$network, filter = as.logical(facet))),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+           p <- p + ggraph::geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet))),
+           p <- p + ggraph::geom_node_point(size=node.size, colour=node.color))
   }
   if(directed == F){
     ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=data$network)),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+           p <- p + ggraph::geom_node_point(size=node.size, aes(colour=as.factor(data$network))),
+           p <- p + ggraph::geom_node_point(size=node.size, colour=node.color))
   }
 
 
   ## add labs
   if(directed == T && labels==T){
-    p <- p + geom_node_text(aes(label = data$ROI.Name, filter = as.logical(facet)),
+    p <- p + ggraph::geom_node_text(aes(label = data$ROI.Name, filter = as.logical(facet)),
                             size=label.size, repel=TRUE,
                             nudge_x = node.size+2, nudge_y = node.size)
   }
 
 
   if (directed == F && labels==T){
-    p <- p + geom_node_text(aes(label = data$ROI.Name),
+    p <- p + ggraph::geom_node_text(aes(label = data$ROI.Name),
                             size=label.size, repel=TRUE,
                             nudge_x = node.size+2, nudge_y = node.size)
   }
 
-
-
-
-
-  #Add degree sizing
-  #if(node.size=="degree"){ p <- p + geom_node_point(aes(size=as.vector((degree(graph_from_adjacency_matrix(x))))+1))}
-
-  p <- p + theme_bw() +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.border = element_blank(),
-          panel.background = element_blank(),
-          axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),
-          axis.title.y =element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank(),
+#remove gridlines
+  p <- p + ggplot2::theme_bw() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank(),
+          panel.background = ggplot2::element_blank(),
+          axis.title.x=ggplot2::element_blank(),
+          axis.text.x=ggplot2::element_blank(),
+          axis.ticks.x=ggplot2::element_blank(),
+          axis.title.y =ggplot2::element_blank(),
+          axis.text.y=ggplot2::element_blank(),
+          axis.ticks.y=ggplot2::element_blank(),
 
     )
   #legend
-  if (show.legend==F){p <- p + theme(legend.position="none")}
-  if (show.legend==T){p <- p + scale_color_discrete(name="Network")}
+  if (show.legend==F){p <- p + ggplot2::theme(legend.position="none")}
+  if (show.legend==T){p <- p + ggplot2::scale_color_discrete(name="Network")}
 
 
-  print(p)
+p
 
 }

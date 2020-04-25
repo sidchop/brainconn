@@ -1,0 +1,69 @@
+ROI.Name,x.mni,y.mni,z.mni,network,hemi,index
+L bank of the superior temporal sulcus,-56,-44,5,Temporal,L,1
+L caudal anterior cingulate,-2,21,27,Cingulate,L,2
+L caudal middle frontal gyrus,-45,18,46,Frontal,L,3
+L cuneus,-1,-82,20,Occipital,L,4
+L entorhinal,-16,-10,-29,Temporal,L,5
+L fusiform,-24,-54,-16,Temporal,L,6
+L inferior parietal lobule,-47,-70,31,Parietal,L,7
+L inferior temporal gyrus,-56,-32,-24,Temporal,L,8
+L isthmus cingulate cortex,-1,-48,25,Cingulate,L,9
+L lateral occipital gyrus,-43,-87,1,Occipital,L,10
+L lateral orbitofrontal,-35.98,30.71,-12.11,Frontal,L,11
+L lingual,-3,-73,-1,Occipital,L,12
+L medial orbitofrontal,-4,44,-14,Frontal,L,13
+L middle temporal gyrus,-68,-29,-13,Temporal,L,14
+L parahippocampal,-18,-30,-18,Temporal,L,15
+L paracentral,-3,-28,62,Frontal,L,16
+L pars opercularis,-57,22,18,Frontal,L,17
+L pars orbitalis,-44,48,-13,Frontal,L,18
+L pars triangularis,-50,35,3,Frontal,L,19
+L pericalcarine,-12,-89,3,Occipital,L,20
+L postcentral,-50,-26,58,Parietal,L,21
+L posterior cingulate cortex,-1,-18,38,Cingulate,L,22
+L precentral,-44,-12,59,Frontal,L,23
+L precuneus,-9,-59,46,Parietal,L,24
+L rostral anterior cingulate cortex,-2,39,6,Cingulate,L,25
+L rostral middle frontal gyrus,-34,53,17,Frontal,L,26
+L superior frontal gyrus,-21,38,50,Frontal,L,27
+L superior parietal lobule,-25,-62,63,Parietal,L,28
+L superior temporal gyrus,-63,-7,-1,Temporal,L,29
+L supramarginal gyrus,-60,-41,39,Parietal,L,30
+L frontal pole,-9,65,-12,Frontal,L,31
+L temporal pole,-26,15,-35,Temporal,L,32
+L transverse temporal,-49,-23,9,Temporal,L,33
+L insula,-41,13,-6,Insula,L,34
+R bank of the superior temporal sulcus,50,-42,6,Temporal,R,35
+R caudal anterior cingulate,3,21,27,Cingulate,R,36
+R caudal middle frontal gyrus,43,14,43,Frontal,R,37
+R cuneus,3,-81,19,Occipital,R,38
+R entorhinal,21,-4,-32,Temporal,R,39
+R fusiform,33,-52,-19,Temporal,R,40
+R inferior parietal lobule,48,-67,29,Parietal,R,41
+R inferior temporal gyrus,61,-31,-27,Temporal,R,42
+R isthmus cingulate cortex,1,-48,26,Cingulate,R,43
+R lateral occipital gyrus,38,-88,1,Occipital,R,44
+R lateral orbitofrontal,20,38,-21,Frontal,R,45
+R lingual,5,-69,-1,Occipital,R,46
+R medial orbitofrontal,7,45,-13,Frontal,R,47
+R middle temporal gyrus,69,-24,-14,Temporal,R,48
+R parahippocampal,20,-29,-17,Temporal,R,49
+R paracentral,4,-25,61,Frontal,R,50
+R pars opercularis,57,15,17,Frontal,R,51
+R pars orbitalis,49,40,-13,Frontal,R,52
+R pars triangularis,55,31,5,Frontal,R,53
+R pericalcarine,14,-85,5,Occipital,R,54
+R postcentral,51,-23,56,Parietal,R,55
+R posterior cingulate cortex,1,-16,37,Cingulate,R,56
+R precentral,47,-9,54,Frontal,R,57
+R precuneus,7,-57,41,Parietal,R,58
+R rostral anterior cingulate cortex,4,38,4,Cingulate,R,59
+R rostral middle frontal gyrus,43,45,21,Frontal,R,60
+R superior frontal gyrus,16,34,53,Frontal,R,61
+R superior parietal lobule,17,-65,59,Parietal,R,62
+R superior temporal gyrus,67,-12,-1,Temporal,R,63
+R supramarginal gyrus,65,-36,35,Parietal,R,64
+R frontal pole,9,64,-13,Frontal,R,65
+R temporal pole,37,21,-38,Temporal,R,66
+R transverse temporal,45,-25,11,Temporal,R,67
+R insula,43,12,-6,Insula,R,68

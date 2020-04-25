@@ -1,0 +1,105 @@
+---
+title: "Plotting tool for brain connectivity data"
+output: 
+  html_document:
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Plotting tool for brain connectivity data}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(eval=TRUE)
+devtools::load_all(".")
+```
+
+## Basic use of `brainconn()`
+The `brainconn()` function allows users to input a binary/weighted and directed/directed (i.e. symmetric) connectivity matrix which can be plotted in MNI space onto several brain atlases provided with the package. The layout of the nodes and edges is created using [ggraph](https://github.com/thomasp85/ggraph), which does most of the heavy lifting here. The background is a `custom_annotation` using [ggplot2](https://github.com/tidyverse/ggplot2). 
+
+The minimum user input requirements for the `brainconn()` function is a connectivity matrix. This can be read into r as a matrix or data.fame. Some example connectivity matrices can be found in the `data/example` folder. The number of rows/columns should match the number of regions in the selected atlas. The atlases currently included with in the package are: `aal116`, `aal90`, `craddock200`, `dk68`, `dkt60`, `schafer300_n7`. Custom atlases can be added easily in `.csv` format (see adding custom atlas section). 
+
+By default, the `view` is a top view, the `node.color` is by network.
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+library(brainconn)
+x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = 8)
+```
+
+
+You can change the default view, node, edge and background properties as well as show all nodes of the atlas, rather than just the ones that have connected edges.  
+```{r, out.width='40%', warning=FALSE, message=FALSE}
+brainconn(atlas ="Stages_melbBrain", conmat=x, view="left", node.size = 3, node.color = "hotpink", edge.width = 3, edge.color="darkblue", edge.alpha = 0.8, all.nodes = T, show.legend = F)
+```
+
+If the connectivity matrix (conmat) you input is not a binary matrix, i.e. the values are weighted, by default `ggconn()` will modulate the `edge.width` by the weighted values. `scale.edge.width` can be used to scale the edge width.
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_weighted_undirected.txt", header = F)
+
+brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", scale.edge.width = c(1,6), show.legend = F)
+```
+
+You can also change the edge color by weight using the `edge.color.weighted` option.
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_weighted_undirected.txt", header = F)
+
+brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", edge.width = 2, edge.color.weighted = T, show.legend = T)
+```
+
+If a directed matrix (i.e. non symmetrical) is the input, the edges will be displayed as directed arrows, with the `edge.width` and `edge.color` serving the same purpose.:
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_unweighted_directed.txt", header = F)
+
+brainconn(atlas ="schafer300_n7", conmat=x, node.size = 4, view="right", edge.alpha = 1)
+```
+
+Weighted and directed matrix example:
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_weighted_directed.txt", header = F)
+brainconn(atlas ="schafer300_n7", conmat=x, view="front", edge.color.weighted=T)
+```
+
+
+You can auto add `labels`, but this doesn't work to great if theirs a large number of edges. 
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+brainconn(atlas ="Stages_melbBrain", conmat=x, labels = T, label.size = 2)
+```
+
+If you want to weight the nodes by a feature such as degree, you can provide a vector the length of the number of ROIs in the parcellation to `node.size`. 
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x)) #convert connectivity matrix into an graph object.
+d <- igraph::degree(x_igraph) #use igraph::degree to obtain a vector of nodal degree
+d <- d[d != 0] #remove nodes with no edges 
+brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = d)
+```
+
+
+
+## Basic use of `ggconn3D()`
+Currently, `ggconn3D()` is only able to visualize binary undirected connectivity matrices.  
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
+p
+```
+
+Modifiable features include `node.color`, `node.size`, `edge.size` & `edge.width`, brain surface `opacity` and `d.factor` (a multiplication factor to control the spread of nodes.)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, edge.width = 6, edge.color = "green", node.size = 6, node.color = "red", show.legend = F)
+p
+```
+
+
+The `d.factor` can be adjusted for different purposes. The default is set to 1.05.
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, edge.width = 3, edge.color = "brown", node.size = 3, d.factor = 1.3, all.nodes = T, opacity = 0.1, show.legend = F)
+p
+```
+
+
