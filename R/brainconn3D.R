@@ -34,10 +34,18 @@ brainconn3D <- function(atlas=NULL,
                            uthr=NULL,
                            ...) {
 
-  list.atlas <- sub('\\.csv$', '', list.files(path="data/atlases/", pattern = "*.csv"))
-  if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- read.csv(paste0('data/atlases/', atlas, '.csv'))
-  } else{stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
+  load_object <- function(file) {
+    tmp <- new.env()
+    load(file = file, envir = tmp)
+    tmp[[ls(tmp)[1]]]
   }
+
+  list.atlas <- sub('\\.rda$', '', list.files(path="data/", pattern = "*.rda"))
+  if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- load_object(paste0('data/', atlas, '.rda'))} else
+  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
+  }
+
+
 #convert conmat to matrix
 # conmat <- as.matrix(conmat)
 
@@ -46,10 +54,12 @@ brainconn3D <- function(atlas=NULL,
   nparc <- dim(data)[1]
   if (!exists("conmat")){conmat <- matrix(0L, nrow=nparc, ncol=nparc)
   }
+  #convert conmat to matrix
+  conmat <- as.matrix(conmat)
 
 
   #make sure the col and row names of the supplied conmat are indexed correctly
-  rownames(conmat) <- colnames(conmat) <- 1:length(conmat)
+  rownames(conmat) <- colnames(conmat) <- 1:dim(conmat)[1]
 
 
 

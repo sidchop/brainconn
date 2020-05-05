@@ -23,7 +23,7 @@ By default, the `view` is a top view, the `node.color` is by network.
 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
 library(brainconn)
-x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+x <- read.csv("../data/example/example_unweighted_undirected.txt", header = F)
 brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = 8)
 ```
 
@@ -36,7 +36,7 @@ brainconn(atlas ="Stages_melbBrain", conmat=x, view="left", node.size = 3, node.
 If the connectivity matrix (conmat) you input is not a binary matrix, i.e. the values are weighted, by default `ggconn()` will modulate the `edge.width` by the weighted values. `scale.edge.width` can be used to scale the edge width.
 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("data/example/example_weighted_undirected.txt", header = F)
+x <- read.csv("../data/example/example_weighted_undirected.txt", header = F)
 
 brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", scale.edge.width = c(1,6), show.legend = F)
 ```
@@ -44,7 +44,7 @@ brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", scale.e
 You can also change the edge color by weight using the `edge.color.weighted` option.
 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("data/example/example_weighted_undirected.txt", header = F)
+x <- read.csv("../data/example/example_weighted_undirected.txt", header = F)
 
 brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", edge.width = 2, edge.color.weighted = T, show.legend = T)
 ```
@@ -52,21 +52,21 @@ brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", edge.wi
 If a directed matrix (i.e. non symmetrical) is the input, the edges will be displayed as directed arrows, with the `edge.width` and `edge.color` serving the same purpose.:
 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("data/example/example_unweighted_directed.txt", header = F)
+x <- read.csv("../data/example/example_unweighted_directed.txt", header = F)
 
 brainconn(atlas ="schafer300_n7", conmat=x, node.size = 4, view="right", edge.alpha = 1)
 ```
 
 Weighted and directed matrix example:
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("data/example/example_weighted_directed.txt", header = F)
+x <- read.csv("../data/example/example_weighted_directed.txt", header = F)
 brainconn(atlas ="schafer300_n7", conmat=x, view="front", edge.color.weighted=T)
 ```
 
 
 You can auto add `labels`, but this doesn't work to great if theirs a large number of edges. 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+x <- read.csv("../data/example/example_unweighted_undirected.txt", header = F)
 brainconn(atlas ="Stages_melbBrain", conmat=x, labels = T, label.size = 2)
 ```
 

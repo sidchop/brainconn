@@ -45,10 +45,15 @@ brainconn <- function(atlas,
                         background.alpha = 1,
                          ...) {
 
+  load_object <- function(file) {
+    tmp <- new.env()
+    load(file = file, envir = tmp)
+    tmp[[ls(tmp)[1]]]
+  }
 
-  list.atlas <- sub('\\.csv$', '', list.files(path="data/atlases/", pattern = "*.csv"))
-  if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- read.csv(paste0('data/atlases/', atlas, '.csv'))
-  } else{stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
+  list.atlas <- sub('\\.rda$', '', list.files(path="data/", pattern = "*.rda"))
+  if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- load_object(paste0('data/', atlas, '.rda'))} else
+    {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
   }
 
   #set background
