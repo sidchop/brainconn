@@ -1,7 +1,10 @@
   
 ---
+title: "Plotting tool for brain connectivity data"
+author: "Sidhant Chopra"
 output: github_document
 ---
+
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
