@@ -76,13 +76,6 @@ p
 ```
 
 ```{r, echo = FALSE}
-p <- p %>% 
-  plotly::add_annotations( text="Screen capture",
-                  legendtitle=TRUE, showarrow=FALSE,
-                  font = list(color = 'darkgrey',
-                              family = 'sans serif',
-                              size = 50)) 
-plotly::orca(p, "man/img/README-ggseg3d_example.png")
 knitr::include_graphics("man/img/README-ggseg3d_example.png")
 ```
 \
