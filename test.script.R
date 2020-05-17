@@ -68,7 +68,9 @@ brainconn(atlas ="Stages_melbBrain",
           #          background.alpha = 0.4
 )
 
-
+x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
+p
 
 
 x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x))

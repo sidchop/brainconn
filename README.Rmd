@@ -1,11 +1,6 @@
+  
 ---
-title: "R Plotting tool for brain connectivity data"
-author: "Sidhant Chopra"
-
-output:  
-  html_document:
-    keep_md: true
-
+output: github_document
 ---
 
 ```{r, include = FALSE}
@@ -15,19 +10,11 @@ knitr::opts_chunk$set(
   fig.path = "man/img/README-",
   echo = TRUE
 )
-devtools::load_all(".")
-``` 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
+library(magrittr)
+if (!require("processx")) install.packages("processx")
 devtools::load_all(".")
 ```
+
 
 # brainconn <img src="man/img/logo.png" align="right" alt="" width="138.5" />  
 
@@ -79,10 +66,20 @@ brainconn(atlas ="Stages_melbBrain", conmat=x)
 Modifyble features for `brainconn` include: `view`, `node.size`, `node.color`, `edge.width`, `edge.color`, `edge.alpha`, `background.alpha`, `labels` and others (see vignette)
 
 
-```{r, out.width='50%',  warning=FALSE, message=FALSE}
+```{r results = 'hide'}
 x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
+```
+```{r, echo = FALSE}
+p <- p %>% 
+  plotly::add_annotations( text="Screen capture",
+                  legendtitle=TRUE, showarrow=FALSE,
+                  font = list(color = 'darkgrey',
+                              family = 'sans serif',
+                              size = 50)) 
+plotly::orca(p, "man/img/README-ggseg3d_example.png")
+knitr::include_graphics("man/img/README-ggseg3d_example.png")
 ```
 \
 Modifyble features for `brainconn3D` include: `node.size`, `node.color`, `edge.width`, `edge.color`, `adge.alpha`, `background.alpha`, `labels` and others (see vignette)
