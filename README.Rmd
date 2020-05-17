@@ -69,11 +69,12 @@ brainconn(atlas ="Stages_melbBrain", conmat=x)
 Modifyble features for `brainconn` include: `view`, `node.size`, `node.color`, `edge.width`, `edge.color`, `edge.alpha`, `background.alpha`, `labels` and others (see vignette)
 
 
-```{r results = 'hide'}
+```{r, results = 'hide'}
 x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
 ```
+
 ```{r, echo = FALSE}
 p <- p %>% 
   plotly::add_annotations( text="Screen capture",
