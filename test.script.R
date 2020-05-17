@@ -44,13 +44,13 @@ x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,np
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
 
-x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/baseline_diff_out_of_model_a1/tfce_0.75_3.txt",
+x <- read.csv("~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/Illness_effect/tfce_0.7_3_lt_3.852.txt",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="Stages_melbBrazsin",
+brainconn(atlas ="Stages_melbBrain",
           conmat=x,
           all.nodes = F,
           #broken        interactive = F,

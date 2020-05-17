@@ -34,16 +34,11 @@ brainconn3D <- function(atlas=NULL,
                            uthr=NULL,
                            ...) {
 
-  load_object <- function(file) {
-    tmp <- new.env()
-    load(file = file, envir = tmp)
-    tmp[[ls(tmp)[1]]]
-  }
-
-  list.atlas <- sub('\\.rda$', '', list.files(path="data/", pattern = "*.rda"))
-  if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- load_object(paste0('data/', atlas, '.rda'))} else
-  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
-  }
+  #list.atlas <- sub('\\.rda$', '', list.files(pattern = "*.rda"))
+  #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
+  #  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
+  #}
+  data <- get(atlas)
 
 
 #convert conmat to matrix
@@ -78,7 +73,7 @@ brainconn3D <- function(atlas=NULL,
   if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
 
 
-  temp <- read.table("data/background/ICBM152_mesh")
+  temp <- get("ICBM152_mesh")
   temp.v <- subset(temp, V1 == "v")
   temp.f <- subset(temp, V1 == "f")
   temp.v <- temp.v[,-1]
