@@ -74,8 +74,8 @@ x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
 ```
-
-```{r, echo = FALSE}
+Included below is a screenshot of the interactive output: 
+```{r, echo = FALSE,warning=F, error=F}
 knitr::include_graphics("man/img/README-ggseg3d_example.png")
 ```
 \

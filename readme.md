@@ -71,16 +71,7 @@ x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
 ```
-
-
-```
-#> Warning: 'layout' objects don't have these attributes: 'NA'
-#> Valid attributes include:
-#> 'font', 'title', 'uniformtext', 'autosize', 'width', 'height', 'margin', 'paper_bgcolor', 'plot_bgcolor', 'separators', 'hidesources', 'showlegend', 'colorway', 'datarevision', 'uirevision', 'editrevision', 'selectionrevision', 'template', 'modebar', 'meta', 'transition', '_deprecated', 'clickmode', 'dragmode', 'hovermode', 'hoverdistance', 'spikedistance', 'hoverlabel', 'selectdirection', 'grid', 'calendar', 'xaxis', 'yaxis', 'ternary', 'scene', 'geo', 'mapbox', 'polar', 'radialaxis', 'angularaxis', 'direction', 'orientation', 'editType', 'legend', 'annotations', 'shapes', 'images', 'updatemenus', 'sliders', 'colorscale', 'coloraxis', 'metasrc', 'barmode', 'bargap', 'mapType'
-#> -\|/-\|/-\|/-\|/-\|/-\|/-\|/-\|/-\ 
-#> Error in processx::run("orca", args, echo = TRUE, spinner = TRUE, ...): System command 'orca' failed, exit status: -5, stdout & stderr were printed
-```
-
+Included below is a screenshot of the interactive output: 
 ![plot of chunk unnamed-chunk-7](man/img/README-ggseg3d_example.png)
 \
 Modifyble features for `brainconn3D` include: `node.size`, `node.color`, `edge.width`, `edge.color`, `adge.alpha`, `background.alpha`, `labels` and others (see vignette)
