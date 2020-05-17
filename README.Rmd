@@ -69,6 +69,7 @@ Modifyble features for `brainconn` include: `view`, `node.size`, `node.color`, `
 
 
 ```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
 ```
