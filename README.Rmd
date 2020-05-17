@@ -1,11 +1,19 @@
+
 ---
 title: "R Plotting tool for brain connectivity data"
 author: "Sidhant Chopra"
-output: 
-  html_document:
-    keep_md: true
+output: github_document
 ---
 
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/img/README-",
+  echo = TRUE
+)
+devtools::load_all(".")
+``` 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}

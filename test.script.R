@@ -43,7 +43,7 @@ x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,np
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
 
-x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1/1.301_obs_comp.csv",
+x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/baseline_diff_out_of_model_a1/tfce_0.75_3.txt",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
