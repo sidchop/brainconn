@@ -50,7 +50,7 @@ x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_cor
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="Stages_melbBrain",
+brainconn(atlas ="Stages_melbBrazsin",
           conmat=x,
           all.nodes = F,
           #broken        interactive = F,

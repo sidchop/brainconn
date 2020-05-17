@@ -46,6 +46,11 @@ The package also has a vignette, to help you get started. You can access it [ADD
 
 ```r
 library(ggconn)
+#> 
+#> Attaching package: 'ggconn'
+#> The following object is masked from 'package:brainconn':
+#> 
+#>     build_plot
 vignette("brainconn")
 ```
 
