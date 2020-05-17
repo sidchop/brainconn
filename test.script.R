@@ -1,5 +1,6 @@
 
 ###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
+##TEST
 
 
 library(brainconn)
