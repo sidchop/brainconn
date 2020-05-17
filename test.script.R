@@ -1,6 +1,6 @@
 
 ###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
-##TEST
+##TEST#
 
 
 library(brainconn)
