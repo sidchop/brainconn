@@ -1,10 +1,10 @@
-
 ---
 title: "R Plotting tool for brain connectivity data"
 author: "Sidhant Chopra"
-output: github_document
+output: 
+  html_document:
+    keep_md: true
 ---
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
