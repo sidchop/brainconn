@@ -1,6 +1,11 @@
 
-library(ggconn)
+###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
+
+
+library(brainconn)
 #library(ggraph)
+vignette("brainconn")
+
 nparc <- 300
 
 z <- igraph::erdos.renyi.game(300, 0.009, type="gnp")
@@ -19,7 +24,7 @@ x <- forceSymmetric(as.matrix(x))
 isSymmetric(as.matrix(x))
 rownames(x) <- colnames(x)
 x <- read.csv("data/example/temp", header = T)
-x <- read.csv("../STAGES_fmri/data/swe_validation/tfnbs/clust_TFCE_a2.txt", header = F)
+x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/a2_illness_effect/clust_gmr_illness_0.999_a2.txt", header = F)
 pheatmap::pheatmap(x, cluster_rows = FALSE,
                    cluster_cols = FALSE)
 
@@ -37,29 +42,46 @@ nparc <- 1000
 x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,nparc)
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
-ggconn(atlas ="schafer1000_n7",
-       conmat=x,
-             all.nodes = T,
-       #broken        interactive = F,
-#       node.color = "",
-       node.size= 1,
-             edge.color.weighted=T,
+
+x <- read.csv("../STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1/1.301_obs_comp.csv",
+              header = F)
+#as.igraph(qgraph(y))
+#x <- vec_2_mat(x, 316, 0)
+#y <- binarize(x = x, threshold = 15)
+
+brainconn(atlas ="Stages_melbBrain",
+          conmat=x,
+          all.nodes = F,
+          #broken        interactive = F,
+          #       node.color = "",
+          node.size= 3,
+          #      edge.color.weighted=T,
+          edge.color = "black",
           edge.width=0.3,
-       #scale.edge.width = c(1,2),
-       edge.alpha=1,
-       view = "top",
-       #         labels = F,
-                show.legend = T,
-       #         label.size = 2,
-       #          background.alpha = 0.4
+          #scale.edge.width = c(1,2),
+          edge.alpha=1,
+          view = "top",
+          labels = F,
+          show.legend = T,
+                  label.size = 3,
+          #          background.alpha = 0.4
 )
 
 
-ggconn3D(atlas = "Stages_melbBrain",
-         conmat = x,
 
+
+x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x))
+degree <- igraph::degree(x_igraph)
+degree <- degree[degree != 0]
+degree <- log(degree)*2
+
+View(degree)
+
+
+brainconn3D(atlas = "schafer1000_n7",
+         conmat = x,
         node.color = "network",
         show.legend = T
           )
-
-
+devtools::use_vignettes()
+devtools::build_vignettes()

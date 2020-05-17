@@ -1,78 +1,88 @@
 ---
-title: "Plotting tool for brain connectivity data"
+title: "Put the title of your vignette here"
 output: 
   html_document:
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{Plotting tool for brain connectivity data}
+  %\VignetteIndexEntry{brainconn}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-
 ```{r setup, include=F}
 knitr::opts_chunk$set(eval=TRUE)
 devtools::load_all(".")
+knitr::opts_knit$set(root.dir = '..')
 ```
 
 ## Basic use of `brainconn()`
 The `brainconn()` function allows users to input a binary/weighted and directed/directed (i.e. symmetric) connectivity matrix which can be plotted in MNI space onto several brain atlases provided with the package. The layout of the nodes and edges is created using [ggraph](https://github.com/thomasp85/ggraph), which does most of the heavy lifting here. The background is a `custom_annotation` using [ggplot2](https://github.com/tidyverse/ggplot2). 
 
-The minimum user input requirements for the `brainconn()` function is a connectivity matrix. This can be read into r as a matrix or data.fame. Some example connectivity matrices can be found in the `data/example` folder. The number of rows/columns should match the number of regions in the selected atlas. The atlases currently included with in the package are: `aal116`, `aal90`, `craddock200`, `dk68`, `dkt60`, `schafer300_n7`. Custom atlases can be added easily in `.csv` format (see adding custom atlas section). 
+The minimum user input requirements for the `brainconn()` function is a connectivity matrix. This can be read into r as a matrix or data.fame. Some example connectivity matrices can be found in the `data/example` folder. The number of rows/columns should match the number of regions in the selected atlas. The atlases currently included with in the package are:
+```{r, out.width='50%', include = FALSE}
+list.atlas <- sub('\\.rda$', '', list.files(path="/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/", pattern = "*.rda"))
+paste(list.atlas, " ", collapse="")
+```
+
+Custom atlases can be added easily in `.csv` format (see adding custom atlas section). 
 
 By default, the `view` is a top view, the `node.color` is by network.
 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
+```{r, out.width='50%'}
 library(brainconn)
-x <- read.csv("../data/example/example_unweighted_undirected.txt", header = F)
-brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = 8)
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_unweighted_undirected.txt", header = F)
+#setwd("~/Dropbox/Sid/R_files/brainconn")
+brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = 6)
 ```
 
 
+
 You can change the default view, node, edge and background properties as well as show all nodes of the atlas, rather than just the ones that have connected edges.  
-```{r, out.width='40%', warning=FALSE, message=FALSE}
+```{r, out.width='50%', warning=FALSE, message=FALSE}
 brainconn(atlas ="Stages_melbBrain", conmat=x, view="left", node.size = 3, node.color = "hotpink", edge.width = 3, edge.color="darkblue", edge.alpha = 0.8, all.nodes = T, show.legend = F)
 ```
 
 If the connectivity matrix (conmat) you input is not a binary matrix, i.e. the values are weighted, by default `ggconn()` will modulate the `edge.width` by the weighted values. `scale.edge.width` can be used to scale the edge width.
 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("../data/example/example_weighted_undirected.txt", header = F)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_weighted_undirected.txt", header = F)
 
-brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", scale.edge.width = c(1,6), show.legend = F)
+brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", scale.edge.width = c(1,6), background.alpha = 0.4, show.legend = F)
 ```
 
 You can also change the edge color by weight using the `edge.color.weighted` option.
 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("../data/example/example_weighted_undirected.txt", header = F)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_weighted_undirected.txt", header = F)
 
 brainconn(atlas ="schafer300_n7", conmat=x, node.size = 7,view="bottom", edge.width = 2, edge.color.weighted = T, show.legend = T)
 ```
 
 If a directed matrix (i.e. non symmetrical) is the input, the edges will be displayed as directed arrows, with the `edge.width` and `edge.color` serving the same purpose.:
 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("../data/example/example_unweighted_directed.txt", header = F)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_unweighted_directed.txt", header = F)
 
-brainconn(atlas ="schafer300_n7", conmat=x, node.size = 4, view="right", edge.alpha = 1)
+brainconn(atlas ="schafer300_n7", conmat=x, node.size = 4, view="right", edge.alpha = 0.4)
 ```
 
 Weighted and directed matrix example:
-```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("../data/example/example_weighted_directed.txt", header = F)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_weighted_directed.txt", header = F)
+
 brainconn(atlas ="schafer300_n7", conmat=x, view="front", edge.color.weighted=T)
 ```
 
 
 You can auto add `labels`, but this doesn't work to great if theirs a large number of edges. 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
-x <- read.csv("../data/example/example_unweighted_undirected.txt", header = F)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_unweighted_undirected.txt", header = F)
+
 brainconn(atlas ="Stages_melbBrain", conmat=x, labels = T, label.size = 2)
 ```
 
 If you want to weight the nodes by a feature such as degree, you can provide a vector the length of the number of ROIs in the parcellation to `node.size`. 
 
-```{r, out.width='50%', warning=FALSE, message=FALSE}
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
 x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x)) #convert connectivity matrix into an graph object.
 d <- igraph::degree(x_igraph) #use igraph::degree to obtain a vector of nodal degree
 d <- d[d != 0] #remove nodes with no edges 

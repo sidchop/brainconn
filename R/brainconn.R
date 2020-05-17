@@ -113,12 +113,12 @@ brainconn <- function(atlas,
 
   #if interactive call build_plot_int, else call build con
 #  source("functions/build_plot.R")
-if(interactive==FALSE){p <- build_plot(conmat, data, data.row, data.col, background, node.size=node.size, view,
+p <- build_plot(conmat, data, data.row, data.col, background, node.size=node.size, view,
                                           node.color=node.color, thr=NULL, uthr=NULL,
                                           edge.color=edge.color,edge.alpha=edge.alpha,
                                           edge.width=edge.width,  scale.edge.width=scale.edge.width,
                                           show.legend=show.legend, labels=labels, label.size=label.size,
-                                          include.vec=include.vec, edge.color.weighted=edge.color.weighted)}
+                                          include.vec=include.vec, edge.color.weighted=edge.color.weighted)
 
 #  source("functions/build_plot_int.R")
 #if(interactive==TRUE){p <- build_plot_int(conmat, data, data.row, data.col, background, node.size=node.size, view,
