@@ -8,9 +8,8 @@ Depends: R (>= 3.1.0),
   ggraph
 License: What license is it under?
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 Imports: 
     ggplot2
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-

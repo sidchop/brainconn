@@ -4,10 +4,31 @@
 \alias{build_plot}
 \title{Title}
 \usage{
-build_plot(conmat, data, data.row = NULL, data.col = NULL, background,
-  node.size, node.color = "network", thr = NULL, uthr = NULL, view,
-  edge.color, edge.alpha, edge.width, show.legend, label.size, labels,
-  include.vec = NULL, scale.edge.width, edge.color.weighted, ...)
+build_plot(
+  conmat,
+  data,
+  data.row = NULL,
+  data.col = NULL,
+  background,
+  node.size,
+  node.color = "network",
+  thr = NULL,
+  uthr = NULL,
+  view,
+  edge.color,
+  edge.alpha,
+  edge.width,
+  show.legend,
+  label.size,
+  labels,
+  include.vec = NULL,
+  scale.edge.width,
+  edge.color.weighted,
+  ...
+)
+}
+\value{
+
 }
 \description{
 Title

@@ -44,7 +44,7 @@ x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,np
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
 
-x <- read.csv("~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/Illness_effect/tfce_0.7_3_lt_3.852.txt",
+x <- read.csv("~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1/tfce_0.75_3_lt_3.852.txt",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
@@ -61,9 +61,9 @@ brainconn(atlas ="Stages_melbBrain",
           edge.width=0.3,
           #scale.edge.width = c(1,2),
           edge.alpha=1,
-          view = "top",
-          labels = F,
-          show.legend = T,
+          view = "left",
+          labels = T,
+          show.legend = F,
                   label.size = 3,
           #          background.alpha = 0.4
 )
@@ -77,11 +77,12 @@ x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x))
 degree <- igraph::degree(x_igraph)
 degree <- degree[degree != 0]
 degree <- log(degree)*2
+load("~/Dropbox/Sid/R_files/brainconn/data/Stages_melbBrain.rda")
 
 View(degree)
 
 
-brainconn3D(atlas = "schafer1000_n7",
+brainconn3D(atlas = "Stages_melbBrain",
          conmat = x,
         node.color = "network",
         show.legend = T

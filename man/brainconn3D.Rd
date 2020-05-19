@@ -4,13 +4,28 @@
 \alias{brainconn3D}
 \title{Title}
 \usage{
-brainconn3D(atlas = NULL, conmat = NULL, data, all.nodes = FALSE,
-  node.color = "network", node.size = 10, edge.width = 3,
-  edge.color = "black", opacity = 0.28, d.factor = 1.05,
-  show.legend = T, thr = NULL, uthr = NULL, ...)
+brainconn3D(
+  atlas = NULL,
+  conmat = NULL,
+  data,
+  all.nodes = FALSE,
+  node.color = "network",
+  node.size = 10,
+  edge.width = 3,
+  edge.color = "black",
+  opacity = 0.28,
+  d.factor = 1.05,
+  show.legend = T,
+  thr = NULL,
+  uthr = NULL,
+  ...
+)
 }
 \arguments{
 \item{...}{}
+}
+\value{
+
 }
 \description{
 Title
