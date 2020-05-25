@@ -44,7 +44,8 @@ x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,np
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
 
-x <- read.csv("~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1/tfce_0.75_3_lt_3.852.txt",
+x <- read.csv(
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1_long_fixed/1.301_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
@@ -61,13 +62,14 @@ brainconn(atlas ="Stages_melbBrain",
           edge.width=0.3,
           #scale.edge.width = c(1,2),
           edge.alpha=1,
-          view = "left",
-          labels = T,
+          view = "top",
+          labels = F,
           show.legend = F,
                   label.size = 3,
           #          background.alpha = 0.4
 )
 
+as.igraph(qgraph::qgraph(x))
 x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
 p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
