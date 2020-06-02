@@ -1,7 +1,8 @@
 
 ###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
 ##TEST#
-
+schafer300_17_cog_lang <- read.csv("Schafer300_17_cog_lang.csv")
+usethis::use_data(schafer300_17_cog_lang, schafer300_17_cog_lang)
 
 library(brainconn)
 #library(ggraph)
@@ -9,7 +10,7 @@ vignette("brainconn")
 
 nparc <- 300
 
-z <- igraph::erdos.renyi.game(300, 0.009, type="gnp")
+z <- igraph::erdos.renyi.game(59, 0.009, type="gnp")
 plot(z)
 
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
@@ -39,19 +40,19 @@ x <- Matrix::forceSymmetric(as.matrix(x))
 #d <- c(2,7,3,2,7,1,9,4,1,2,7,3,1,2,2,1,4,1,5,3,1,1,1,2,1,3,1,2,2,2,2,2,5,1,1)
 #d_adj <- d+5
 #d_scale <- scale(d)+4
-nparc <- 1000
-x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.9999,.0001)),nparc,nparc)
+nparc <- 59
+x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.99,.01)),nparc,nparc)
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
 
 
-x <- read.csv(
-"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/medication_effect_1_long_fixed/1.301_obs_comp.csv",
+x  <- read.csv(
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/a3/medication_effect_conj/1.301_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="Stages_melbBrain",
+brainconn(atlas ="schafer300_17_cog_lang",
           conmat=x,
           all.nodes = F,
           #broken        interactive = F,
@@ -64,7 +65,7 @@ brainconn(atlas ="Stages_melbBrain",
           edge.alpha=1,
           view = "top",
           labels = F,
-          show.legend = F,
+          show.legend = T,
                   label.size = 3,
           #          background.alpha = 0.4
 )
@@ -76,7 +77,9 @@ p
 
 
 x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x))
+
 degree <- igraph::degree(x_igraph)
+
 degree <- degree[degree != 0]
 degree <- log(degree)*2
 load("~/Dropbox/Sid/R_files/brainconn/data/Stages_melbBrain.rda")
