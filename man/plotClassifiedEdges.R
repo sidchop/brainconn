@@ -17,8 +17,6 @@
 # ids       - N*1 vector of network ids. Each network should be represented
 #           as a unique number. Each row is a different node.
 #
-# plotFig   - set to 1 if you want to plot out; 2 for outPC; 3 for outNorm;
-#           0 otherwise. Default is 0.
 #
 # labels    - M*1 cell, where M is the number of different networks. Each
 #             cell contains a string representing the
@@ -27,17 +25,17 @@
 # -------
 # % OUTPUTS:
 # % -------
-# % out       - M*M adjacency matrix indicating the number of edges between
+# % out [[1]]       - M*M adjacency matrix indicating the number of edges between
 #           each network pair. Values along diagonal represent edges within
 #           a network.
 #           NOTE: sum(sum(triu(out))) = sum(sum(adj))/2; in other
 #           words, the number of unique edges in adj equals the number of
 #           edges in the upper triangle (including the diagonal) of out.
 #
-# outPC     - The out matrix normalized by the number of unqiue edge to
+# outPC [[2]]    - The out matrix normalized by the number of unqiue edge to
 #           yield the proportion of edges for each category.
 #
-# outNorm   - this matrix is normalized separetly for each pair of regions
+# outNorm  [[3]]  - this matrix is normalized separetly for each pair of regions
 #           by the total number of edges between them. The values thus
 #           represent the connection density of the subgraph of nodes
 #           belonging to a given pair of modules. This normalization
