@@ -46,7 +46,7 @@ y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,
 
 
 x  <- read.csv(
-"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/a3/medication_effect_conj/1.301_obs_comp.csv",
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/illness_effect_age_long_fixed/1.301_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
@@ -76,8 +76,9 @@ p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
 p
 
 
-x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x))
+x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x), mode = c("undirected"))
 
+igraph::gsize(x_igraph)
 degree <- igraph::degree(x_igraph)
 
 degree <- degree[degree != 0]
