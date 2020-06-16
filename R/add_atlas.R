@@ -23,12 +23,3 @@ add_atlas <- function(atlas) {
   usethis::use_data(atlas)
 }
 
-list_atlas <- function() {
-  d <- data(package = "brainconn")
-  atlas.list <- d$results[,3]
-  atlas.list <- atlas.list[!grepl("ICBM",  atlas.list)]
-  message("brainconn currently contains the following atlases: ")
-  for (a in 1:length(atlas.list)) {
-    message(atlas.list[a])
-  }
-}

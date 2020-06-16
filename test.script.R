@@ -46,13 +46,13 @@ y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,
 
 
 x  <- read.csv(
-"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/illness_effect_age_long_fixed/1.301_obs_comp.csv",
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/illness_effect_age_long_fixed/3_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="schafer300_17_cog_lang",
+brainconn(atlas ="Stages_melbBrain",
           conmat=x,
           all.nodes = F,
           #broken        interactive = F,
@@ -63,7 +63,7 @@ brainconn(atlas ="schafer300_17_cog_lang",
           edge.width=0.3,
           #scale.edge.width = c(1,2),
           edge.alpha=1,
-          view = "top",
+          view = "ortho",
           labels = F,
           show.legend = T,
                   label.size = 3,
@@ -95,3 +95,9 @@ brainconn3D(atlas = "Stages_melbBrain",
           )
 devtools::use_vignettes()
 devtools::build_vignettes()
+
+list_atlases()
+
+
+
+
