@@ -1,8 +1,10 @@
 
 ###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
 ##TEST#
-schafer300_17_cog_lang <- read.csv("Schafer300_17_cog_lang.csv")
-usethis::use_data(schafer300_17_cog_lang, schafer300_17_cog_lang)
+stages_study<- read.csv("data/stages_study.csv")[,-8]
+usethis::use_data(stages_study, stages_study)
+
+
 
 library(brainconn)
 #library(ggraph)
@@ -47,13 +49,13 @@ nparc <- 4
 x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.10,.90)),nparc,nparc)
 
 x  <- read.csv(
-"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/illness_effect_age_long_fixed/2_obs_comp.csv",
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/baseline_diff/2_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="Stages_melbBrain",
+brainconn(atlas ="stages_study",
           conmat=x,
           all.nodes = F,
           #broken        interactive = F,
@@ -64,7 +66,7 @@ brainconn(atlas ="Stages_melbBrain",
           edge.width=0.1,
           #scale.edge.width = c(1,2),
           edge.alpha=1,
-          view = "ortho",
+          view = "top",
           labels = F,
           show.legend = T,
                   label.size = 3,
@@ -121,5 +123,6 @@ add_atlas(catlas_plus)
 list_atlases()
 
 data()
+
 
 
