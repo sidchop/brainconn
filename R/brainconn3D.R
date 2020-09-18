@@ -38,12 +38,10 @@ brainconn3D <- function(atlas=NULL,
   #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
   #  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
   #}
-  data <- get(atlas)
-
+  ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
 #convert conmat to matrix
 # conmat <- as.matrix(conmat)
-
 
   #if no conmat is provided, build nparc x  nparc empty one
   nparc <- dim(data)[1]
@@ -56,13 +54,11 @@ brainconn3D <- function(atlas=NULL,
   #make sure the col and row names of the supplied conmat are indexed correctly
   rownames(conmat) <- colnames(conmat) <- 1:dim(conmat)[1]
 
-
-
   #Remove nodes with no edges
   if(all.nodes==FALSE) {
     include.vec <- vector(length=dim(data)[1])
-    for (i in 1:dim(x)[1]){
-      ifelse(any(x[i, ] > 0), include.vec[i] <- 1, include.vec[i] <- 0)
+    for (i in 1:dim(conmat)[1]){
+      ifelse(any(conmat[i, ] > 0), include.vec[i] <- 1, include.vec[i] <- 0)
     }
     data <- data[as.logical(include.vec), ,drop=F]
     conmat <- conmat[which(rowSums(conmat) > 0), which(colSums(conmat) > 0), drop = F]

@@ -1,29 +1,33 @@
 
 ###IGNORE THIS SCRIPT - JUST FOR TESTING CODE
 ##TEST#
-stages_study<- read.csv("data/stages_study.csv")[,-8]
-usethis::use_data(stages_study, stages_study)
+custom <- read.csv("data/custom_atlas_example.csv")
+check_atlas(custom)
+colnames(custom) <- c("ROI.Name", "x.mni", "y.mni", "z.mni", "network", "hemi", "index")
 
 
+
+load("data/stages_study.rda")
+write.csv(stages_study, "data/custom_atlas_example.csv", row.names = F, quote = F)
 
 library(brainconn)
 #library(ggraph)
 vignette("brainconn")
 
-nparc <- 300
+nparc <- 316
 
 z <- igraph::erdos.renyi.game(59, 0.009, type="gnp")
 plot(z)
 
 y <- matrix(sample(0:10,nparc*nparc, replace=TRUE, prob=c(0.99999,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001,.00001)),nparc,nparc)
-diag(x) <- 0
+diag(y) <- 0
 
 
 
 write.csv(as.matrix(y), file = "data/example/example_weighted_directed.txt", row.names = F)
 
 require(Matrix)
-x <- forceSymmetric(as.matrix(x))
+y <- forceSymmetric(as.matrix(y))
 diag(x) <- 0
 isSymmetric(as.matrix(x))
 rownames(x) <- colnames(x)
@@ -49,28 +53,27 @@ nparc <- 4
 x <- matrix(sample(0:1,nparc*nparc, replace=TRUE, prob=c(0.10,.90)),nparc,nparc)
 
 x  <- read.csv(
-"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/baseline_diff/2_obs_comp.csv",
+"~/Dropbox/Sid/R_files/STAGES_fmri/data/swe_validation_contrasts/gmr/fwe_contrast_corrected/illness_effect_age_long_fixed/3_obs_comp.csv",
               header = F)
 #as.igraph(qgraph(y))
 #x <- vec_2_mat(x, 316, 0)
 #y <- binarize(x = x, threshold = 15)
 
-brainconn(atlas ="stages_study",
-          conmat=x,
+brainconn(atlas = custom,
+          conmat=y,
           all.nodes = F,
-          #broken        interactive = F,
           #       node.color = "",
-          node.size= 5,
-          #      edge.color.weighted=T,
+          node.size= 2,
+                edge.color.weighted=T,
           edge.color = "black",
-          edge.width=0.1,
+          edge.width=2,
           #scale.edge.width = c(1,2),
           edge.alpha=1,
-          view = "top",
+          view = "ortho",
           labels = F,
-          show.legend = T,
+          show.legend = F,
                   label.size = 3,
-          #          background.alpha = 0.4
+                 background.alpha = 0.2
 )
 
 as.igraph(qgraph::qgraph(x))
@@ -86,16 +89,19 @@ degree <- igraph::degree(x_igraph)
 
 degree <- degree[degree != 0]
 degree <- log(degree)*2
-load("~/Dropbox/Sid/R_files/brainconn/data/Stages_melbBrain.rda")
+load("~/Dropbox/Sid/R_files/brainconn/data/stages_study.rda")
 
 View(degree)
 
 
-brainconn3D(atlas = "Stages_melbBrain",
-         conmat = x,
+brainconn3D(atlas = custom,
+         conmat = y,
         node.color = "network",
-        show.legend = T
+        show.legend = F,
+        edge.width = 2
+
           )
+
 devtools::use_vignettes()
 devtools::build_vignettes()
 

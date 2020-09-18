@@ -8,12 +8,11 @@
 #' @examples
 #'
 #===================================
-# This function converts user inputed atlas
-# first checks collums names and then converts
-# it into .rda file that can be accessed by brain conn
+# This function checks user inputed atlas to make sure it will play nice with the
+# brainconn and brainconn3d functions.
 #===================================
-add_atlas <- function(atlas) {
-  stopifnot(is.data.frame(atlas))
+check_atlas <- function(atlas) {
+  if(!is.data.frame(atlas)) {message("Please convert atlas to a dataframe (e.g. as.dataframe())")}
   essential_cols <-  c("ROI.Name", "x.mni", "y.mni", "z.mni")
   col.check <- essential_cols %in% names(atlas)
   ifelse(any(col.check==F), pass <- F, pass <- T)
@@ -26,10 +25,7 @@ add_atlas <- function(atlas) {
   }
 
   if(pass == T){
-    usethis::use_data(atlas, internal = FALSE, overwrite = TRUE)
-    message("Atlas added to brainconn. Use list_atlases() to see all atlases. Reloading brainconn..")
-    detach("package:brainconn", unload=TRUE)
-    library("brainconn")
+    message("Atlas fits brainconn specifications and should work with brainconn() and brainconn3d().")
   }
   if(pass == F){
     stop(paste("File missing", essential_cols[which(col.check == F)], "column."))

@@ -8,7 +8,7 @@ Depends: R (>= 3.1.0),
   ggraph
 License: What license is it under?
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports: 
     ggplot2
 Suggests: knitr, rmarkdown

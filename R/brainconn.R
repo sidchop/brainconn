@@ -51,7 +51,8 @@ brainconn <- function(atlas,
   #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
   #  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
   #}
-  data <- get(atlas)
+
+  ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
   #set background
   # list.backgroud <- sub('\\.png$', '', list.files(path="data/background/", pattern = "*.png"))
