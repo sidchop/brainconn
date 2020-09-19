@@ -54,7 +54,7 @@ brainconn <- function(atlas,
   #loop three times for the three vies that make ortho view
   if (view == "ortho") {
     ortho_list <- list()
-     ortho_views  <- c("top", "left", "front")
+    ortho_views  <- c("top", "left", "front")
     for (v in 1:3) {
       view <- ortho_views[v]
       bg <- paste0("ICBM152_", view)
@@ -130,12 +130,12 @@ brainconn <- function(atlas,
 
     }
 
-     right_col <- cowplot::plot_grid(ortho_list[[2]],
-                                     ortho_list[[3]],
-                                     nrow=2,
-                                     rel_heights = c(1, 1.45))
-     p <- cowplot::plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
-     return(p)
+    right_col <- cowplot::plot_grid(ortho_list[[2]],
+                                    ortho_list[[3]],
+                                    nrow=2,
+                                    rel_heights = c(1, 1.45))
+    p <- cowplot::plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
+    return(p)
 
 
   }

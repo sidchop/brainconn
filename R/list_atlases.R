@@ -6,7 +6,8 @@
 #' @examples
 list_atlases <- function() {
   d <- data(package = "brainconn")
-  atlas.list <- ls(readRDS(system.file("data", "Rdata.rds", package = "brainconn")))
+  atlas.list <- d[[3]]
+  atlas.list <- atlas.list[,3]
   atlas.list <- atlas.list[!grepl("ICBM",  atlas.list)]
   atlas.list <- atlas.list[!grepl("example",  atlas.list)]
   message("Brainconn currently contains the following atlases:")
