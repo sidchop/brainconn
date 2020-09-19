@@ -1,30 +1,13 @@
-
-#' Title
+#' workhorse function for \code{brainconn()}
 #'
-#' @param conmat
-#' @param data
-#' @param data.row
-#' @param data.col
-#' @param background
-#' @param node.size
-#' @param node.color
-#' @param thr
-#' @param uthr
-#' @param view
-#' @param edge.color
-#' @param edge.alpha
-#' @param edge.width
-#' @param show.legend
-#' @param label.size
-#' @param labels
-#' @param include.vec
-#' @param scale.edge.width
-#' @param ...
+#' returns a ggraph object of plotted brain connectivity matrix
+#' @author Sidhant Chopra
 #' @import ggraph
 #' @importFrom ggplot2 aes annotation_custom
-#' @return
-#' @export
-#' @examples
+
+
+
+
 build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, node.size, node.color="network",
                        thr=NULL, uthr=NULL, view, edge.color, edge.alpha, edge.width, show.legend, label.size,
                        labels, include.vec=NULL, scale.edge.width, edge.color.weighted, ...) {

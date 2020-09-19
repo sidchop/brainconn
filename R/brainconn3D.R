@@ -1,27 +1,37 @@
-#' Title
+#' Plots brains in 3D
 #'
-#' @param atlas
-#' @param conmat
-#' @param data
-#' @param all.nodes
-#' @param node.color
-#' @param node.size
-#' @param edge.width
-#' @param edge.color
-#' @param opacity
-#' @param d.factor
-#' @param show.legend
-#' @param thr
-#' @param uthr
-#' @param ...
+#' \code{brainconn} plots and returns a interactive plotly object of plotted brain connectivity matrix..
+#' @author Sidhant Chopra
 #'
-#' @return
+#'
+#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases{}
+#' or a .data.frame that meets specifications, see \code{vignette("brainconn")}
+#' @param conmat A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.
+#' @param all.nodes f \code{TRUE}, then all nodes will be shown be hemisphere without ticks.
+#' If \code{FALSE}, then only nodes with connecting edges will be shown.
+#' @param node.color A string that sets the node color. e.g. "blue". If set to "network", then nodes will be
+#' colored according to the network column of the atlas
+#' @param node.size A integer that determines the diameter of the nodes. Can also be a vector of integers
+#' with a length equal to the number of ROIs in the atlas
+#' @param edge.width Number to set the width of the edges.
+#' @param edge.color A string that sets the edge color. e.g. "blue".
+#' @param opacity Number between 0-1 to  set the transparency of the mesh brain
+#' @param d.factor An int to change the distance between the nodes and brain surface.
+#' @param show.legend if \code{TRUE}, legend will be shown.
+#' If \code{FALSE}, then no legend will be shown
+#' @param thr a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than
+#' the one set here will not be shown)
+#' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than
+#' the one set here will not be shown)
+#'
+#' @return a plotly object
 #' @export
 #'
 #' @examples
+#' brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
+
 brainconn3D <- function(atlas=NULL,
                            conmat=NULL,
-                           data,
                            all.nodes=FALSE,
                            node.color="network",
                            node.size=10,
@@ -31,8 +41,7 @@ brainconn3D <- function(atlas=NULL,
                            d.factor=1.05,
                            show.legend=T,
                            thr=NULL,
-                           uthr=NULL,
-                           ...) {
+                           uthr=NULL) {
 
   #list.atlas <- sub('\\.rda$', '', list.files(pattern = "*.rda"))
   #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else

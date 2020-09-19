@@ -1,34 +1,50 @@
-
-#' Title
+#' Plots brains
 #'
-#' @param atlas
-#' @param background
-#' @param view
-#' @param conmat
-#' @param interactive
-#' @param node.size
-#' @param node.color
-#' @param all.nodes
-#' @param edge.color
-#' @param edge.alpha
-#' @param edge.width
-#' @param labels
-#' @param show.legend
-#' @param thr
-#' @param uthr
-#' @param scale.edge.width
-#' @param label.size
-#' @param ...
+#' \code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix..
+#' @author Sidhant Chopra
 #'
-#' @return
-#' @export
-#' @impot ggraph
+#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases{}
+#' or a .data.frame that meets specifications, see \code{vignette("brainconn")}
+#' @param background 'ICBM152', currently the only background option
+#' @param background.alpha Number between 0-1 to  set the transparency of the background.
+#' @param view A sting to choose the view. Can be any of these: c("ortho", "top", "bottom", "left", "right")
+#' @param conmat A adjacency matrix. Can be binary, weights, directed or undirected. see example_* data.
+#' @param node.size A integer that determines the diameter of the nodes. Can also be a vector of integers
+#' with a length equal to the number of ROIs in the atlas
+#' @param node.color A string that sets the node color. e.g. "blue". If set to "network", then nodes will be
+#' colored according to the network column of the atlas
+#' @param edge.color.weighted A boolean that applies when the conmat is weighted. if \code{TRUE}, then edges
+#' will be colored according to the weight \code{FALSE}, the edges will be sized according to weight.
+#' @param all.nodes if \code{TRUE}, then all nodes will be shown be hemisphere without ticks.
+#' If \code{FALSE}, then only nodes with connecting edges will be shown.
+#' @param edge.color A string that sets the edge color. e.g. "blue".
+#' @param edge.alpha Number between 0-1 to  set the transparency of the edges.
+#' @param edge.width Number to set the width of the edges.
+#' @param labels if \code{TRUE}, ROI labels for all visible nodes will be shown.
+#' If \code{FALSE}, then no labes will be shown.
+#' @param show.legend if \code{TRUE}, legend will be shown.
+#' If \code{FALSE}, then no legend will be shown.
+#' @param thr a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than
+#' the one set here will not be shown)
+#' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than
+#' the one set here will not be shown)
+#' @param scale.edge.width If \code{edge.color.weighted=FALSE}, you can use this rescale the edge.width according to weight.
+#' e.g. \code{scale.edge.width = c(1,3)}
+#' @param label.size If labels=TRUE then, \code{label.size} can can be set as in integer to control the size of the labels.
+#'
+#' @return a ggraph object
+#'
+#' @import ggraph
 #' @examples
+#' library(brainconn)
+#' x <- example_unweighted_undirected
+#' brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 3, view="ortho")
+#' @export
 brainconn <- function(atlas,
                       background='ICBM152',
                       view ="top",
                       conmat=NULL,
-                      interactive = F,
+                 #     interactive = F,
                       node.size=4,
                       node.color="network",
                       all.nodes=FALSE,
@@ -42,8 +58,7 @@ brainconn <- function(atlas,
                       uthr=NULL,
                       scale.edge.width = NULL,
                       label.size=1.5,
-                      background.alpha = 1,
-                      ...) {
+                      background.alpha = 1) {
 
 
 
