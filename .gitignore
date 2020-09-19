@@ -9,3 +9,5 @@ inst/doc
 docs/
 test.script.R
 .Rproj.user
+vignettes/*.html
+vignettes/*.R
