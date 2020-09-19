@@ -2,7 +2,6 @@
 
 export(brainconn)
 export(brainconn3D)
-export(build_plot)
 export(check_atlas)
 export(list_atlases)
 import(ggraph)

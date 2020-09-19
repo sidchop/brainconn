@@ -2,14 +2,13 @@
 % Please edit documentation in R/brainconn.R
 \name{brainconn}
 \alias{brainconn}
-\title{Title}
+\title{Plots brains}
 \usage{
 brainconn(
   atlas,
   background = "ICBM152",
   view = "top",
   conmat = NULL,
-  interactive = F,
   node.size = 4,
   node.color = "network",
   all.nodes = FALSE,
@@ -23,16 +22,64 @@ brainconn(
   uthr = NULL,
   scale.edge.width = NULL,
   label.size = 1.5,
-  background.alpha = 1,
-  ...
+  background.alpha = 1
 )
 }
 \arguments{
-\item{...}{}
+\item{background}{'ICBM152', currently the only background option}
+
+\item{view}{A sting to choose the view. Can be any of these: c("ortho", "top", "bottom", "left", "right")}
+
+\item{conmat}{A adjacency matrix. Can be binary, weights, directed or undirected. see example_* data.}
+
+\item{node.size}{A integer that determines the diameter of the nodes. Can also be a vector of integers
+with a length equal to the number of ROIs in the atlas}
+
+\item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be
+colored according to the network column of the atlas}
+
+\item{all.nodes}{if \code{TRUE}, then all nodes will be shown be hemisphere without ticks.
+If \code{FALSE}, then only nodes with connecting edges will be shown.}
+
+\item{edge.color}{A string that sets the edge color. e.g. "blue".}
+
+\item{edge.alpha}{Number between 0-1 to  set the transparency of the edges.}
+
+\item{edge.width}{Number to set the width of the edges.}
+
+\item{edge.color.weighted}{A boolean that applies when the conmat is weighted. if \code{TRUE}, then edges
+will be colored according to the weight \code{FALSE}, the edges will be sized according to weight.}
+
+\item{labels}{if \code{TRUE}, ROI labels for all visible nodes will be shown.
+If \code{FALSE}, then no labes will be shown.}
+
+\item{show.legend}{if \code{TRUE}, legend will be shown.
+If \code{FALSE}, then no legend will be shown.}
+
+\item{thr}{a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than
+the one set here will not be shown)}
+
+\item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than
+the one set here will not be shown)}
+
+\item{scale.edge.width}{If \code{edge.color.weighted=FALSE}, you can use this rescale the edge.width according to weight.
+e.g. \code{scale.edge.width = c(1,3)}}
+
+\item{label.size}{If labels=TRUE then, \code{label.size} can can be set as in integer to control the size of the labels.}
+
+\item{background.alpha}{Number between 0-1 to  set the transparency of the background.}
 }
 \value{
-
+a ggraph object
 }
 \description{
-Title
+\code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix..
+}
+\examples{
+library(brainconn)
+x <- example_unweighted_undirected
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 3, view="ortho")
+}
+\author{
+Sidhant Chopra
 }

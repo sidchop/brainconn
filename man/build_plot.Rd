@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_plot.R
 \name{build_plot}
 \alias{build_plot}
-\title{Title}
+\title{workhorse function for \code{brainconn()}}
 \usage{
 build_plot(
   conmat,
@@ -27,9 +27,9 @@ build_plot(
   ...
 )
 }
-\value{
-
-}
 \description{
-Title
+returns a ggraph object of plotted brain connectivity matrix
+}
+\author{
+Sidhant Chopra
 }
