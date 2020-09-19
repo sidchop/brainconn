@@ -1,7 +1,11 @@
-.Rproj.user
+Meta
+doc
+*.Rproj
 .Rhistory
 .RData
 .Ruserdata
-doc
-Meta
+/**/.DS_Store
+inst/doc
+docs/
 test.script.R
+.Rproj.user

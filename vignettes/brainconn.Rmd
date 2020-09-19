@@ -1,10 +1,8 @@
 ---
 title: "brainconn: a R-package for plotting brain connectivity data"
-output: 
-  html_document:
-    keep_md: true
+output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{brainconn}
+  %\VignetteIndexEntry{Plotting brain mesh atlases in plotly}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
