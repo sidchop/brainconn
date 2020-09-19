@@ -7,14 +7,18 @@
 check_atlas(atlas)
 }
 \arguments{
-\item{atlas}{}
+\item{atlas}{a .data.frame with a 4 collums named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}}
 }
 \value{
-
+a message
 }
 \description{
 Title
 }
 \examples{
+\dontrun{
+library(brainconn)
+check_atlas(custom_atlas_example)
+}
 
 }

@@ -22,14 +22,11 @@ brainconn3D(
 \arguments{
 \item{conmat}{A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.}
 
-\item{all.nodes}{f \code{TRUE}, then all nodes will be shown be hemisphere without ticks.
-If \code{FALSE}, then only nodes with connecting edges will be shown.}
+\item{all.nodes}{f \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.}
 
-\item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be
-colored according to the network column of the atlas}
+\item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas}
 
-\item{node.size}{A integer that determines the diameter of the nodes. Can also be a vector of integers
-with a length equal to the number of ROIs in the atlas}
+\item{node.size}{A integer that determines the diameter of the nodes. Can also be a vector of integers with a length equal to the number of ROIs in the atlas}
 
 \item{edge.width}{Number to set the width of the edges.}
 
@@ -39,14 +36,11 @@ with a length equal to the number of ROIs in the atlas}
 
 \item{d.factor}{An int to change the distance between the nodes and brain surface.}
 
-\item{show.legend}{if \code{TRUE}, legend will be shown.
-If \code{FALSE}, then no legend will be shown}
+\item{show.legend}{if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown}
 
-\item{thr}{a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than
-the one set here will not be shown)}
+\item{thr}{a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than the one set here will not be shown)}
 
-\item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than
-the one set here will not be shown)}
+\item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)}
 }
 \value{
 a plotly object
@@ -55,7 +49,10 @@ a plotly object
 \code{brainconn} plots and returns a interactive plotly object of plotted brain connectivity matrix..
 }
 \examples{
+\dontrun{
+library(brainconn)
 brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
+}
 }
 \author{
 Sidhant Chopra

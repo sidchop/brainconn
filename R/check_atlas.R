@@ -1,11 +1,13 @@
 #' Title
 #'
-#' @param atlas
-#'
-#' @return
-#' @export
+#' @param atlas a .data.frame with a 4 collums named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}
+#' @return a message
 #'
 #' @examples
+#' \dontrun{
+#'library(brainconn)
+#'check_atlas(custom_atlas_example)
+#'}
 #'
 #===================================
 # This function checks user inputed atlas to make sure it will play nice with the
