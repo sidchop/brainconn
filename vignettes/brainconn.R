@@ -3,7 +3,7 @@ knitr::opts_chunk$set(eval=TRUE)
 devtools::load_all(".")
 knitr::opts_knit$set(root.dir = '..')
 
-## ---- out.width='50%'---------------------------------------------------------
+## ---- out.width='50%', warning=FALSE, message=FALSE---------------------------
 library(brainconn)
 x <- example_unweighted_undirected
 brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 3, view="ortho")
@@ -31,25 +31,31 @@ x <- example_weighted_directed
 brainconn(atlas ="schaefer300_n7", conmat=x, view="front", edge.color.weighted=T)
 
 ## ---- out.width='50%',  warning=FALSE, message=FALSE--------------------------
-#x <- read.csv("/Users/sidchopra/Dropbox/Sid/R_files/brainconn/data/example/example_unweighted_undirected.txt", header = F)
-
-#brainconn(atlas ="Stages_melbBrain", conmat=x, labels = T, label.size = 2)
+brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, labels = T, label.size = 2, node.size = 3)
 
 ## ---- out.width='50%',  warning=FALSE, message=FALSE--------------------------
-#x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(x)) #convert connectivity matrix into an graph object.
-#d <- igraph::degree(x_igraph) #use igraph::degree to obtain a vector of nodal degree
-#d <- d[d != 0] #remove nodes with no edges 
-#brainconn(atlas ="Stages_melbBrain", conmat=x, node.size = d)
+x <- example_unweighted_undirected
+x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(example_unweighted_undirected)) #convert connectivity matrix into an graph object.
+d <- igraph::degree(x_igraph) #use igraph::degree to obtain a vector of nodal degree
+d <- d[d != 0] #remove nodes with no edges 
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = d)
 
 ## ---- out.width='50%',  warning=FALSE, message=FALSE--------------------------
-#p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
-#p
+p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
+p
 
 ## ---- out.width='50%',  warning=FALSE, message=FALSE--------------------------
-#p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, edge.width = 6, edge.color = "green", node.size = 6, node.color = "red", show.legend = F)
-#p
+p <- brainconn3D(atlas = "schaefer300_n7", conmat=example_unweighted_undirected, edge.width = 6, edge.color = "green", node.size = 8, node.color = "red", show.legend = F)
+p
 
 ## ---- out.width='50%',  warning=FALSE, message=FALSE--------------------------
-#p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, edge.width = 3, edge.color = "brown", node.size = 3, d.factor = 1.3, all.nodes = T, opacity = 0.1, show.legend = F)
-#p
+p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, edge.width = 3, edge.color = "brown", node.size = 3, d.factor = 1.3, all.nodes = T, opacity = 0.3, show.legend = F)
+p
+
+## ---- out.width='50%',  warning=FALSE, message=TRUE---------------------------
+custom_atlas <- custom_atlas_example
+check_atlas(custom_atlas)
+
+brainconn(atlas = custom_atlas, conmat = example_unweighted_undirected,
+          node.color = "black")
 
