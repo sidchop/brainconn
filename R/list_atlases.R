@@ -8,8 +8,10 @@ list_atlases <- function() {
   d <- data(package = "brainconn")
   atlas.list <- ls(readRDS(system.file("data", "Rdata.rds", package = "brainconn")))
   atlas.list <- atlas.list[!grepl("ICBM",  atlas.list)]
-  message("Brainconn currently contains the following atlases (you can add your own using the make_atlas() function): ")
+  atlas.list <- atlas.list[!grepl("example",  atlas.list)]
+  message("Brainconn currently contains the following atlases:")
   for (a in 1:length(atlas.list)) {
     message(atlas.list[a])
   }
+  message("You can also input your own custom atlas, as along as it meets certain requirement. See vignette and use the check_atlas() function to make sure the requirements are met.")
 }

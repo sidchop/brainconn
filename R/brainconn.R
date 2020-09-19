@@ -47,20 +47,9 @@ brainconn <- function(atlas,
 
 
 
-  #list.atlas <- sub('\\.rda$', '', list.files(pattern = "*.rda"))
-  #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
-  #  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
-  #}
-
   ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
   #set background
-  # list.backgroud <- sub('\\.png$', '', list.files(path="data/background/", pattern = "*.png"))
-
-  # if(any(grepl(background, list.backgroud, fixed=TRUE))) {background <-
-  #   grid::rasterGrob(png::readPNG(paste0("data/background/", background,"_", view,".png")))
-  # } else {stop(paste('please select a valid background: ', as.character(list.backgroud)))
-  # }
 
   #loop three times for the three vies that make ortho view
   if (view == "ortho") {
