@@ -4,7 +4,7 @@ doc
 .Rhistory
 .RData
 .Ruserdata
-/**/.DS_Store
+.DS_Store
 inst/doc
 docs/
 test.script.R
