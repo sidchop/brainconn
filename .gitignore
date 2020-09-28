@@ -1,6 +1,6 @@
 Meta
-doc/brainconn.html
-doc/brainconn.R
+docs/brainconn.html
+docs/brainconn.R
 *.Rproj
 .Rhistory
 .RData
