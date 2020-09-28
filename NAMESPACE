@@ -3,5 +3,6 @@
 export(brainconn)
 export(list_atlases)
 import(ggraph)
+import(devtools)
 importFrom(ggplot2,aes)
 importFrom(ggplot2,annotation_custom)
