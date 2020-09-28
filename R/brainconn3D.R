@@ -18,7 +18,7 @@
 #' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)
 #'
 #' @return a plotly object
-#' @exportff
+#' @export
 #'
 #' @examples
 #' \dontrun{

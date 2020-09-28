@@ -2,7 +2,7 @@
 #'
 #' @param atlas a .data.frame with a 4 collums named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}
 #' @return a message
-#'
+#'@export
 #' @examples
 #' \dontrun{
 #'library(brainconn)
