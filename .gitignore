@@ -7,7 +7,6 @@ docs/brainconn.R
 .Ruserdata
 .DS_Store
 inst/doc
-docs/
 test.script.R
 .Rproj.user
 vignettes/brainconn.html
