@@ -43,9 +43,10 @@ the `list_atlases()` function: `aal116`, `aal90`, `craddock200`, `dk68`,
 `dk82_aspree`, `dkt62`, `gordon_333`, `schaefer1000_n7`,
 `schaefer300_17_cog_lang`, `schaefer300_n7`, `shen_268`, `shen_368`.
 Custom atlases can be easily added as long as you have centroid
-coordinates in MNI space, see vignette \[LINK\]. The `check_atlas()`
-function checks that custom atlases meet the requirements of the
-plotting functions.
+coordinates in MNI space, see
+[vignette](https://sidchop.github.io/brainconn/articles/brainconn.html).
+The `check_atlas()` function checks that custom atlases meet the
+requirements of the plotting functions.
 
 Installation
 ------------
@@ -62,25 +63,23 @@ Use
 ---
 
 The package also has a vignette, to help you get started. You can access
-it \[ADD GIT LINK\], or via R:
+it [here](https://sidchop.github.io/brainconn/articles/brainconn.html),
+or via R:
 
     library(brainconn)
     vignette("brainconn")
-    #> starting httpd help server ... done
 
-The primary user input is a connectivity matrix.
+The primary user input is a connectivity matrix (`conmat`).
 
-    x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+    brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected)
 
-    brainconn(atlas ="schaefer300_n7", conmat=x)
-
-<img src="man/img/README-unnamed-chunk-5-1.png" width="50%" />
+<img src="man/img/README-unnamed-chunk-4-1.png" width="50%" />
 
 Modifiable features for `brainconn` include: `view`, `node.size`,
 `node.color`, `edge.width`, `edge.color`, `edge.alpha`,
 `background.alpha`, `labels` and others (see vignette)
 
-    x <- read.csv("data/example/example_unweighted_undirected.txt", header = F)
+    x <- example_unweighted_undirected
     p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
     p
 
@@ -90,10 +89,10 @@ Included below is a screenshot of the interactive output:
 
 Modifiable features for `brainconn3D` include: `node.size`,
 `node.color`, `edge.width`, `edge.color`, `adge.alpha`,
-`background.alpha`, `labels` and others (see vignette)
+`background.alpha`, `labels` and others (see
+[vignette](https://sidchop.github.io/brainconn/articles/brainconn.html))
 
 ### Report bugs or requests
 
-Don’t hesitate to ask for support using [github
-issues](https://github.com/sidchop/brainconn), Please feek free to add
-and errors or feature reques through the issues.
+Don’t hesitate to ask for support or new features using [github
+issues](https://github.com/sidchop/brainconn).
