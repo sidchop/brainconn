@@ -1,0 +1,120 @@
+---
+title: "brainconn: a R-package for plotting brain connectivity data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Plotting brain mesh atlases in plotly}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=F}
+knitr::opts_chunk$set(eval=TRUE)
+devtools::load_all(".")
+knitr::opts_knit$set(root.dir = '..')
+```
+
+## Basic use of `brainconn()`
+The `brainconn()` function allows users to input a binary/weighted and directed/directed (i.e. symmetric) connectivity matrix which can be plotted in MNI space onto several brain atlases provided with the package, or a user defined custom atlas. The layout of the nodes and edges is created using [ggraph](https://github.com/thomasp85/ggraph), which does most of the heavy lifting here. The background is a `custom_annotation` using [ggplot2](https://github.com/tidyverse/ggplot2). 
+
+The minimum user input requirements for the `brainconn()` function is a connectivity matrix. This can be read into `r` as a matrix or data.fame. Some example connectivity matrices can be found in the `data/example` folder. The number of rows & columns should match the number of regions in the selected atlas. Custom atlases can also be used, see [Using custom atlases]. 
+
+By default, the `view` is a top view, the `node.color` is by network.
+
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+library(brainconn)
+x <- example_unweighted_undirected
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 3, view="ortho")
+```
+
+
+
+You can change the default view, node, edge and background properties as well as show all nodes of the atlas, rather than just the ones that have connected edges.  
+```{r, out.width='50%', warning=FALSE, message=FALSE}
+brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="left", node.size = 3, node.color = "hotpink", edge.width = 2, edge.color="darkblue", edge.alpha = 0.8, all.nodes = T, show.legend = F)
+```
+
+If the connectivity matrix you input is not a binary matrix, i.e. the values are weighted, by default `braincon()` will modulate the `edge.width` by the weighted values. `scale.edge.width` can be used to scale the edge width.
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- example_weighted_undirected
+
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 5,view="bottom", scale.edge.width = c(1,3), background.alpha = 0.4, show.legend = F)
+```
+
+You can also color the egges by weight using the `edge.color.weighted` option.
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+
+brainconn(atlas ="schaefer300_n7", conmat=example_weighted_undirected, node.size = 7,view="bottom", edge.width = 2, edge.color.weighted = T, show.legend = T)
+```
+
+If the input is a directed matrix (i.e. non-symmetrical), the edges will be displayed as directed arrows, with the `edge.width` and `edge.color` serving the same purpose:
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- example_unweighted_directed
+
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 4, view="right", edge.alpha = 0.6)
+```
+
+Weighted and directed matrix example:
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- example_weighted_directed
+
+brainconn(atlas ="schaefer300_n7", conmat=x, view="front", edge.color.weighted=T)
+```
+
+
+You can auto add `labels`, but this doesn't work to great if theirs a large number of edges. 
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, labels = T, label.size = 2, node.size = 3)
+```
+
+If you want to weight the nodes by a feature such as degree, you can provide a vector the length of the number of ROIs in the parcellation to `node.size`: 
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+x <- example_unweighted_undirected
+x_igraph <- igraph::graph_from_adjacency_matrix(as.matrix(example_unweighted_undirected)) #convert connectivity matrix into an graph object.
+d <- igraph::degree(x_igraph) #use igraph::degree to obtain a vector of nodal degree
+d <- d[d != 0] #remove nodes with no edges 
+brainconn(atlas ="schaefer300_n7", conmat=x, node.size = d)
+```
+
+
+
+## Basic use of `ggconn3D()`
+Currently, `ggconn3D()` is only able to visualize binary undirected connectivity matrices. 
+
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
+p
+```
+
+Modifiable features include `node.color`, `node.size`, `edge.size` & `edge.width`, brain surface `opacity` and `d.factor` (a multiplication factor to control the spread of nodes.)
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas = "schaefer300_n7", conmat=example_unweighted_undirected, edge.width = 6, edge.color = "green", node.size = 8, node.color = "red", show.legend = F)
+p
+```
+
+
+The `d.factor` can be adjusted for different purposes. The default is set to 1.05.
+```{r, out.width='50%',  warning=FALSE, message=FALSE}
+p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, edge.width = 3, edge.color = "brown", node.size = 3, d.factor = 1.3, all.nodes = T, opacity = 0.3, show.legend = F)
+p
+```
+
+## Using custom atlases
+
+To use you own atlas, you will require a data.frame with a minimum of four column: "ROI.name", "x.mni", "y.mni", "z.mni". You can also include a "network" column for node-coloring purposes. The x y and z.mni columns are the centroid coordinates for each roi in MNI space. These coordinates will sometimes be published with the atlas, and can also be obtained from the atlas .nii file. One way of doing this would be with FSL e.g.`fslstats roi.nii -c`.
+
+To check that your custom atlas matches the requirements for `brainconn()` or `brainconn3d()`, you can use the `check_atlas()` function:
+
+```{r, out.width='50%',  warning=FALSE, message=TRUE}
+custom_atlas <- custom_atlas_example
+check_atlas(custom_atlas)
+
+brainconn(atlas = custom_atlas, conmat = example_unweighted_undirected,
+          node.color = "black")
+```
+
+
+

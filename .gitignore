@@ -1,5 +1,6 @@
 Meta
-doc
+doc/brainconn.html
+doc/brainconn.R
 *.Rproj
 .Rhistory
 .RData
