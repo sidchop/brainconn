@@ -2,7 +2,7 @@ Plotting tool for brain connectivity data
 ================
 Sidhant Chopra
 
-brainconn <img src="man/img/logo.png" align="right" alt="" width="220" />
+brainconn <img src="man/img/logo.png" align="right" alt="" width="350" />
 =========================================================================
 
 <!-- badges: start -->

@@ -19,7 +19,7 @@ devtools::load_all(".")
 ```
 
 
-# brainconn <img src="man/img/logo.png" align="right" alt="" width="220" />  
+# brainconn <img src="man/img/logo.png" align="right" alt="" width="350" />  
 
 <!-- badges: start -->
 [![Travis build status](https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master)](https://travis-ci.com/sidchop/brainconn)
