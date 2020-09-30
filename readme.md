@@ -2,19 +2,19 @@ Plotting tool for brain connectivity data
 ================
 Sidhant Chopra
 
-brainconn <img src="man/img/logo.png" align="right" alt="" width="138.5" />
-===========================================================================
+brainconn <img src="man/img/logo.png" align="right" alt="" width="220" />
+=========================================================================
 
 <!-- badges: start -->
 
 [![Travis build
-status](https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master)](https://travis-ci.com/sidchop/ggconn)
+status](https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master)](https://travis-ci.com/sidchop/brainconn)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&svg=true)](https://ci.appveyor.com/project/sidchop/ggconn)
+status](https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&svg=true)](https://ci.appveyor.com/project/sidchop/brainconn)
 [![Coverage
-status](https://codecov.io/gh/sidchop/ggconn/branch/master/graph/badge.svg)](https://codecov.io/gh/sidchop/ggconn)
+status](https://codecov.io/gh/sidchop/brainconn/branch/master/graph/badge.svg)](https://codecov.io/gh/sidchop/brainconn)
 [![CRAN
-status](https://www.r-pkg.org/badges/version/ggconn)](https://CRAN.R-project.org/package=ggconn)
+status](https://www.r-pkg.org/badges/version/brainconn)](https://CRAN.R-project.org/package=brainconn)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->

@@ -81,8 +81,8 @@ brainconn(atlas ="schaefer300_n7", conmat=x, node.size = d)
 
 
 
-## Basic use of `ggconn3D()`
-Currently, `ggconn3D()` is only able to visualize binary undirected connectivity matrices. 
+## Basic use of `brainconn3D()`
+Currently, `brainconn3D()` is only able to visualize binary undirected connectivity matrices. 
 
 ```{r, out.width='50%',  warning=FALSE, message=FALSE}
 p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
