@@ -25,6 +25,7 @@
 #' @return a ggraph object
 #'
 #' @import ggraph
+#' @importFrom rgl tmesh3d
 #' @examples
 #' library(brainconn)
 #' x <- example_unweighted_undirected
