@@ -114,15 +114,15 @@
 </div>
 <div id="brainconn-" class="section level1">
 <h1 class="hasAnchor">
-<a href="#brainconn-" class="anchor"></a>brainconn <img src="man/img/logo.png" align="right" alt="" width="138.5">
+<a href="#brainconn-" class="anchor"></a>brainconn <img src="man/img/logo.png" align="right" alt="" width="180">
 </h1>
 <!-- badges: start -->
-<p><a href="https://travis-ci.com/sidchop/ggconn"><img src="https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/sidchop/ggconn"><img src="https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/gh/sidchop/ggconn"><img src="https://codecov.io/gh/sidchop/ggconn/branch/master/graph/badge.svg" alt="Coverage status"></a> <a href="https://CRAN.R-project.org/package=ggconn"><img src="https://www.r-pkg.org/badges/version/ggconn" alt="CRAN status"></a> <a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a> <!-- badges: end --></p>
+<p><a href="https://travis-ci.com/sidchop/brainconn"><img src="https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/sidchop/brainconn"><img src="https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/gh/sidchop/brainconn"><img src="https://codecov.io/gh/sidchop/brainconn/branch/master/graph/badge.svg" alt="Coverage status"></a> <a href="https://CRAN.R-project.org/package=brainconn"><img src="https://www.r-pkg.org/badges/version/brainconn" alt="CRAN status"></a> <a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a> <!-- badges: end --></p>
 <p>The purpose of this package is to allow for flexible, programmatic and interactive plotting of brain connectivity data within Rstudio - negating the need to swap to other visualization tools and allowing for reproducible integration of visualization with analysis scripts that are written in R.</p>
 <p>The primary plotting functions: <code><a href="reference/brainconn.html">brainconn()</a></code> and <code><a href="reference/brainconn3D.html">brainconn3D()</a></code>. The primary user input into these function is a connectivity matrix. Several brain atlases come pre-installed and users can also provide a custom atlas (see vignette).</p>
 <p>The <code><a href="reference/brainconn.html">brainconn()</a></code> function allows users to input a binary/weighted and directed/non-directed (i.e. symmetric) connectivity matrix which can be plotted according to MNI coordinates.</p>
 <p>The <code><a href="reference/brainconn3D.html">brainconn3D()</a></code> allows users to input a binary and non-directed connectivity matrix which is plotted in a 3D and interactive way using <a href="https://github.com/plotly">plottly</a>.</p>
-<p>The atlases currently included with in the packaage can be listed using the <code><a href="reference/list_atlases.html">list_atlases()</a></code> function: <code>aal116</code>, <code>aal90</code>, <code>craddock200</code>, <code>dk68</code>, <code>dk82_aspree</code>, <code>dkt62</code>, <code>gordon_333</code>, <code>schaefer1000_n7</code>, <code>schaefer300_17_cog_lang</code>, <code>schaefer300_n7</code>, <code>shen_268</code>, <code>shen_368</code>. Custom atlases can be easily added as long as you have centroid coordinates in MNI space, see vignette <span class="math display"><em>L</em><em>I</em><em>N</em><em>K</em></span>. The <code><a href="reference/check_atlas.html">check_atlas()</a></code> function checks that custom atlases meet the requirements of the plotting functions.</p>
+<p>The atlases currently included with in the packaage can be listed using the <code><a href="reference/list_atlases.html">list_atlases()</a></code> function: <code>aal116</code>, <code>aal90</code>, <code>craddock200</code>, <code>dk68</code>, <code>dk82_aspree</code>, <code>dkt62</code>, <code>gordon_333</code>, <code>schaefer1000_n7</code>, <code>schaefer300_17_cog_lang</code>, <code>schaefer300_n7</code>, <code>shen_268</code>, <code>shen_368</code>. Custom atlases can be easily added as long as you have centroid coordinates in MNI space, see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">vignette</a>. The <code><a href="reference/check_atlas.html">check_atlas()</a></code> function checks that custom atlases meet the requirements of the plotting functions.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -134,26 +134,23 @@
 <div id="use" class="section level2">
 <h2 class="hasAnchor">
 <a href="#use" class="anchor"></a>Use</h2>
-<p>The package also has a vignette, to help you get started. You can access it <span class="math display"><em>A</em><em>D</em><em>D</em><em>G</em><em>I</em><em>T</em><em>L</em><em>I</em><em>N</em><em>K</em></span>, or via R:</p>
+<p>The package also has a vignette, to help you get started. You can access it <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">here</a>, or via R:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="kw">library</span>(brainconn)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">vignette</span>(<span class="st">"brainconn"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="co">#&gt; starting httpd help server ... done</span></span></code></pre></div>
-<p>The primary user input is a connectivity matrix.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a>x &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">"data/example/example_unweighted_undirected.txt"</span>, <span class="dt">header =</span> F)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">brainconn</span>(<span class="dt">atlas =</span><span class="st">"schaefer300_n7"</span>, <span class="dt">conmat=</span>x)</span></code></pre></div>
-<p><img src="man/img/README-unnamed-chunk-5-1.png" width="50%"></p>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="kw">vignette</span>(<span class="st">"brainconn"</span>)</span></code></pre></div>
+<p>The primary user input is a connectivity matrix (<code>conmat</code>).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">brainconn</span>(<span class="dt">atlas =</span><span class="st">"schaefer300_n7"</span>, <span class="dt">conmat=</span>example_unweighted_undirected)</span></code></pre></div>
+<p><img src="man/img/README-unnamed-chunk-4-1.png" width="50%"></p>
 <p>Modifiable features for <code>brainconn</code> include: <code>view</code>, <code>node.size</code>, <code>node.color</code>, <code>edge.width</code>, <code>edge.color</code>, <code>edge.alpha</code>, <code>background.alpha</code>, <code>labels</code> and others (see vignette)</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>x &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">"data/example/example_unweighted_undirected.txt"</span>, <span class="dt">header =</span> F)</span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a>x &lt;-<span class="st"> </span>example_unweighted_undirected</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>p &lt;-<span class="st"> </span><span class="kw">brainconn3D</span>(<span class="dt">atlas =</span><span class="st">"Stages_melbBrain"</span>, <span class="dt">conmat=</span>x, <span class="dt">show.legend =</span> F)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>p</span></code></pre></div>
 <p>Included below is a screenshot of the interactive output:</p>
 <p><img src="man/img/README-ggseg3d_example.png" width="1292"></p>
-<p>Modifiable features for <code>brainconn3D</code> include: <code>node.size</code>, <code>node.color</code>, <code>edge.width</code>, <code>edge.color</code>, <code>adge.alpha</code>, <code>background.alpha</code>, <code>labels</code> and others (see vignette)</p>
+<p>Modifiable features for <code>brainconn3D</code> include: <code>node.size</code>, <code>node.color</code>, <code>edge.width</code>, <code>edge.color</code>, <code>adge.alpha</code>, <code>background.alpha</code>, <code>labels</code> and others (see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">vignette</a>)</p>
 <div id="report-bugs-or-requests" class="section level3">
 <h3 class="hasAnchor">
 <a href="#report-bugs-or-requests" class="anchor"></a>Report bugs or requests</h3>
-<p>Don’t hesitate to ask for support using <a href="https://github.com/sidchop/brainconn">github issues</a>, Please feek free to add and errors or feature reques through the issues.</p>
+<p>Don’t hesitate to ask for support or new features using <a href="https://github.com/sidchop/brainconn">github issues</a>.</p>
 </div>
 </div>
 </div>
