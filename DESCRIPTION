@@ -9,8 +9,8 @@ License: MIT
 LazyData: true
 RoxygenNote: 7.1.1
 Imports: 
-    ggplot2
-    ggraph
+    ggplot2,
+    ggraph,
     rgl
 Suggests: 
     knitr,
