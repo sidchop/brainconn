@@ -20,12 +20,15 @@
 #' @return a plotly object
 
 #' @import rgl
+#' @import scales
+#' @import plotly
+#' @import igraph
 #' @examples
-#' @export
 #' \dontrun{
 #' library(brainconn)
 #' brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
 #' }
+#' @export
 
 brainconn3D <- function(atlas=NULL,
                            conmat=NULL,
@@ -102,44 +105,44 @@ brainconn3D <- function(atlas=NULL,
   zmean <- apply(t(mesh$it), MARGIN=1, function(row){mean(m[row,3])})
 
 
-  facecolor = scales::colour_ramp(
-    scales::brewer_pal(palette="Greys")(1)
-  )(scales::rescale(x=zmean))
+  facecolor = colour_ramp(
+   brewer_pal(palette="Greys")(1)
+  )(rescale(x=zmean))
 
-  p1 <- plotly::plot_ly(
+  p1 <- plot_ly(
     x = x, y = y, z = z,
     i = mesh$it[1,]-1, j = mesh$it[2,]-1, k = mesh$it[3,]-1,
     facecolor = facecolor,
     type = "mesh3d",
     opacity = opacity)
 
-  p1 <- plotly::layout(p1, scene = list(xaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
+  p1 <- layout(p1, scene = list(xaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
                                 yaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
                                 zaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE)))
 
   ##make edgeplot to overlay
-  g <- igraph::graph.adjacency(as.matrix(conmat))
-  edge.list <- igraph::get.edgelist(g)
+  g <- graph.adjacency(as.matrix(conmat))
+  edge.list <- get.edgelist(g)
 
   size <- rep(0.1,length(data$index))
 
 ifelse(node.color=="network", node.color <- as.factor(data$network), node.color <- node.color)
 
  if (!is.character(node.color)) {
-   p <- plotly::plot_ly(data, marker = list(size = node.size),
+   p <- plot_ly(data, marker = list(size = node.size),
               x = data$x.mni*d.factor,
               y = data$y.mni*d.factor,
               z = data$z.mni*d.factor,
               color= ~node.color,
               name = data$ROI.Name,
               type = "scatter3d") } else {
-                p <- plotly::plot_ly(data, x = data$x.mni*d.factor,
+                p <- plot_ly(data, x = data$x.mni*d.factor,
                                      y = data$y.mni*d.factor,
                                      z = data$z.mni*d.factor,
                                      color = node.color,
                                      colors = node.color,
                                      marker = list(size = node.size))
-                p <- plotly::add_markers(p)
+                p <- add_markers(p)
 
               }
 
@@ -147,7 +150,7 @@ ifelse(node.color=="network", node.color <- as.factor(data$network), node.color 
 
 
 
-    ifelse(show.legend==T, p <- plotly::layout(p, showlegend = TRUE), p <- plotly::layout(p, showlegend = FALSE))
+    ifelse(show.legend==T, p <- layout(p, showlegend = TRUE), p <- layout(p, showlegend = FALSE))
 
 
   elength = length(edge.list)/2
@@ -178,7 +181,7 @@ ifelse(node.color=="network", node.color <- as.factor(data$network), node.color 
     #                name = paste0(data$ROI.Name[edge.list[e,1]], "to",data$ROI.Name[edge.list[e,2]], sep=" "),
     #                showlegend = FALSE,
     #                inherit = F)
-    p <- plotly::add_trace(p, x = xx*d.factor,
+    p <- add_trace(p, x = xx*d.factor,
                            y = yy*d.factor,
                            z = zz*d.factor,
                            type = "scatter3d",
@@ -189,7 +192,7 @@ ifelse(node.color=="network", node.color <- as.factor(data$network), node.color 
   }
 
   #https://plot.ly/r/reference/#scattermapbox-below
-  p1p <- plotly::subplot(p1, p)
+  p1p <- subplot(p1, p)
 
   # remove axis
   ax <- list(
@@ -199,7 +202,7 @@ ifelse(node.color=="network", node.color <- as.factor(data$network), node.color 
     showticklabels = FALSE,
     showgrid = FALSE
   )
-  plotly::layout(p1p,
+  layout(p1p,
          scene = list(xaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
                       yaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
                       zaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE))

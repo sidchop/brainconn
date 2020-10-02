@@ -25,7 +25,9 @@
 #' @return a ggraph object
 #'
 #' @import ggraph
-#'
+#' @import cowplot
+#' @import grid
+#' @importFrom grDevices rgb
 #' @examples
 #' library(brainconn)
 #' x <- example_unweighted_undirected
@@ -69,7 +71,7 @@ brainconn <- function(atlas,
       #  m <- png::readPNG(paste0("data/background/", background,"_", view,".png"))
       #
       w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
-      background <- grid::rasterGrob(w)
+      background <- rasterGrob(w)
       #} else {stop(paste('please select a valid background: ', as.character(list.backgroud)))
       #}
 
@@ -136,11 +138,11 @@ brainconn <- function(atlas,
 
     }
 
-    right_col <- cowplot::plot_grid(ortho_list[[2]],
+    right_col <- plot_grid(ortho_list[[2]],
                                     ortho_list[[3]],
                                     nrow=2,
                                     rel_heights = c(1, 1.45))
-    p <- cowplot::plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
+    p <- plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
     return(p)
 
 
@@ -153,8 +155,8 @@ brainconn <- function(atlas,
   #if(any(grepl(background, list.backgroud, fixed=TRUE))) {
   #  m <- png::readPNG(paste0("data/background/", background,"_", view,".png"))
   #
-  w <- matrix(grDevices::rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
-  background <- grid::rasterGrob(w)
+  w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
+  background <- rasterGrob(w)
   #} else {stop(paste('please select a valid background: ', as.character(list.backgroud)))
   #}
 
