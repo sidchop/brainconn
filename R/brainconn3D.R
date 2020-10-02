@@ -18,9 +18,10 @@
 #' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)
 #'
 #' @return a plotly object
-#' @export
+
 #' @import rgl
 #' @examples
+#' @export
 #' \dontrun{
 #' library(brainconn)
 #' brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
