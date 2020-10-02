@@ -19,7 +19,7 @@
 #'
 #' @return a plotly object
 #' @export
-#'
+#' @importFrom rgl tmesh3d
 #' @examples
 #' \dontrun{
 #' library(brainconn)
@@ -122,7 +122,7 @@ brainconn3D <- function(atlas=NULL,
 
   size <- rep(0.1,length(data$index))
 
-ifelse(node.color=="network", node.color <- data$network, node.color <- node.color)
+ifelse(node.color=="network", node.color <- as.factor(data$network), node.color <- node.color)
 
  if (!is.character(node.color)) {
    p <- plotly::plot_ly(data, marker = list(size = node.size),

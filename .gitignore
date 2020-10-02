@@ -9,3 +9,4 @@ test.script.R
 .Rproj.user
 vignettes/brainconn.html
 vignettes/brainconn.R
+R/make_atlases.R
