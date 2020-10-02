@@ -19,7 +19,7 @@
 #'
 #' @return a plotly object
 #' @export
-#' @importFrom rgl tmesh3d
+#' @import rgl
 #' @examples
 #' \dontrun{
 #' library(brainconn)
@@ -88,7 +88,7 @@ brainconn3D <- function(atlas=NULL,
   vertices <- c(vb_mat)
   indices <- c(it_mat)
 
-  mesh <- rgl::tmesh3d(vertices = vertices,
+  mesh <- tmesh3d(vertices = vertices,
                   indices = indices,
                   homogeneous = TRUE,
                   material = NULL,
