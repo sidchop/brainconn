@@ -12,16 +12,17 @@ for (i in 1:length(r)) {
     ROI.Name <- gsub('^_|_$', '',  ROI.Name)
     atlas <- cbind(ROI.Name, centroid, roi[,3], roi[,2], 1:length(ROI.Name))
     colnames(atlas) <- colnames(schaefer300_n7)
-    assign(paste0("schaefer",r[ii],"_n",n[ii]), atlas)
-    atlas_name <- paste0("schaefer",r[ii],"_n",n[ii])
-    usethis::use_data(as.character(atlas_name))
+    assign(paste0("schaefer",r[i],"_n",n[ii]), atlas)
   }
 }
 
 
+usethis::use_data(schaefer1000_n17, overwrite = T)
 
-
-x <- matrix(rbinom(100 * 100, 1, 0.0001), ncol = 100, nrow = 100)
+x <- matrix(rbinom(1000 * 1000, 1, 0.0001), ncol = 1000, nrow = 1000)
 x <- Matrix::forceSymmetric(x)
 diag(x) <- 0
-brainconn::brainconn(atlas = "schaefer100_n7", conmat = x, view = "ortho")
+brainconn::brainconn(atlas = "schaefer1000_n17", conmat = x,
+                     view = "ortho",
+                     node.size = 0.2,
+                     all.nodes = T)
