@@ -19,7 +19,7 @@
 #'
 #' @return a plotly object
 
-#' @importFrom rgl tmesh3d
+#' @import rgl
 #' @import scales
 #' @rawNamespace import(plotly, except = last_plot)
 #' @rawNamespace import(igraph, except = groups)
