@@ -11,3 +11,4 @@ vignettes/brainconn.html
 vignettes/brainconn.R
 make_atlases.R
 make_mesh.R
+doc
