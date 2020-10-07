@@ -45,13 +45,14 @@ The package can be installed using devtools.
 
 ```{r eval=F}
 install.packages("remotes")
-remotes::install_github("sidchop/brainconn", build_vignettes = TRUE)
+remotes::install_github("sidchop/brainconn")
 ```
 
 The functions are now installed, and you may load them when you want to use them.
 
 ## Use
 The package also has a vignette, to help you get started. You can access it [here](https://sidchop.github.io/brainconn/articles/brainconn.html), or via R:
+
 ```{r, out.width='50%'}
 library(brainconn)
 vignette("brainconn")
