@@ -15,11 +15,11 @@ Imports:
     grid,
     igraph,
     plotly,
-    scales
+    scales,
 Suggests: 
-    knitr,
     rmarkdown,
     testthat,
+    knitr,
     devtools
 VignetteBuilder: knitr
 Encoding: UTF-8
