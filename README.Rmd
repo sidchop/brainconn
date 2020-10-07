@@ -85,3 +85,19 @@ Modifiable features for `brainconn3D` include: `node.size`, `node.color`, `edge.
 ### Report bugs or requests  
 Don't hesitate to ask for support or new features using [github issues](https://github.com/sidchop/brainconn).
 
+### Other R packages you might be intrested in:
+* [ggseg](https://github.com/LCBC-UiO/ggseg) & [ggseg3D](https://github.com/LCBC-UiO/ggseg3d): Plotting tool for brain atlases, in ggplot/plotly
+
+* [brainGraph](https://github.com/cwatson/brainGraph): Graph theory analysis of brain MRI data
+
+* [fsbrain](https://github.com/dfsp-spirit/fsbrain): Provides high-level functions to access (read and write) and visualize surface-based brain morphometry data (e.g. cortical thickness) for individual subjects and groups.
+
+* [NBR](https://github.com/zchuri/NBR/): Network Based R-statistics for Mixed Effects Models
+
+*[fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
+
+
+
+
+
+
