@@ -105,16 +105,20 @@ issues](https://github.com/sidchop/brainconn).
 -   [ggseg](https://github.com/LCBC-UiO/ggseg) &
     [ggseg3D](https://github.com/LCBC-UiO/ggseg3d): Plotting tool for
     brain atlases, in ggplot/plotly
-
 -   [brainGraph](https://github.com/cwatson/brainGraph): Graph theory
     analysis of brain MRI data
-
 -   [fsbrain](https://github.com/dfsp-spirit/fsbrain): Provides
     high-level functions to access (read and write) and visualize
     surface-based brain morphometry data (e.g. cortical thickness) for
     individual subjects and groups.
-
 -   [NBR](https://github.com/zchuri/NBR/): Network Based R-statistics
     for Mixed Effects Models
+-   [fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
 
-\*[fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
+### Citations
+
+If you end up using `brainconn()` in a publication, please feel free to
+cite this preprint: Orchard, E. R., Chopra, S., Ward, P. G., Storey, E.,
+Jamadar, S. D., & Egan, G. F. (2020). *Neuroprotective effects of
+motherhood on brain function in late-life: a resting state fMRI study.*
+bioRxiv.
