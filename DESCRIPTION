@@ -1,7 +1,7 @@
 Package: brainconn
 Title: Plotting Tool for Brain Connectivity Data
 Version: 0.1
-Authors@R: c(person("Sidhant", "Chopra", email = "sid.chopra@monash.edu", role = c("aut", "cre"), comment = c(SCHOLAR = "https://scholar.google.com.au/citations?user=rGJ8oLwAAAAJ&hl=en")))
+Authors@R: c(person("Sidhant", "Chopra", email = "sid.chopra@monash.edu", role = c("aut", "cre")))
 Description: This package mainly contatins two plotting fucntions: `brianconn()` and `brainconn3d()`, as well as data for several commonly used MNI-space brain atlases
 Depends: R (>= 3.1.0),
   ggraph
