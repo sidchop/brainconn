@@ -16,10 +16,7 @@
 #' @param show.legend if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown
 #' @param thr a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than the one set here will not be shown)
 #' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)
-#'
 #' @return a plotly object
-
-#' @import rgl
 #' @import scales
 #' @rawNamespace import(plotly, except = last_plot)
 #' @rawNamespace import(igraph, except = groups)
@@ -77,32 +74,15 @@ brainconn3D <- function(atlas=NULL,
   if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
   if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
 
+#set up mesh
+  vb <- get("ICBM152_mesh_vb")
+  it <- get("ICBM152_mesh_it")
 
-  temp <- get("ICBM152_mesh")
-  temp.v <- subset(temp, V1 == "v")
-  temp.f <- subset(temp, V1 == "f")
-  temp.v <- temp.v[,-1]
-  temp.f <- temp.f[,-1]
-  vb_mat <- t(as.matrix(temp.v))
-  vb_mat <- rbind(vb_mat, 1)
-  rownames(vb_mat) <- c("xpts", "ypts", "zpts", "")
-  it_mat <- t(as.matrix(temp.f))
-  rownames(it_mat) <- NULL
-
-  vertices <- c(vb_mat)
-  indices <- c(it_mat)
-
-  mesh <- tmesh3d(vertices = vertices,
-                  indices = indices,
-                  homogeneous = TRUE,
-                  material = NULL,
-                  normals = NULL,
-                  texcoords = NULL)
-  x <- mesh$vb[1,]
-  y <- mesh$vb[2,]
-  z <- mesh$vb[3,]
+  x <- vb[1,]
+  y <- vb[2,]
+  z <- vb[3,]
   m <- matrix(c(x,y,z), ncol=3, dimnames=list(NULL,c("x","y","z")))
-  zmean <- apply(t(mesh$it), MARGIN=1, function(row){mean(m[row,3])})
+  zmean <- apply(t(it), MARGIN=1, function(row){mean(m[row,3])})
 
 
   facecolor = colour_ramp(
@@ -111,7 +91,7 @@ brainconn3D <- function(atlas=NULL,
 
   p1 <- plot_ly(
     x = x, y = y, z = z,
-    i = mesh$it[1,]-1, j = mesh$it[2,]-1, k = mesh$it[3,]-1,
+    i = it[1,]-1, j = it[2,]-1, k = it[3,]-1,
     facecolor = facecolor,
     type = "mesh3d",
     opacity = opacity)

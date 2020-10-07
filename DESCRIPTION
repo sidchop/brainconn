@@ -15,8 +15,7 @@ Imports:
     grid,
     igraph,
     plotly,
-    scales,
-    rgl
+    scales
 Suggests: 
     knitr,
     rmarkdown,
