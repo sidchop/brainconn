@@ -32,16 +32,17 @@ atlas (see vignette).
 
 The `brainconn()` function allows users to input a binary/weighted and
 directed/non-directed (i.e. symmetric) connectivity matrix which can be
-plotted according to MNI coordinates.
+plotted onto MNI coordinates using [ggraph](https://github.com/ggraph).
 
 The `brainconn3D()` allows users to input a binary and non-directed
 connectivity matrix which is plotted in a 3D and interactive way using
 [plottly](https://github.com/plotly).
 
-The atlases currently included with in the packaage can be listed using
+The atlases currently included with in the package can be listed using
 the `list_atlases()` function: `aal116`, `aal90`, `craddock200`, `dk68`,
-`dk82_aspree`, `dkt62`, `gordon_333`, `schaefer1000_n7`,
-`schaefer300_17_cog_lang`, `schaefer300_n7`, `shen_268`, `shen_368`.
+`dk82_aspree`, `dkt62`, `gordon_333`, `shen_268`, `shen_368`,
+`schaefer1000_n7`, `schaefer1000_n17`, `schaefer300_n7`,
+`schaefer300_n17` (and all other iterations of the schaefer atlases).
 Custom atlases can be easily added as long as you have centroid
 coordinates in MNI space, see
 [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html).
@@ -71,7 +72,7 @@ or via R:
 
 The primary user input is a connectivity matrix (`conmat`).
 
-    brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected)
+    brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
 
 <img src="man/img/README-unnamed-chunk-4-1.png" width="50%" />
 
@@ -80,12 +81,14 @@ Modifiable features for `brainconn` include: `view`, `node.size`,
 `background.alpha`, `labels` and others (see vignette)
 
     x <- example_unweighted_undirected
-    p <- brainconn3D(atlas ="Stages_melbBrain", conmat=x, show.legend = F)
+    p <- brainconn3D(atlas ="schaefer300_n7", conmat=x, show.legend = F)
     p
 
-Included below is a screenshot of the interactive output:
+Included below is a gif of the interactive output (see
+[vignette](https://sidchop.github.io/brainconn/articles/brainconn.html)
+for more information):
 
-<img src="man/img/README-ggseg3d_example.png" width="1292" />
+![](man/img/README-gif.gif)<!-- -->
 
 Modifiable features for `brainconn3D` include: `node.size`,
 `node.color`, `edge.width`, `edge.color`, `adge.alpha`,
