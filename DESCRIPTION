@@ -11,7 +11,13 @@ RoxygenNote: 7.1.1
 Imports: 
     ggplot2,
     ggraph,
-    rgl
+    rgl,
+    cowplot,
+    grid,
+    igraph,
+    plotly,
+    scales,
+    grDevices
 Suggests: 
     knitr,
     rmarkdown,

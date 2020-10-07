@@ -21,8 +21,8 @@
 
 #' @import rgl
 #' @import scales
-#' @import plotly
-#' @import igraph
+#' @rawNamespace import(plotly, except = last_plot)
+#' @rawNamespace import(igraph, except = groups)
 #' @examples
 #' \dontrun{
 #' library(brainconn)
