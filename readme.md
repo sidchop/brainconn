@@ -55,7 +55,7 @@ Installation
 The package can be installed using devtools.
 
     install.packages("remotes")
-    remotes::install_github("sidchop/brainconn", build_vignettes = TRUE)
+    remotes::install_github("sidchop/brainconn")
 
 The functions are now installed, and you may load them when you want to
 use them.
