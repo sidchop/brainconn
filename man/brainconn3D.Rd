@@ -14,7 +14,7 @@ brainconn3D(
   edge.color = "black",
   opacity = 0.28,
   d.factor = 1.05,
-  show.legend = T,
+  show.legend = F,
   thr = NULL,
   uthr = NULL
 )
