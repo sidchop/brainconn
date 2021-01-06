@@ -2,8 +2,7 @@ Plotting tool for brain connectivity data
 ================
 Sidhant Chopra
 
-brainconn <img src="man/img/logo.png" align="right" alt="" width="180" />
-=========================================================================
+# brainconn <img src="man/img/logo.png" align="right" alt="" width="180" />
 
 <!-- badges: start -->
 
@@ -49,8 +48,7 @@ coordinates in MNI space, see
 The `check_atlas()` function checks that custom atlases meet the
 requirements of the plotting functions.
 
-Installation
-------------
+## Installation
 
 The package can be installed using devtools.
 
@@ -60,8 +58,7 @@ The package can be installed using devtools.
 The functions are now installed, and you may load them when you want to
 use them.
 
-Use
----
+## Use
 
 The package also has a vignette, to help you get started. You can access
 it [here](https://sidchop.github.io/brainconn/articles/brainconn.html),
@@ -117,8 +114,9 @@ issues](https://github.com/sidchop/brainconn).
 
 ### Citations
 
-If you end up using `brainconn()` in a publication, please feel free to
-cite this preprint: Orchard, E. R., Chopra, S., Ward, P. G., Storey, E.,
-Jamadar, S. D., & Egan, G. F. (2020). *Neuroprotective effects of
-motherhood on brain function in late-life: a resting state fMRI study.*
-bioRxiv.
+If you end up using `brainconn()` in a publication, please cite our
+paper, for which brainconn was created : Orchard, E. R., Chopra, S.,
+Ward, P. G., Storey, E., Jamadar, S. D., & Egan, G. F. (2020).
+*Neuroprotective effects of motherhood on brain function in late-life: a
+resting state fMRI study.* Cerebral Cortex.  
+<a href="https://pubmed.ncbi.nlm.nih.gov/33067999/" class="uri">https://pubmed.ncbi.nlm.nih.gov/33067999/</a>
