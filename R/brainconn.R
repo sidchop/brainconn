@@ -21,6 +21,7 @@
 #' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)
 #' @param scale.edge.width If \code{edge.color.weighted=FALSE}, you can use this rescale the edge.width according to weight. e.g. \code{scale.edge.width = c(1,3)}
 #' @param label.size If labels=TRUE then, \code{label.size} can can be set as in integer to control the size of the labels.
+#' @param label.edge.weight if \code{TRUE}, then the edge weight will be labels along the edge.
 #'
 #' @return a ggraph object
 #'
@@ -51,6 +52,7 @@ brainconn <- function(atlas,
                       uthr=NULL,
                       scale.edge.width = NULL,
                       label.size=1.5,
+                      label.edge.weight = FALSE,
                       background.alpha = 1) {
 
 
@@ -126,7 +128,7 @@ brainconn <- function(atlas,
                                     edge.color=edge.color,edge.alpha=edge.alpha,
                                     edge.width=edge.width,  scale.edge.width=scale.edge.width,
                                     show.legend=show.legend, labels=labels, label.size=label.size,
-                                    include.vec=include.vec, edge.color.weighted=edge.color.weighted)
+                                    include.vec=include.vec, edge.color.weighted=edge.color.weighted, label.edge.weight=label.edge.weight)
 
       #  source("functions/build_plot_int.R")
       #if(interactive==TRUE){p <- build_plot_int(conmat, data,  background, node.size=node.size, view,
@@ -207,7 +209,7 @@ brainconn <- function(atlas,
                   edge.color=edge.color,edge.alpha=edge.alpha,
                   edge.width=edge.width,  scale.edge.width=scale.edge.width,
                   show.legend=show.legend, labels=labels, label.size=label.size,
-                  include.vec=include.vec, edge.color.weighted=edge.color.weighted)
+                  include.vec=include.vec, edge.color.weighted=edge.color.weighted, label.edge.weight=label.edge.weight)
 
   #  source("functions/build_plot_int.R")
   #if(interactive==TRUE){p <- build_plot_int(conmat, data, background, node.size=node.size, view,

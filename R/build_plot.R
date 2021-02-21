@@ -11,7 +11,7 @@
 
 build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, node.size, node.color="network",
                        thr=NULL, uthr=NULL, view, edge.color, edge.alpha, edge.width, show.legend, label.size,
-                       labels, include.vec=NULL, scale.edge.width, edge.color.weighted, ...) {
+                       labels, include.vec=NULL, scale.edge.width, edge.color.weighted, label.edge.weight, ...) {
 
 
   if (view =="top"){
@@ -88,8 +88,7 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
          weighted <- FALSE,
          weighted <- TRUE)
 
-  #should edges be colored bby weight
-
+  #should edges be colored by weight
 #  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
 
   if (!exists("conmat")) stop(print("Please enter a valid connectivity matrix"))
@@ -98,6 +97,7 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
 
 
   if(directed == F) {
+    conmat[upper.tri(conmat)] <- 0 #only take bottom tri of matrix to stop the edge labels being plotted twice
     layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
@@ -127,7 +127,7 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == T && weighted==T && edge.color.weighted==F){p <- ggraph(layout) +
+  if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(width=weight),
                         color=edge.color,
@@ -142,18 +142,73 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
 
   }
 
-  if(directed == T && weighted==T && edge.color.weighted==T){p <- ggraph(layout) +
+ if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==T){p <- ggraph(layout) +
+    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    geom_edge_parallel(aes(width=weight, label=round(weight,3)),
+                       color=edge.color,
+                       edge_alpha = edge.alpha,
+                       arrow = arrow(length = unit(3, 'mm')),
+                       end_cap = circle(node.size/2, 'mm'),
+                       angle_calc = 'along',
+                       alpha = 0,
+                       label_dodge = unit(2.5, 'mm'),
+                       label_size = 2,
+                       fontface = "bold")  +
+    geom_edge_loop0(aes(strength=node.size*3, width=weight, label=round(weight,3)),
+                    color=edge.color,
+                    edge_alpha = edge.alpha,
+                    arrow = arrow(length = unit(3, 'mm')),
+                    angle_calc = 'none',
+                    alpha = 0,
+                    label_dodge = unit(6, 'mm'),
+                    label_size = 2,
+                    vjust = -1,
+                    fontface = "bold") +
+    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+
+  }
+
+  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(color=weight),
-  #                            color=edge.color,
-                               edge_alpha = edge.alpha,
-                                edge_width = edge.width,
-                               arrow = arrow(length = unit(3, 'mm')),
-                               end_cap = circle(node.size/2, 'mm'))  +
-    geom_edge_loop0(aes(strength=node.size*3, color=weight),
-                            edge_width = edge.width,
-                            edge_alpha = edge.alpha,
-                            arrow = arrow(length = unit(3, 'mm'))) +
+                       #color=edge.color,
+                       edge_alpha = edge.alpha,
+                       edge_width = edge.width,
+                       arrow = arrow(length = unit(3, 'mm')),
+                       end_cap = circle(node.size/2, 'mm')) +
+    geom_edge_loop(aes(strength=node.size*3, color=weight),
+                   edge_width = edge.width,
+                   edge_alpha = edge.alpha,
+                   arrow = arrow(length = unit(3, 'mm'))) +
+    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+
+  }
+
+
+
+  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==T){p <- ggraph(layout) +
+    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    geom_edge_parallel(aes(color=weight, label=round(weight,3)),
+                       #color=edge.color,
+                       edge_alpha = edge.alpha,
+                       edge_width = edge.width,
+                       arrow = arrow(length = unit(3, 'mm')),
+                       end_cap = circle(node.size/2, 'mm'),
+                       angle_calc = 'along',
+                       alpha = 0,
+                       label_dodge = unit(2.5, 'mm'),
+                       label_size = 2,
+                       fontface = "bold") +
+    geom_edge_loop(aes(strength=node.size*3, color=weight, label=round(weight,3)),
+                    edge_width = edge.width,
+                    edge_alpha = edge.alpha,
+                    arrow = arrow(length = unit(3, 'mm')),
+                   angle_calc = 'none',
+                   alpha = 0,
+                   label_dodge = unit(6, 'mm'),
+                   label_size = 2,
+                   vjust = -1,
+                   fontface = "bold") +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
 
   }
@@ -168,7 +223,10 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == F && weighted==T && edge.color.weighted==F){p <- ggraph(layout, circular = FALSE) +
+
+
+
+  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(width=weight),
                            color=edge.color,
@@ -176,14 +234,43 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == F && weighted==T && edge.color.weighted==T){p <- ggraph(layout, circular = FALSE) +
+  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==T){
+    p <- ggraph(layout, circular = FALSE) +
+    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    geom_edge_link(aes(width=weight, label=round(weight,3)),
+                   color=edge.color,
+                   edge_alpha = edge.alpha,
+                   angle_calc = 'along',
+                   alpha = 0,
+                   label_dodge = unit(2.5, 'mm'),
+                   label_size = 2,
+                   fontface = "bold") +
+    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+  }
+
+
+  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(colour=weight),
                            edge_width = edge.width,
                            edge_alpha = edge.alpha) +
-    #  geom_edge_loop0(aes(strength=node.size*2), color=edge.color, edge_width = edge.width) +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
+
+  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==T){p <- ggraph(layout, circular = FALSE) +
+    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+    geom_edge_link(aes(colour=weight, label=round(weight,3)),
+                   edge_width = edge.width,
+                   edge_alpha = edge.alpha,
+                   angle_calc = 'along',
+                   alpha = 0,
+                   label_dodge = unit(2.5, 'mm'),
+                   label_size = 2,
+                   fontface = "bold") +
+    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+  }
+
+
 
 
 

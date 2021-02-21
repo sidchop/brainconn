@@ -24,6 +24,7 @@ build_plot(
   include.vec = NULL,
   scale.edge.width,
   edge.color.weighted,
+  label.edge.weight,
   ...
 )
 }

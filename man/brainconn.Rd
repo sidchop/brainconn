@@ -22,6 +22,7 @@ brainconn(
   uthr = NULL,
   scale.edge.width = NULL,
   label.size = 1.5,
+  label.edge.weight = FALSE,
   background.alpha = 1
 )
 }
@@ -57,6 +58,8 @@ brainconn(
 \item{scale.edge.width}{If \code{edge.color.weighted=FALSE}, you can use this rescale the edge.width according to weight. e.g. \code{scale.edge.width = c(1,3)}}
 
 \item{label.size}{If labels=TRUE then, \code{label.size} can can be set as in integer to control the size of the labels.}
+
+\item{label.edge.weight}{if \code{TRUE}, then the edge weight will be labels along the edge.}
 
 \item{background.alpha}{Number between 0-1 to  set the transparency of the background.}
 }
