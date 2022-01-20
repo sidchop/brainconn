@@ -90,7 +90,7 @@ plotClassifiedEdges <- function(adj, ids, labels){
 
    normFactor <- length(index_i)*length(index_j)
 
-   if(i==j) {normFactor <- (length(index_i)^2)-(length(index_i))/2} #remove diagnal elements with computing within network connections
+   if(i==j) {normFactor <- ((length(index_i)^2)-length(index_i))/2} #remove diagnal elements with computing within network connections
 
    outNorm[i,j] <- tempsum/normFactor
    outNorm[j,i] <- tempsum/normFactor
