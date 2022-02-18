@@ -38,7 +38,7 @@ brainconn <- function(atlas,
                       background='ICBM152',
                       view ="top",
                       conmat=NULL,
-                 #     interactive = F,
+                      #     interactive = F,
                       node.size=4,
                       node.color="network",
                       all.nodes=FALSE,
@@ -138,12 +138,15 @@ brainconn <- function(atlas,
       #                                             show.legend=show.legend, labels=labels, label.size=label.size,
       #                                             include.vec=include.vec, view=view, edge.color.weighted=edge.color.weighted)}
 
+      if(is.environment(edge.color) & edge.color.weighted == T) {
+        ortho_list[[v]] <- ortho_list[[v]] + edge.color
+      }
     }
 
     right_col <- plot_grid(ortho_list[[2]],
-                                    ortho_list[[3]],
-                                    nrow=2,
-                                    rel_heights = c(1, 1.45))
+                           ortho_list[[3]],
+                           nrow=2,
+                           rel_heights = c(1, 1.45))
     p <- plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
     return(p)
 
@@ -210,6 +213,10 @@ brainconn <- function(atlas,
                   edge.width=edge.width,  scale.edge.width=scale.edge.width,
                   show.legend=show.legend, labels=labels, label.size=label.size,
                   include.vec=include.vec, edge.color.weighted=edge.color.weighted, label.edge.weight=label.edge.weight)
+
+  if(is.environment(edge.color) & edge.color.weighted == T) {
+    p <- p + edge.color
+  }
 
   #  source("functions/build_plot_int.R")
   #if(interactive==TRUE){p <- build_plot_int(conmat, data, background, node.size=node.size, view,
