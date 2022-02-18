@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">brainconn</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/brainconn.html">Get started</a>
 </li>
@@ -52,7 +48,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/sidchop/brainconn/">
+  <a href="https://github.com/sidchop/brainconn/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -70,34 +66,33 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="plotting-tool-for-brain-connectivity-data" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#plotting-tool-for-brain-connectivity-data" class="anchor"></a>Plotting tool for brain connectivity data</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="plotting-tool-for-brain-connectivity-data">Plotting tool for brain connectivity data<a class="anchor" aria-label="anchor" href="#plotting-tool-for-brain-connectivity-data"></a>
+</h1></div>
 <p>Sidhant Chopra</p>
 </div>
-<div id="brainconn-" class="section level1">
-<h1 class="hasAnchor">
-<a href="#brainconn-" class="anchor"></a>brainconn <img src="man/img/logo.png" align="right" alt="" width="180">
+<div class="section level1">
+<h1 id="brainconn-">brainconn <img src="man/img/logo.png" align="right" alt="" width="180"><a class="anchor" aria-label="anchor" href="#brainconn-"></a>
 </h1>
 <!-- badges: start -->
-<p><a href="https://travis-ci.com/sidchop/brainconn"><img src="https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/sidchop/brainconn"><img src="https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&amp;svg=true" alt="AppVeyor build status"></a> <a href="https://codecov.io/gh/sidchop/brainconn"><img src="https://codecov.io/gh/sidchop/brainconn/branch/master/graph/badge.svg" alt="Coverage status"></a> <a href="https://CRAN.R-project.org/package=brainconn"><img src="https://www.r-pkg.org/badges/version/brainconn" alt="CRAN status"></a> <a href="https://www.tidyverse.org/lifecycle/#maturing"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a> <!-- badges: end --></p>
+
 <p>The purpose of this package is to allow for flexible, programmatic and interactive plotting of brain connectivity data within Rstudio - negating the need to swap to other visualization tools and allowing for reproducible integration of visualization with analysis scripts that are written in R.</p>
 <p>The primary plotting functions: <code><a href="reference/brainconn.html">brainconn()</a></code> and <code><a href="reference/brainconn3D.html">brainconn3D()</a></code>. The primary user input into these function is a connectivity matrix. Several brain atlases come pre-installed and users can also provide a custom atlas (see vignette).</p>
-<p>The <code><a href="reference/brainconn.html">brainconn()</a></code> function allows users to input a binary/weighted and directed/non-directed (i.e. symmetric) connectivity matrix which can be plotted onto MNI coordinates using <a href="https://github.com/ggraph">ggraph</a>.</p>
-<p>The <code><a href="reference/brainconn3D.html">brainconn3D()</a></code> allows users to input a binary and non-directed connectivity matrix which is plotted in a 3D and interactive way using <a href="https://github.com/plotly">plottly</a>.</p>
-<p>The atlases currently included with in the package can be listed using the <code><a href="reference/list_atlases.html">list_atlases()</a></code> function: <code>aal116</code>, <code>aal90</code>, <code>craddock200</code>, <code>dk68</code>, <code>dk82_aspree</code>, <code>dkt62</code>, <code>gordon_333</code>, <code>shen_268</code>, <code>shen_368</code>, <code>schaefer1000_n7</code>, <code>schaefer1000_n17</code>, <code>schaefer300_n7</code>, <code>schaefer300_n17</code> (and all other iterations of the schaefer atlases). Custom atlases can be easily added as long as you have centroid coordinates in MNI space, see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">vignette</a>. The <code><a href="reference/check_atlas.html">check_atlas()</a></code> function checks that custom atlases meet the requirements of the plotting functions.</p>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
+<p>The <code><a href="reference/brainconn.html">brainconn()</a></code> function allows users to input a binary/weighted and directed/non-directed (i.e. symmetric) connectivity matrix which can be plotted onto MNI coordinates using <a href="https://github.com/ggraph" class="external-link">ggraph</a>.</p>
+<p>The <code><a href="reference/brainconn3D.html">brainconn3D()</a></code> allows users to input a binary and non-directed connectivity matrix which is plotted in a 3D and interactive way using <a href="https://github.com/plotly" class="external-link">plottly</a>.</p>
+<p>The atlases currently included with in the package can be listed using the <code><a href="reference/list_atlases.html">list_atlases()</a></code> function: <code>aal116</code>, <code>aal90</code>, <code>craddock200</code>, <code>dk68</code>, <code>dk82_aspree</code>, <code>dkt62</code>, <code>gordon_333</code>, <code>shen_268</code>, <code>shen_368</code>, <code>schaefer1000_n7</code>, <code>schaefer1000_n17</code>, <code>schaefer300_n7</code>, <code>schaefer300_n17</code> (and all other iterations of the schaefer atlases). Custom atlases can be easily added as long as you have centroid coordinates in MNI space, see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html" class="external-link">vignette</a>. The <code><a href="reference/check_atlas.html">check_atlas()</a></code> function checks that custom atlases meet the requirements of the plotting functions.</p>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>The package can be installed using devtools.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">"remotes"</span>)</span>
 <span id="cb1-2"><a href="#cb1-2"></a>remotes<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"sidchop/brainconn"</span>)</span></code></pre></div>
 <p>The functions are now installed, and you may load them when you want to use them.</p>
 </div>
-<div id="use" class="section level2">
-<h2 class="hasAnchor">
-<a href="#use" class="anchor"></a>Use</h2>
-<p>The package also has a vignette, to help you get started. You can access it <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">here</a>, or via R:</p>
+<div class="section level2">
+<h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a>
+</h2>
+<p>The package also has a vignette, to help you get started. You can access it <a href="https://sidchop.github.io/brainconn/articles/brainconn.html" class="external-link">here</a>, or via R:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(brainconn)</span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="kw">vignette</span>(<span class="st">"brainconn"</span>)</span></code></pre></div>
 <p>The primary user input is a connectivity matrix (<code>conmat</code>).</p>
@@ -107,34 +102,34 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>x &lt;-<span class="st"> </span>example_unweighted_undirected</span>
 <span id="cb4-2"><a href="#cb4-2"></a>p &lt;-<span class="st"> </span><span class="kw">brainconn3D</span>(<span class="dt">atlas =</span><span class="st">"schaefer300_n7"</span>, <span class="dt">conmat=</span>x, <span class="dt">show.legend =</span> F)</span>
 <span id="cb4-3"><a href="#cb4-3"></a>p</span></code></pre></div>
-<p>Included below is a gif of the interactive output (see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">vignette</a> for more information):</p>
+<p>Included below is a gif of the interactive output (see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html" class="external-link">vignette</a> for more information):</p>
 <p><img src="man/img/README-gif.gif"><!-- --></p>
-<p>Modifiable features for <code>brainconn3D</code> include: <code>node.size</code>, <code>node.color</code>, <code>edge.width</code>, <code>edge.color</code>, <code>adge.alpha</code>, <code>background.alpha</code>, <code>labels</code> and others (see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html">vignette</a>)</p>
-<div id="report-bugs-or-requests" class="section level3">
-<h3 class="hasAnchor">
-<a href="#report-bugs-or-requests" class="anchor"></a>Report bugs or requests</h3>
-<p>Don’t hesitate to ask for support or new features using <a href="https://github.com/sidchop/brainconn">github issues</a>.</p>
+<p>Modifiable features for <code>brainconn3D</code> include: <code>node.size</code>, <code>node.color</code>, <code>edge.width</code>, <code>edge.color</code>, <code>adge.alpha</code>, <code>background.alpha</code>, <code>labels</code> and others (see <a href="https://sidchop.github.io/brainconn/articles/brainconn.html" class="external-link">vignette</a>)</p>
+<div class="section level3">
+<h3 id="report-bugs-or-requests">Report bugs or requests<a class="anchor" aria-label="anchor" href="#report-bugs-or-requests"></a>
+</h3>
+<p>Don’t hesitate to ask for support or new features using <a href="https://github.com/sidchop/brainconn" class="external-link">github issues</a>.</p>
 </div>
-<div id="other-r-packages-you-might-be-intrested-in" class="section level3">
-<h3 class="hasAnchor">
-<a href="#other-r-packages-you-might-be-intrested-in" class="anchor"></a>Other R packages you might be intrested in:</h3>
+<div class="section level3">
+<h3 id="other-r-packages-you-might-be-intrested-in">Other R packages you might be intrested in:<a class="anchor" aria-label="anchor" href="#other-r-packages-you-might-be-intrested-in"></a>
+</h3>
 <ul>
 <li>
-<a href="https://github.com/LCBC-UiO/ggseg">ggseg</a> &amp; <a href="https://github.com/LCBC-UiO/ggseg3d">ggseg3D</a>: Plotting tool for brain atlases, in ggplot/plotly</li>
+<a href="https://github.com/LCBC-UiO/ggseg" class="external-link">ggseg</a> &amp; <a href="https://github.com/LCBC-UiO/ggseg3d" class="external-link">ggseg3D</a>: Plotting tool for brain atlases, in ggplot/plotly</li>
 <li>
-<a href="https://github.com/cwatson/brainGraph">brainGraph</a>: Graph theory analysis of brain MRI data</li>
+<a href="https://github.com/cwatson/brainGraph" class="external-link">brainGraph</a>: Graph theory analysis of brain MRI data</li>
 <li>
-<a href="https://github.com/dfsp-spirit/fsbrain">fsbrain</a>: Provides high-level functions to access (read and write) and visualize surface-based brain morphometry data (e.g. cortical thickness) for individual subjects and groups.</li>
+<a href="https://github.com/dfsp-spirit/fsbrain" class="external-link">fsbrain</a>: Provides high-level functions to access (read and write) and visualize surface-based brain morphometry data (e.g. cortical thickness) for individual subjects and groups.</li>
 <li>
-<a href="https://github.com/zchuri/NBR/">NBR</a>: Network Based R-statistics for Mixed Effects Models</li>
+<a href="https://github.com/zchuri/NBR/" class="external-link">NBR</a>: Network Based R-statistics for Mixed Effects Models</li>
 <li>
-<a href="https://github.com/muschellij2/fslr">fslr</a>: FSL-R Interface package</li>
+<a href="https://github.com/muschellij2/fslr" class="external-link">fslr</a>: FSL-R Interface package</li>
 </ul>
 </div>
-<div id="citations" class="section level3">
-<h3 class="hasAnchor">
-<a href="#citations" class="anchor"></a>Citations</h3>
-<p>If you end up using <code><a href="reference/brainconn.html">brainconn()</a></code> in a publication, please cite our paper, for which brainconn was created : Orchard, E. R., Chopra, S., Ward, P. G., Storey, E., Jamadar, S. D., &amp; Egan, G. F. (2020). <em>Neuroprotective effects of motherhood on brain function in late-life: a resting state fMRI study.</em> Cerebral Cortex.<br><a href="https://pubmed.ncbi.nlm.nih.gov/33067999/" class="uri">https://pubmed.ncbi.nlm.nih.gov/33067999/</a></p>
+<div class="section level3">
+<h3 id="citations">Citations<a class="anchor" aria-label="anchor" href="#citations"></a>
+</h3>
+<p>If you end up using <code><a href="reference/brainconn.html">brainconn()</a></code> in a publication, please cite our paper, for which brainconn was created : Orchard, E. R., Chopra, S., Ward, P. G., Storey, E., Jamadar, S. D., &amp; Egan, G. F. (2020). <em>Neuroprotective effects of motherhood on brain function in late-life: a resting state fMRI study.</em> Cerebral Cortex.<br><a href="https://pubmed.ncbi.nlm.nih.gov/33067999/" class="external-link uri">https://pubmed.ncbi.nlm.nih.gov/33067999/</a></p>
 </div>
 </div>
 </div>
@@ -143,24 +138,43 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/sidchop/brainconn/">https://​github.com/​sidchop/​brainconn/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/sidchop/brainconn/issues">https://​github.com/​sidchop/​brainconn/​issues</a>
-</li>
+<li><a href="https://github.com/sidchop/brainconn/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/sidchop/brainconn/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://opensource.org/licenses/mit-license.php">MIT</a></li>
+<li><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing brainconn</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Sidhant Chopra <br><small class="roles"> Author, maintainer </small>  </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.com/sidchop/brainconn" class="external-link"><img src="https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://ci.appveyor.com/project/sidchop/brainconn" class="external-link"><img src="https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
+<li><a href="https://codecov.io/gh/sidchop/brainconn" class="external-link"><img src="https://codecov.io/gh/sidchop/brainconn/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
+<li><a href="https://CRAN.R-project.org/package=brainconn" class="external-link"><img src="https://www.r-pkg.org/badges/version/brainconn" alt="CRAN status"></a></li>
+<li><a href="https://www.tidyverse.org/lifecycle/#maturing" class="external-link"><img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Lifecycle: maturing"></a></li>
 </ul>
 </div>
 
@@ -169,11 +183,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Sidhant Chopra.</p>
+  <p></p>
+<p>Developed by Sidhant Chopra.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -181,6 +197,8 @@
 
   
 
+
+  
 
   </body>
 </html>
