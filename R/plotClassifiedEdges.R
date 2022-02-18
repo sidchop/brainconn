@@ -1,5 +1,4 @@
 ################
-
 # This function is useful for understanding the results of NBS output.
 # Given a classification of nodes into a subset of networks (e.g., DMN,
 #                                                            % FPN, CON, etc), it counts the number of edges present in a network both
@@ -17,6 +16,8 @@
 # ids       - N*1 vector of network ids. Each network should be represented
 #           as a unique number. Each row is a different node.
 #
+# plotFig   - set to 1 if you want to plot out; 2 for outPC; 3 for outNorm;
+#           0 otherwise. Default is 0.
 #
 # labels    - M*1 cell, where M is the number of different networks. Each
 #             cell contains a string representing the
@@ -25,17 +26,17 @@
 # -------
 # % OUTPUTS:
 # % -------
-# % out [[1]]       - M*M adjacency matrix indicating the number of edges between
+# % out       - M*M adjacency matrix indicating the number of edges between
 #           each network pair. Values along diagonal represent edges within
 #           a network.
 #           NOTE: sum(sum(triu(out))) = sum(sum(adj))/2; in other
 #           words, the number of unique edges in adj equals the number of
 #           edges in the upper triangle (including the diagonal) of out.
 #
-# outPC [[2]]    - The out matrix normalized by the number of unqiue edge to
+# outPC     - The out matrix normalized by the number of unqiue edge to
 #           yield the proportion of edges for each category.
 #
-# outNorm  [[3]]  - this matrix is normalized separetly for each pair of regions
+# outNorm   - this matrix is normalized separetly for each pair of regions
 #           by the total number of edges between them. The values thus
 #           represent the connection density of the subgraph of nodes
 #           belonging to a given pair of modules. This normalization
@@ -64,36 +65,36 @@ plotClassifiedEdges <- function(adj, ids, labels){
 
   N <- dim(adj)[1]   # number of nodes
   unq <- unique(ids) # number of unique networks
-
+  colnames(unq) <- NULL
   #initialise the three output mats
-  out <- outPC <- outNorm <- matrix(nrow=length(unq), ncol=length(unq))
+  out <- outPC <- outNorm <- matrix(nrow=dim(unq)[1], ncol=dim(unq)[1])
 
 
   #  sort edges
   diag(adj) <- 0
 
-  for (i in 1:length(unq)) {
-    for (j in i:length(unq)) {
-      index_i  <- which(ids==i, arr.ind = T)
-      index_j <- which(ids==j, arr.ind = T)
+  for (i in 1:dim(unq)[1]) {
+    for (j in i:dim(unq)[1]) {
+      index_i  <- which(ids==i)
+      index_j <- which(ids==j)
 
       tempsum <- 0
       tempsum <-  sum(adj[c(index_i),  c(index_j)])
       if(i==j) {tempsum <- tempsum/2}
 
-   out[i,j] <- tempsum
-   out[j,i] <-   tempsum
+      out[i,j] <- tempsum
+      out[j,i] <-   tempsum
 
 
-   outPC[i,j] <- tempsum/sum(adj[upper.tri(adj, diag = T)])
-   outPC[j,i] <- tempsum/sum(adj[upper.tri(adj, diag = T)])
+      outPC[i,j] <- tempsum/sum(adj[upper.tri(adj, diag = T)])
+      outPC[j,i] <- tempsum/sum(adj[upper.tri(adj, diag = T)])
 
-   normFactor <- length(index_i)*length(index_j)
+      normFactor <- length(index_i)*length(index_j)
 
-   if(i==j) {normFactor <- ((length(index_i)^2)-length(index_i))/2} #remove diagnal elements with computing within network connections
+      if(i==j) {normFactor <- ((length(index_i)^2)-length(index_i))/2} #remove diagnal elements with computing within network connections
 
-   outNorm[i,j] <- tempsum/normFactor
-   outNorm[j,i] <- tempsum/normFactor
+      outNorm[i,j] <- tempsum/normFactor
+      outNorm[j,i] <- tempsum/normFactor
 
     }
   }
