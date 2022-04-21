@@ -187,5 +187,6 @@ ifelse(node.color=="network", node.color <- as.factor(data$network), node.color 
                       yaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE),
                       zaxis = list(title = '', autorange = TRUE, showgrid = FALSE, zeroline = FALSE, showline = FALSE, autotick = TRUE, ticks = '', showticklabels = FALSE))
   )
+  return(p1p)
   print(p1p)
 }

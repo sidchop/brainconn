@@ -16,6 +16,7 @@ Imports:
     igraph,
     plotly,
     scales,
+    OpenImageR
 Suggests: 
     rmarkdown,
     testthat,

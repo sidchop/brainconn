@@ -9,39 +9,61 @@
 
 
 
-build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, node.size, node.color="network",
-                       thr=NULL, uthr=NULL, view, edge.color, edge.alpha, edge.width, show.legend, label.size,
-                       labels, include.vec=NULL, scale.edge.width, edge.color.weighted, label.edge.weight, ...) {
+build_plot <- function(conmat,
+                       data,
+                       data.row=NULL,
+                       data.col=NULL,
+                       background,
+                       node.size,
+                       node.color="network",
+                       thr=NULL,
+                       uthr=NULL,
+                       view,
+                       edge.color,
+                       edge.alpha,
+                       edge.width,
+                       show.legend,
+                       label.size,
+                       labels,
+                       include.vec=NULL,
+                       scale.edge.width,
+                       edge.color.weighted,
+                       label.edge.weight,
+                       bg_xmin=0,
+                       bg_ymin=0,
+                       bg_xmax=0,
+                       bg_ymax=0,
+                       ...) {
 
 
   if (view =="top"){
     x.mni<-data$x.mni
     y.mni<-data$y.mni
     depth <- data$z.mni
-    xmax = 70  #70
-    xmin = -75 #-70
-    ymax = 73 #73
-    ymin = -107 #-107
+    xmax = 70     + bg_xmax
+    xmin = -75    + bg_xmin
+    ymax = 73     + bg_ymax
+    ymin = -107   + bg_ymin
   }
 
   if (view =="bottom"){
     x.mni<-data$x.mni*-1
     y.mni<-data$y.mni
     depth <- data$z.mni*-1
-    xmax = 70
-    xmin = -70
-    ymax = 73
-    ymin = -107
+    xmax = 70     + bg_xmax
+    xmin = -70    + bg_xmin
+    ymax = 73     + bg_ymax
+    ymin = -107   + bg_ymin
   }
 
   if (view =="front"){
     x.mni<-data$x.mni
     y.mni<-data$z.mni
     depth <- data$y.mni
-    xmax = 70
-    xmin = -70
-    ymax = 80
-    ymin = -48
+    xmax = 70     + bg_xmax
+    xmin = -70    + bg_xmin
+    ymax = 80     + bg_ymax
+    ymin = -48    + bg_ymin
   }
 
 
@@ -49,10 +71,10 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     x.mni<-data$x.mni*-1
     y.mni<-data$z.mni
     depth <- data$y.mni*-1
-    xmax = 70
-    xmin = -70
-    ymax = 80
-    ymin = -48
+    xmax = 70    + bg_xmax
+    xmin = -70   + bg_xmin
+    ymax = 80    + bg_ymax
+    ymin = -48   + bg_ymin
   }
 
 
@@ -60,10 +82,10 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     x.mni<-data$y.mni*-1
     y.mni<-data$z.mni
     depth <- data$x.mni
-    xmax = 103
-    xmin = -72
-    ymax = 77
-    ymin = -50
+    xmax = 103   + bg_xmax
+    xmin = -72   + bg_xmin
+    ymax = 77    + bg_ymax
+    ymin = -50   + bg_ymin
   }
 
   ##fix below
@@ -71,10 +93,10 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
     x.mni<-data$y.mni
     y.mni<-data$z.mni
     depth <- data$x.mni*-1
-    xmax = 103
-    xmin = -140
-    ymax = 77
-    ymin = -50
+    xmax = 103   + bg_xmax
+    xmin = -140  + bg_xmin
+    ymax = 77    + bg_ymax
+    ymin = -50   + bg_ymin
   }
 
 
@@ -89,11 +111,9 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
          weighted <- TRUE)
 
   #should edges be colored by weight
-#  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
+  #  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
 
   if (!exists("conmat")) stop(print("Please enter a valid connectivity matrix"))
-  if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
-  if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
 
 
   if(directed == F) {
@@ -130,19 +150,19 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
   if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(width=weight),
-                        color=edge.color,
+                       color=edge.color,
                        edge_alpha = edge.alpha,
                        arrow = arrow(length = unit(3, 'mm')),
                        end_cap = circle(node.size/2, 'mm'))  +
     geom_edge_loop0(aes(strength=node.size*3, width=weight),
-                            color=edge.color,
-                            edge_alpha = edge.alpha,
-                            arrow = arrow(length = unit(3, 'mm'))) +
+                    color=edge.color,
+                    edge_alpha = edge.alpha,
+                    arrow = arrow(length = unit(3, 'mm'))) +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
 
   }
 
- if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==T){p <- ggraph(layout) +
+  if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==T){p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(width=weight, label=round(weight,3)),
                        color=edge.color,
@@ -200,9 +220,9 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
                        label_size = 2,
                        fontface = "bold") +
     geom_edge_loop(aes(strength=node.size*3, color=weight, label=round(weight,3)),
-                    edge_width = edge.width,
-                    edge_alpha = edge.alpha,
-                    arrow = arrow(length = unit(3, 'mm')),
+                   edge_width = edge.width,
+                   edge_alpha = edge.alpha,
+                   arrow = arrow(length = unit(3, 'mm')),
                    angle_calc = 'none',
                    alpha = 0,
                    label_dodge = unit(6, 'mm'),
@@ -229,31 +249,31 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
   if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(width=weight),
-                           color=edge.color,
+                   color=edge.color,
                    edge_alpha = edge.alpha) +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
   if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==T){
     p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(aes(width=weight, label=round(weight,3)),
-                   color=edge.color,
-                   edge_alpha = edge.alpha,
-                   angle_calc = 'along',
-                   alpha = 0,
-                   label_dodge = unit(2.5, 'mm'),
-                   label_size = 2,
-                   fontface = "bold") +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
+      annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
+      geom_edge_link(aes(width=weight, label=round(weight,3)),
+                     color=edge.color,
+                     edge_alpha = edge.alpha,
+                     angle_calc = 'along',
+                     alpha = 0,
+                     label_dodge = unit(2.5, 'mm'),
+                     label_size = 2,
+                     fontface = "bold") +
+      coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
 
   if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(colour=weight),
-                           edge_width = edge.width,
-                           edge_alpha = edge.alpha) +
+                   edge_width = edge.width,
+                   edge_alpha = edge.alpha) +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
@@ -288,10 +308,10 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
   if(view=="right") {
     p <- p + coord_fixed(xlim = c(-98,64), ylim = c(-44,76)) }
 
-#set node size with degree option  #### NOT WORKING ###
+  #set node size with degree option  #### NOT WORKING ###
   #ifelse(node.size=="degree", node.size <- as.vector((degree(graph_from_adjacency_matrix(conmat)))*0.2), node.size <- node.size)
 
-#add nodes
+  #add nodes
   if(directed == T){
     ifelse(node.color=="network",
            p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet))),
@@ -318,7 +338,7 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
                             nudge_x = node.size+2, nudge_y = node.size)
   }
 
-#remove gridlines
+  #remove gridlines
   p <- p + theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
@@ -337,6 +357,6 @@ build_plot <- function(conmat, data, data.row=NULL, data.col=NULL, background, n
   if (show.legend==T){p <- p + scale_color_discrete(name="Network")}
 
 
-p
+  p
 
 }

@@ -28,6 +28,7 @@
 #' @import ggraph
 #' @import cowplot
 #' @import grid
+#' @import OpenImageR
 #' @importFrom grDevices rgb
 #' @examples
 #' library(brainconn)
@@ -38,7 +39,7 @@ brainconn <- function(atlas,
                       background='ICBM152',
                       view ="top",
                       conmat=NULL,
-                 #     interactive = F,
+                      # interactive = F,
                       node.size=4,
                       node.color="network",
                       all.nodes=FALSE,
@@ -53,15 +54,25 @@ brainconn <- function(atlas,
                       scale.edge.width = NULL,
                       label.size=1.5,
                       label.edge.weight = FALSE,
-                      background.alpha = 1) {
+                      background.alpha = 1,
+                      bg_xmax=0,
+                      bg_xmin=0,
+                      bg_ymax=0,
+                      bg_ymin=0) {
 
 
 
   ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
-  #set background
+  #set background (add ability to add custom background image)
+  if(background != "ICBM152"  && view == "ortho") {
+    stop("Custom background image detected, view cannot be 'ortho', please select top,
+        bottom, left, right, front or back.")}
 
+  if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
+  if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
   #loop three times for the three vies that make ortho view
+
   if (view == "ortho") {
     ortho_list <- list()
     ortho_views  <- c("top", "left", "front")
@@ -116,10 +127,6 @@ brainconn <- function(atlas,
         include.vec <- rep(1, length=dim(data)[1])
       }
 
-
-      #if interactive call build_plot_int, else call build con
-      #  source("functions/build_plot.R")
-
       #in ortho view, only show legend for top view to avoid redundancy
       ifelse(v == 1, show.legend <- T, show.legend <- F)
 
@@ -141,9 +148,9 @@ brainconn <- function(atlas,
     }
 
     right_col <- plot_grid(ortho_list[[2]],
-                                    ortho_list[[3]],
-                                    nrow=2,
-                                    rel_heights = c(1, 1.45))
+                           ortho_list[[3]],
+                           nrow=2,
+                           rel_heights = c(1, 1.45))
     p <- plot_grid(ortho_list[[1]], right_col, rel_widths = c(1.8,1.2))
     return(p)
 
@@ -151,14 +158,20 @@ brainconn <- function(atlas,
   }
 
   # If not ortho, then do the below:
+  if(background=='ICBM152') {
+    bg <- paste0("ICBM152_", view)
+    m <- get(bg)
+    w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
+  }
 
-  bg <- paste0("ICBM152_", view)
-  m <- get(bg)
+  if(background!='ICBM152') {
+    m <- OpenImageR::readImage(background)
+  }
+  w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
+  background <- rasterGrob(w)
   #if(any(grepl(background, list.backgroud, fixed=TRUE))) {
   #  m <- png::readPNG(paste0("data/background/", background,"_", view,".png"))
   #
-  w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
-  background <- rasterGrob(w)
   #} else {stop(paste('please select a valid background: ', as.character(list.backgroud)))
   #}
 
@@ -204,12 +217,28 @@ brainconn <- function(atlas,
 
   #if interactive call build_plot_int, else call build con
   #  source("functions/build_plot.R")
-  p <- build_plot(conmat=conmat, data=data, background=background, node.size=node.size, view=view,
-                  node.color=node.color, thr=NULL, uthr=NULL,
-                  edge.color=edge.color,edge.alpha=edge.alpha,
-                  edge.width=edge.width,  scale.edge.width=scale.edge.width,
-                  show.legend=show.legend, labels=labels, label.size=label.size,
-                  include.vec=include.vec, edge.color.weighted=edge.color.weighted, label.edge.weight=label.edge.weight)
+  p <- build_plot(conmat=conmat,
+                  data=data,
+                  background=background,
+                  node.size=node.size,
+                  view=view,
+                  node.color=node.color,
+                  thr=thr,
+                  uthr=uthr,
+                  edge.color=edge.color,
+                  edge.alpha=edge.alpha,
+                  edge.width=edge.width,
+                  scale.edge.width=scale.edge.width,
+                  show.legend=show.legend,
+                  labels=labels,
+                  label.size=label.size,
+                  include.vec=include.vec,
+                  edge.color.weighted=edge.color.weighted,
+                  label.edge.weight=label.edge.weight,
+                  bg_xmax=bg_xmax,
+                  bg_xmin=bg_xmin,
+                  bg_ymax=bg_ymax,
+                  bg_ymin=bg_ymin)
 
   #  source("functions/build_plot_int.R")
   #if(interactive==TRUE){p <- build_plot_int(conmat, data, background, node.size=node.size, view,
