@@ -191,7 +191,6 @@ build_plot <- function(conmat,
   if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(color=weight),
-                       #color=edge.color,
                        edge_alpha = edge.alpha,
                        edge_width = edge.width,
                        arrow = arrow(length = unit(3, 'mm')),

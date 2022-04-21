@@ -12,3 +12,4 @@ vignettes/brainconn.R
 make_atlases.R
 make_mesh.R
 doc
+test
