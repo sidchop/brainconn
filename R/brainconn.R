@@ -144,14 +144,10 @@ brainconn <- function(atlas,
                                     include.vec=include.vec,
                                     edge.color.weighted=edge.color.weighted,
                                     label.edge.weight=label.edge.weight)
+      if(is.environment(edge.color) == T) {
+        ortho_list[[v]] <- ortho_list[[v]] + edge.color
+      }
 
-      #  source("functions/build_plot_int.R")
-      #if(interactive==TRUE){p <- build_plot_int(conmat, data,  background, node.size=node.size, view,
-      #                                             node.color=node.color, thr=NULL, uthr=NULL,
-      #                                             edge.color=edge.color,edge.alpha=edge.alpha,
-      #                                             edge.width=edge.width,  scale.edge.width=scale.edge.width,
-      #                                             show.legend=show.legend, labels=labels, label.size=label.size,
-      #                                             include.vec=include.vec, view=view, edge.color.weighted=edge.color.weighted)}
 
     }
 
