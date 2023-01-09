@@ -121,13 +121,12 @@ build_plot <- function(conmat,
     layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
-    layout
   }
 
 
 
   if(directed == T) {
-    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
+    layout <- create_layout(graph = as.matrix(conmat), layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
     layout$facet <- include.vec
@@ -136,7 +135,8 @@ build_plot <- function(conmat,
 
   #make graph
 
-  if(directed == T && weighted==F){p <- ggraph(layout) +
+  if(directed == T && weighted==F){
+    p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(color=edge.color,
                        edge_width = edge.width,
@@ -188,7 +188,8 @@ build_plot <- function(conmat,
 
   }
 
-  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout) +
+  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==F){
+    p <- ggraph(layout) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_parallel(aes(color=weight),
                        edge_alpha = edge.alpha,
@@ -245,7 +246,8 @@ build_plot <- function(conmat,
 
 
 
-  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
+  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==F){
+    p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(width=weight),
                    color=edge.color,
@@ -268,7 +270,9 @@ build_plot <- function(conmat,
   }
 
 
-  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==F){p <- ggraph(layout, circular = FALSE) +
+
+  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==F){
+    p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(colour=weight),
                    edge_width = edge.width,
@@ -276,7 +280,8 @@ build_plot <- function(conmat,
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
-  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==T){p <- ggraph(layout, circular = FALSE) +
+  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==T){
+    p <- ggraph(layout, circular = FALSE) +
     annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
     geom_edge_link(aes(colour=weight, label=round(weight,3)),
                    edge_width = edge.width,
