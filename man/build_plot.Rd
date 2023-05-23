@@ -25,6 +25,10 @@ build_plot(
   scale.edge.width,
   edge.color.weighted,
   label.edge.weight,
+  bg_xmin = 0,
+  bg_ymin = 0,
+  bg_xmax = 0,
+  bg_ymax = 0,
   ...
 )
 }
