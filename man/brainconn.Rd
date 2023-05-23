@@ -23,10 +23,16 @@ brainconn(
   scale.edge.width = NULL,
   label.size = 1.5,
   label.edge.weight = FALSE,
-  background.alpha = 1
+  background.alpha = 1,
+  bg_xmax = 0,
+  bg_xmin = 0,
+  bg_ymax = 0,
+  bg_ymin = 0
 )
 }
 \arguments{
+\item{atlas}{Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}}
+
 \item{background}{'ICBM152', currently the only background option}
 
 \item{view}{A sting to choose the view. Can be any of these: c("ortho", "top", "bottom", "left", "right")}

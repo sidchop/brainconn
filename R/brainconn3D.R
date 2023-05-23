@@ -4,7 +4,7 @@
 #' @author Sidhant Chopra
 #'
 #'
-#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases() or a .data.frame that meets specifications, see \code{vignette("brainconn")}
+#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}
 #' @param conmat A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.
 #' @param all.nodes f \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.
 #' @param node.color A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas

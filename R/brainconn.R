@@ -3,7 +3,7 @@
 #' \code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix..
 #' @author Sidhant Chopra
 #'
-#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases{} or a .data.frame that meets specifications, see \code{vignette("brainconn")}
+#' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}
 #' @param background 'ICBM152', currently the only background option
 #' @param background.alpha Number between 0-1 to  set the transparency of the background.
 #' @param view A sting to choose the view. Can be any of these: c("ortho", "top", "bottom", "left", "right")
@@ -255,38 +255,3 @@ brainconn <- function(atlas,
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

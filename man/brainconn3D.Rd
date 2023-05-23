@@ -20,6 +20,8 @@ brainconn3D(
 )
 }
 \arguments{
+\item{atlas}{Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}}
+
 \item{conmat}{A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.}
 
 \item{all.nodes}{f \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.}
