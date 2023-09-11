@@ -46,14 +46,12 @@ brainconn3D <- function(atlas=NULL,
   #}
   ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
-  #convert conmat to matrix
-  # conmat <- as.matrix(conmat)
-
   #if no conmat is provided, build nparc x  nparc empty one
   nparc <- dim(data)[1]
   if (!exists("conmat")){conmat <- matrix(0L, nrow=nparc, ncol=nparc)
   }
-  #convert conmat to matrix
+
+   #convert conmat to matrix
   conmat <- as.matrix(conmat)
 
 
