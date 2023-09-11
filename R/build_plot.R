@@ -118,7 +118,7 @@ build_plot <- function(conmat,
 
   if(directed == F) {
     conmat[upper.tri(conmat)] <- 0 #only take bottom tri of matrix to stop the edge labels being plotted twice
-    layout <- create_layout(graph = as.data.frame(conmat), layout ="stress", circular=TRUE)
+    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
   }
@@ -126,7 +126,7 @@ build_plot <- function(conmat,
 
 
   if(directed == T) {
-    layout <- create_layout(graph = as.data.frame(conmat), layout ="stress", circular=TRUE)
+    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
     layout$x <- x.mni
     layout$y <- y.mni
     layout$facet <- include.vec
