@@ -28,17 +28,17 @@
 #' @export
 
 brainconn3D <- function(atlas=NULL,
-                           conmat=NULL,
-                           all.nodes=FALSE,
-                           node.color="network",
-                           node.size=10,
-                           edge.width=3,
-                           edge.color="black",
-                           opacity=0.28,
-                           d.factor=1.05,
-                           show.legend=F,
-                           thr=NULL,
-                           uthr=NULL) {
+                        conmat=NULL,
+                        all.nodes=FALSE,
+                        node.color="network",
+                        node.size=10,
+                        edge.width=3,
+                        edge.color="black",
+                        opacity=0.28,
+                        d.factor=1.05,
+                        show.legend=F,
+                        thr=NULL,
+                        uthr=NULL) {
 
   #list.atlas <- sub('\\.rda$', '', list.files(pattern = "*.rda"))
   #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
@@ -46,8 +46,8 @@ brainconn3D <- function(atlas=NULL,
   #}
   ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
 
-#convert conmat to matrix
-# conmat <- as.matrix(conmat)
+  #convert conmat to matrix
+  # conmat <- as.matrix(conmat)
 
   #if no conmat is provided, build nparc x  nparc empty one
   nparc <- dim(data)[1]
@@ -74,7 +74,7 @@ brainconn3D <- function(atlas=NULL,
   if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
   if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
 
-#set up mesh
+  #set up mesh
   vb <- get("ICBM152_mesh_vb")
   it <- get("ICBM152_mesh_it")
 
@@ -86,7 +86,7 @@ brainconn3D <- function(atlas=NULL,
 
 
   facecolor = colour_ramp(
-   brewer_pal(palette="Greys")(1)
+    brewer_pal(palette="Greys")(1)
   )(rescale(x=zmean))
 
   p1 <- plot_ly(
@@ -106,71 +106,74 @@ brainconn3D <- function(atlas=NULL,
 
   size <- rep(0.1,length(data$index))
 
-ifelse(node.color=="network", node.color <- as.factor(data$network), node.color <- node.color)
+  ifelse(node.color=="network", node.color <- as.factor(data$network), node.color <- node.color)
 
- if (!is.character(node.color)) {
-   p <- plot_ly(data, marker = list(size = node.size),
-              x = data$x.mni*d.factor,
-              y = data$y.mni*d.factor,
-              z = data$z.mni*d.factor,
-              color= ~node.color,
-              name = data$ROI.Name,
-              type = "scatter3d") } else {
-                p <- plot_ly(data, x = data$x.mni*d.factor,
-                                     y = data$y.mni*d.factor,
-                                     z = data$z.mni*d.factor,
-                                     color = node.color,
-                                     colors = node.color,
-                                     marker = list(size = node.size))
-                p <- add_markers(p)
-
-              }
-
-
-
-
-
-    ifelse(show.legend==T, p <- layout(p, showlegend = TRUE), p <- layout(p, showlegend = FALSE))
-
-
-  elength = length(edge.list)/2
-  xx <- yy <- zz <- vector()
-  for (e in 1:elength) {
-    from <- data$x.mni[which(data$index == edge.list[e,1])]
-    to <- data$x.mni[which(data$index == edge.list[e,2])]
-    xx[1:length(data$x.mni)] <- NA
-    xx[1:2] <- c(from, to)
-
-    from <- data$y.mni[which(data$index == edge.list[e,1])]
-    to <- data$y.mni[which(data$index == edge.list[e,2])]
-    yy[1:length(data$y.mni)] <- NA
-    yy[1:2] <- c(from, to)
-
-    from <- data$z.mni[which(data$index == edge.list[e,1])]
-    to <- data$z.mni[which(data$index == edge.list[e,2])]
-    zz[1:length(data$z.mni)] <- NA
-    zz[1:2] <- c(from, to)
-
-
-    # p <- add_trace(p, x = xx*d.factor,
-    #                y = yy*d.factor,
-    #                z = zz*d.factor,
-    #                type = "scatter3d",
-    #                mode = "lines",
-    #                line = list(width = "5", color = "black"),
-    #                name = paste0(data$ROI.Name[edge.list[e,1]], "to",data$ROI.Name[edge.list[e,2]], sep=" "),
-    #                showlegend = FALSE,
-    #                inherit = F)
-    p <- add_trace(p, x = xx*d.factor,
-                           y = yy*d.factor,
-                           z = zz*d.factor,
-                           type = "scatter3d",
-                           mode = 'lines',
-                           line = list(width = edge.width, color= edge.color),
-                           inherit = F, showlegend = FALSE)
+  if (!is.character(node.color)) {
+    p <- plot_ly(data, marker = list(size = node.size),
+                 x = data$x.mni*d.factor,
+                 y = data$y.mni*d.factor,
+                 z = data$z.mni*d.factor,
+                 color= ~node.color,
+                 name = data$ROI.Name,
+                 type = "scatter3d")
+  } else {
+    p <- plot_ly(data, x = data$x.mni*d.factor,
+                 y = data$y.mni*d.factor,
+                 z = data$z.mni*d.factor,
+                 color = node.color,
+                 colors = node.color,
+                 marker = list(size = node.size))
+    p <- add_markers(p)
 
   }
 
+
+
+
+
+  ifelse(show.legend==T, p <- layout(p, showlegend = TRUE), p <- layout(p, showlegend = FALSE))
+
+
+  elength = length(edge.list)/2
+
+  if (elength !=0) {
+    xx <- yy <- zz <- vector()
+    for (e in 1:elength) {
+      from <- data$x.mni[which(data$index == edge.list[e,1])]
+      to <- data$x.mni[which(data$index == edge.list[e,2])]
+      xx[1:length(data$x.mni)] <- NA
+      xx[1:2] <- c(from, to)
+
+      from <- data$y.mni[which(data$index == edge.list[e,1])]
+      to <- data$y.mni[which(data$index == edge.list[e,2])]
+      yy[1:length(data$y.mni)] <- NA
+      yy[1:2] <- c(from, to)
+
+      from <- data$z.mni[which(data$index == edge.list[e,1])]
+      to <- data$z.mni[which(data$index == edge.list[e,2])]
+      zz[1:length(data$z.mni)] <- NA
+      zz[1:2] <- c(from, to)
+
+
+      # p <- add_trace(p, x = xx*d.factor,
+      #                y = yy*d.factor,
+      #                z = zz*d.factor,
+      #                type = "scatter3d",
+      #                mode = "lines",
+      #                line = list(width = "5", color = "black"),
+      #                name = paste0(data$ROI.Name[edge.list[e,1]], "to",data$ROI.Name[edge.list[e,2]], sep=" "),
+      #                showlegend = FALSE,
+      #                inherit = F)
+      p <- add_trace(p, x = xx*d.factor,
+                     y = yy*d.factor,
+                     z = zz*d.factor,
+                     type = "scatter3d",
+                     mode = 'lines',
+                     line = list(width = edge.width, color= edge.color),
+                     inherit = F, showlegend = FALSE)
+
+    }
+  }
   #https://plot.ly/r/reference/#scattermapbox-below
   p1p <- subplot(p1, p)
 
