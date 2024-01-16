@@ -53,15 +53,18 @@ The functions are now installed, and you may load them when you want to use them
 ## Use
 The package also has a vignette, to help you get started. You can access it [here](https://sidchop.github.io/brainconn/articles/brainconn.html), or via R:
 
-```{r, out.width='50%'}
+```{r, out.width='50%', eval=FALSE}
 library(brainconn)
 vignette("brainconn")
 ```
 
 The primary user input is a connectivity matrix (`conmat`). 
 
-```{r, out.width='50%'}
+```{r, out.width='50%', echo=T, warning=F, eval=F}
 brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
+```
+```{r, echo = FALSE,warning=F, error=F}
+knitr::include_graphics("man/figures/000010.png")
 ```
 
 Modifiable features for `brainconn` include: `view`, `node.size`, `node.color`, `edge.width`, `edge.color`, `edge.alpha`, `background.alpha`, `labels` and others (see vignette)
@@ -94,7 +97,7 @@ Don't hesitate to ask for support or new features using [github issues](https://
 
 ### Citations
 If you end up using `brainconn()` in a publication, please cite our paper, for which brainconn was created : Sidhant Chopra, Loïc Labache, Elvisha Dhamala, Edwina R Orchard, Avram Holmes (2023). *A Practical Guide for Generating Reproducible and Programmatic Neuroimaging Visualizations* ApertureNeuro. \
-https://apertureneuro.org/article/85104-a-practical-guide-for-generating-reproducible-and-programmatic-neuroimaging-visualizations
+https://doi.org/10.52294/001c.85104
 
 
 
