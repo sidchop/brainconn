@@ -4,19 +4,7 @@ author: "Sidhant Chopra"
 output: github_document
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/img/README-",
-  echo = TRUE,
-  warning = FALSE,
-  message = FALSE
-)
-library(magrittr)
-if (!require("processx")) install.packages("processx")
-devtools::load_all(".")
-```
+
 
 
 # brainconn <img src="man/img/logo.png" align="right" alt="" width="180" />  
@@ -43,7 +31,8 @@ The atlases currently included with in the package can be listed using the `list
 ## Installation
 The package can be installed using devtools.
 
-```{r eval=F}
+
+```r
 install.packages("remotes")
 remotes::install_github("sidchop/brainconn")
 ```
@@ -53,21 +42,25 @@ The functions are now installed, and you may load them when you want to use them
 ## Use
 The package also has a vignette, to help you get started. You can access it [here](https://sidchop.github.io/brainconn/articles/brainconn.html), or via R:
 
-```{r, out.width='50%'}
+
+```r
 library(brainconn)
 vignette("brainconn")
 ```
 
 The primary user input is a connectivity matrix (`conmat`). 
 
-```{r, out.width='50%'}
+
+```r
 brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
 ```
+<img src="man/figures/000010.png" width="1989" />
 
 Modifiable features for `brainconn` include: `view`, `node.size`, `node.color`, `edge.width`, `edge.color`, `edge.alpha`, `background.alpha`, `labels` and others (see vignette)
 
 
-```{r, results = 'hide', eval=F, echo=T, warning=F}
+
+```r
 x <- example_unweighted_undirected
 p <- brainconn3D(atlas ="schaefer300_n7", conmat=x, show.legend = F)
 p
@@ -75,9 +68,7 @@ p
 
 Included below is a gif of the interactive output (see [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html) for more information): 
 
-```{r, echo = FALSE,warning=F, error=F}
-knitr::include_graphics("man/img/README-gif.gif")
-```
+![](man/img/README-gif.gif)<!-- -->
 
 Modifiable features for `brainconn3D` include: `node.size`, `node.color`, `edge.width`, `edge.color`, `adge.alpha`, `background.alpha`, `labels` and others (see [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html))
 
@@ -94,7 +85,7 @@ Don't hesitate to ask for support or new features using [github issues](https://
 
 ### Citations
 If you end up using `brainconn()` in a publication, please cite our paper, for which brainconn was created : Sidhant Chopra, Loïc Labache, Elvisha Dhamala, Edwina R Orchard, Avram Holmes (2023). *A Practical Guide for Generating Reproducible and Programmatic Neuroimaging Visualizations* ApertureNeuro. \
-https://apertureneuro.org/article/85104-a-practical-guide-for-generating-reproducible-and-programmatic-neuroimaging-visualizations
+https://doi.org/10.52294/001c.85104
 
 
 

@@ -52,8 +52,10 @@ requirements of the plotting functions.
 
 The package can be installed using devtools.
 
-    install.packages("remotes")
-    remotes::install_github("sidchop/brainconn")
+``` r
+install.packages("remotes")
+remotes::install_github("sidchop/brainconn")
+```
 
 The functions are now installed, and you may load them when you want to
 use them.
@@ -64,22 +66,28 @@ The package also has a vignette, to help you get started. You can access
 it [here](https://sidchop.github.io/brainconn/articles/brainconn.html),
 or via R:
 
-    library(brainconn)
-    vignette("brainconn")
+``` r
+library(brainconn)
+vignette("brainconn")
+```
 
 The primary user input is a connectivity matrix (`conmat`).
 
-    brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
+``` r
+brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
+```
 
-<img src="man/img/README-unnamed-chunk-4-1.png" width="50%" />
+<img src="man/figures/000010.png" width="1989" />
 
 Modifiable features for `brainconn` include: `view`, `node.size`,
 `node.color`, `edge.width`, `edge.color`, `edge.alpha`,
 `background.alpha`, `labels` and others (see vignette)
 
-    x <- example_unweighted_undirected
-    p <- brainconn3D(atlas ="schaefer300_n7", conmat=x, show.legend = F)
-    p
+``` r
+x <- example_unweighted_undirected
+p <- brainconn3D(atlas ="schaefer300_n7", conmat=x, show.legend = F)
+p
+```
 
 Included below is a gif of the interactive output (see
 [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html)
@@ -99,24 +107,24 @@ issues](https://github.com/sidchop/brainconn).
 
 ### Other R packages you might be intrested in:
 
--   [ggseg](https://github.com/LCBC-UiO/ggseg) &
-    [ggseg3D](https://github.com/LCBC-UiO/ggseg3d): Plotting tool for
-    brain atlases, in ggplot/plotly
--   [brainGraph](https://github.com/cwatson/brainGraph): Graph theory
-    analysis of brain MRI data
--   [fsbrain](https://github.com/dfsp-spirit/fsbrain): Provides
-    high-level functions to access (read and write) and visualize
-    surface-based brain morphometry data (e.g. cortical thickness) for
-    individual subjects and groups.
--   [NBR](https://github.com/zchuri/NBR/): Network Based R-statistics
-    for Mixed Effects Models
--   [fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
+- [ggseg](https://github.com/LCBC-UiO/ggseg) &
+  [ggseg3D](https://github.com/LCBC-UiO/ggseg3d): Plotting tool for
+  brain atlases, in ggplot/plotly
+- [brainGraph](https://github.com/cwatson/brainGraph): Graph theory
+  analysis of brain MRI data
+- [fsbrain](https://github.com/dfsp-spirit/fsbrain): Provides high-level
+  functions to access (read and write) and visualize surface-based brain
+  morphometry data (e.g. cortical thickness) for individual subjects and
+  groups.
+- [NBR](https://github.com/zchuri/NBR/): Network Based R-statistics for
+  Mixed Effects Models
+- [fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
 
 ### Citations
 
 If you end up using `brainconn()` in a publication, please cite our
-paper, for which brainconn was created : Orchard, E. R., Chopra, S.,
-Ward, P. G., Storey, E., Jamadar, S. D., & Egan, G. F. (2020).
-*Neuroprotective effects of motherhood on brain function in late-life: a
-resting state fMRI study.* Cerebral Cortex.  
-<a href="https://pubmed.ncbi.nlm.nih.gov/33067999/" class="uri">https://pubmed.ncbi.nlm.nih.gov/33067999/</a>
+paper, for which brainconn was created : Sidhant Chopra, Loïc Labache,
+Elvisha Dhamala, Edwina R Orchard, Avram Holmes (2023). *A Practical
+Guide for Generating Reproducible and Programmatic Neuroimaging
+Visualizations* ApertureNeuro.  
+<https://doi.org/10.52294/001c.85104>
