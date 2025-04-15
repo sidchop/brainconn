@@ -18,6 +18,8 @@ status](https://www.r-pkg.org/badges/version/brainconn)](https://CRAN.R-project.
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 <!-- badges: end -->
 
+**THIS PACKAGE IS NO LONGER ACTIVELY MAINTAINED, USE AT YOUR OWN RISK**
+
 The purpose of this package is to allow for flexible, programmatic and
 interactive plotting of brain connectivity data within Rstudio -
 negating the need to swap to other visualization tools and allowing for
