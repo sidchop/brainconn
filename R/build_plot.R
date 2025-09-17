@@ -57,7 +57,7 @@ build_plot <- function(conmat,
   }
 
   if (view =="front"){
-    x.mni<-data$x.mni
+    x.mni<-data$x.mni*-1
     y.mni<-data$z.mni
     depth <- data$y.mni
     xmax = 70     + bg_xmax
@@ -68,7 +68,7 @@ build_plot <- function(conmat,
 
 
   if (view =="back"){
-    x.mni<-data$x.mni*-1
+    x.mni<-data$x.mni
     y.mni<-data$z.mni
     depth <- data$y.mni*-1
     xmax = 70    + bg_xmax
