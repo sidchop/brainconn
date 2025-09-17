@@ -100,15 +100,11 @@ build_plot <- function(conmat,
   }
 
 
-  #is matrix directed (i.e. symetric)
-  ifelse(isSymmetric.matrix(conmat)==TRUE,
-         directed <- FALSE,
-         directed <- TRUE)
+  #is matrix directed (i.e. symmetric)
+  directed <- !isSymmetric.matrix(conmat)
 
-  #is matrix weighed
-  ifelse(all(conmat %in% c(0,1))==TRUE,
-         weighted <- FALSE,
-         weighted <- TRUE)
+  #is matrix weighted
+  weighted <- !all(conmat %in% c(0,1))
 
   #should edges be colored by weight
   #  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
@@ -317,14 +313,18 @@ build_plot <- function(conmat,
 
   #add nodes
   if(directed == T){
-    ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet))),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+    if(node.color=="network"){
+      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet)))
+    } else {
+      p <- p + geom_node_point(size=node.size, colour=node.color)
+    }
   }
   if(directed == F){
-    ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network))),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+    if(node.color=="network"){
+      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network)))
+    } else {
+      p <- p + geom_node_point(size=node.size, colour=node.color)
+    }
   }
 
 

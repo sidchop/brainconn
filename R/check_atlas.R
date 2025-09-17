@@ -1,6 +1,6 @@
 #' Title
 #'
-#' @param atlas a .data.frame with a 4 collums named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}
+#' @param atlas a .data.frame with a 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}
 #' @return a message
 #'@export
 #' @examples
@@ -10,27 +10,27 @@
 #'}
 #'
 #===================================
-# This function checks user inputed atlas to make sure it will play nice with the
+# This function checks user input atlas to make sure it will play nice with the
 # brainconn and brainconn3d functions.
 #===================================
 check_atlas <- function(atlas) {
-  if(!is.data.frame(atlas)) {message("Please convert atlas to a dataframe (e.g. as.dataframe())")}
+  if(!is.data.frame(atlas)) {
+    message("Please convert atlas to a dataframe (e.g. as.dataframe())")
+    return(invisible(NULL))
+  }
   essential_cols <-  c("ROI.Name", "x.mni", "y.mni", "z.mni")
   col.check <- essential_cols %in% names(atlas)
-  ifelse(any(col.check==F), pass <- F, pass <- T)
-  if(pass == F){
-    stop(paste("File missing", essential_cols[which(col.check == F)], "column."))
+  pass <- !any(col.check == FALSE)
+  if(!pass){
+    stop(paste("File missing", essential_cols[which(col.check == FALSE)], "column."))
   }
-  ifelse(is.integer(atlas$x.mni) & is.integer(atlas$y.mni) & is.integer(atlas$x.mni),  pass <- T, pass <- F)
-  if(pass == F){
+  pass <- is.integer(atlas$x.mni) & is.integer(atlas$y.mni) & is.integer(atlas$z.mni)
+  if(!pass){
     stop("x.mni, y.mni and z.mni columns need to be integers.")
   }
 
-  if(pass == T){
+  if(pass){
     message("Atlas fits brainconn specifications and should work with brainconn() and brainconn3d().")
-  }
-  if(pass == F){
-    stop(paste("File missing", essential_cols[which(col.check == F)], "column."))
   }
 }
 

@@ -62,7 +62,11 @@ brainconn <- function(atlas,
 
 
 
-  ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
+  if(is.character(atlas)) {
+    data <- get(atlas)
+  } else {
+    data <- atlas
+  }
 
   #set background (add ability to add custom background image)
   if(background != "ICBM152"  && view == "ortho") {
@@ -70,8 +74,8 @@ brainconn <- function(atlas,
         bottom, left, right, front or back.")}
 
   if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
-  if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
-  #loop three times for the three vies that make ortho view
+  if (!is.null(uthr)) {conmat[conmat > uthr] <- 0} #upper threshold graph
+  #loop three times for the three views that make ortho view
 
   if (view == "ortho") {
     ortho_list <- list()
@@ -96,16 +100,14 @@ brainconn <- function(atlas,
 
       #Remove nodes with no edges
       rownames(conmat) <- colnames(conmat) #this needs to be same same if is.sym to work
-      ifelse(isSymmetric.matrix(conmat)==TRUE,
-             directed <- FALSE,
-             directed <- TRUE)
+      directed <- !isSymmetric.matrix(conmat)
 
 
 
       if(all.nodes == FALSE && directed == FALSE) {
         include.vec <- vector(length=dim(data)[1])
         for (i in 1:dim(conmat)[1]){
-          ifelse(any(conmat[i, ] != 0), include.vec[i] <- 1, include.vec[i] <- 0)
+          include.vec[i] <- as.integer(any(conmat[i, ] != 0))
         }
         data <- data[as.logical(include.vec), ,drop=F]
         conmat <- conmat[which(rowSums(conmat, na.rm = T) != 0), which(colSums(conmat, na.rm = T) != 0), drop = F]
@@ -115,17 +117,16 @@ brainconn <- function(atlas,
       if(all.nodes==FALSE && directed == TRUE) {
         include.vec <- vector(length=dim(data)[1])
         for (i in 1:dim(conmat)[1]){
-          ifelse(any(conmat[i, ] != 0) | any(conmat[, i] != 0), include.vec[i] <- 1, include.vec[i] <- 0)
+          include.vec[i] <- as.integer(any(conmat[i, ] != 0) | any(conmat[, i] != 0))
         }
       }
 
       if(all.nodes==TRUE) {
-        include.vec <- vector(length=dim(data)[1])
-        include.vec <- rep(1, length=dim(data)[1])
+        include.vec <- rep(1, dim(data)[1])
       }
 
       #in ortho view, only show legend for top view to avoid redundancy
-      ifelse(v == 1, show.legend <- T, show.legend <- F)
+      show.legend <- (v == 1)
 
       ortho_list[[v]] <- build_plot(conmat=conmat,
                                     data=data,
@@ -188,16 +189,14 @@ brainconn <- function(atlas,
 
   #Remove nodes with no edges
   rownames(conmat) <- colnames(conmat) #this needs to be same same if is.sym to work
-  ifelse(isSymmetric.matrix(conmat)==TRUE,
-         directed <- FALSE,
-         directed <- TRUE)
+  directed <- !isSymmetric.matrix(conmat)
 
 
 
   if(all.nodes == FALSE && directed == FALSE) {
     include.vec <- vector(length=dim(data)[1])
     for (i in 1:dim(conmat)[1]){
-      ifelse(any(conmat[i, ] != 0), include.vec[i] <- 1, include.vec[i] <- 0)
+      include.vec[i] <- as.integer(any(conmat[i, ] != 0))
     }
     data <- data[as.logical(include.vec), ,drop=F]
     conmat <- conmat[which(rowSums(conmat, na.rm = T) != 0), which(colSums(conmat, na.rm = T) != 0), drop = F]
@@ -207,13 +206,12 @@ brainconn <- function(atlas,
   if(all.nodes==FALSE && directed == TRUE) {
     include.vec <- vector(length=dim(data)[1])
     for (i in 1:dim(conmat)[1]){
-      ifelse(any(conmat[i, ] != 0) | any(conmat[, i] != 0), include.vec[i] <- 1, include.vec[i] <- 0)
+      include.vec[i] <- as.integer(any(conmat[i, ] != 0) | any(conmat[, i] != 0))
     }
   }
 
   if(all.nodes==TRUE) {
-    include.vec <- vector(length=dim(data)[1])
-    include.vec <- rep(1, length=dim(data)[1])
+    include.vec <- rep(1, dim(data)[1])
   }
 
 
