@@ -5,8 +5,8 @@
 #'
 #'
 #' @param atlas Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}
-#' @param conmat A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.
-#' @param all.nodes f \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.
+#' @param conmat A adjacency matrix. Has to be binary and undirected (i.e. symmetric). see example_* data.
+#' @param all.nodes If \code{TRUE}, then all nodes will be shown by hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.
 #' @param node.color A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas
 #' @param node.size A integer that determines the diameter of the nodes. Can also be a vector of integers with a length equal to the number of ROIs in the atlas
 #' @param edge.width Number to set the width of the edges.
@@ -40,11 +40,11 @@ brainconn3D <- function(atlas=NULL,
                         thr=NULL,
                         uthr=NULL) {
 
-  #list.atlas <- sub('\\.rda$', '', list.files(pattern = "*.rda"))
-  #if(any(grepl(atlas, list.atlas, fixed=TRUE))) {data <- get(atlas)} else
-  #  {stop(paste(paste('please select a valid atlas: '), paste(list.atlas, " ", collapse="")))
-  #}
-  ifelse(is.character(atlas), data <- get(atlas), data <- atlas)
+  if(is.character(atlas)) {
+    data <- get(atlas)
+  } else {
+    data <- atlas
+  }
 
   #if no conmat is provided, build nparc x  nparc empty one
   nparc <- dim(data)[1]
@@ -62,15 +62,15 @@ brainconn3D <- function(atlas=NULL,
   if(all.nodes==FALSE) {
     include.vec <- vector(length=dim(data)[1])
     for (i in 1:dim(conmat)[1]){
-      ifelse(any(conmat[i, ] > 0), include.vec[i] <- 1, include.vec[i] <- 0)
+      include.vec[i] <- as.integer(any(conmat[i, ] > 0))
     }
     data <- data[as.logical(include.vec), ,drop=F]
     conmat <- conmat[which(rowSums(conmat) > 0), which(colSums(conmat) > 0), drop = F]
   }
 
-  if (!exists("conmat")) stop(print("Please enter a valid connectivity matrix"))
+  if (!exists("conmat")) stop("Please enter a valid connectivity matrix")
   if (!is.null(thr)) {conmat[conmat < thr] <- 0} #lower threshold graph
-  if (!is.null(uthr)) {conmat[conmat > thr] <- 0} #upper threshold graph
+  if (!is.null(uthr)) {conmat[conmat > uthr] <- 0} #upper threshold graph
 
   #set up mesh
   vb <- get("ICBM152_mesh_vb")
@@ -104,7 +104,9 @@ brainconn3D <- function(atlas=NULL,
 
   size <- rep(0.1,length(data$index))
 
-  ifelse(node.color=="network", node.color <- as.factor(data$network), node.color <- node.color)
+  if(node.color=="network") {
+    node.color <- as.factor(data$network)
+  }
 
   if (!is.character(node.color)) {
     p <- plot_ly(data, marker = list(size = node.size),
@@ -129,7 +131,11 @@ brainconn3D <- function(atlas=NULL,
 
 
 
-  ifelse(show.legend==T, p <- layout(p, showlegend = TRUE), p <- layout(p, showlegend = FALSE))
+  if(show.legend==TRUE) {
+    p <- layout(p, showlegend = TRUE)
+  } else {
+    p <- layout(p, showlegend = FALSE)
+  }
 
 
   elength = length(edge.list)/2

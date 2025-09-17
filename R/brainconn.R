@@ -39,7 +39,6 @@ brainconn <- function(atlas,
                       background='ICBM152',
                       view ="top",
                       conmat=NULL,
-                      # interactive = F,
                       node.size=4,
                       node.color="network",
                       all.nodes=FALSE,
@@ -86,8 +85,6 @@ brainconn <- function(atlas,
       m <- get(bg)
       w <- matrix(rgb(m[,,1],m[,,2],m[,,3], m[,,4] * background.alpha), nrow=dim(m)[1])
       background <- rasterGrob(w)
-      #} else {stop(paste('please select a valid background: ', as.character(list.backgroud)))
-      #}
 
       #if no conmat is provided, build nparc x  nparc empty one
       nparc <- dim(data)[1]
@@ -215,8 +212,6 @@ brainconn <- function(atlas,
   }
 
 
-  #if interactive call build_plot_int, else call build con
-  #  source("functions/build_plot.R")
   p <- build_plot(conmat=conmat,
                   data=data,
                   background=background,
@@ -240,16 +235,5 @@ brainconn <- function(atlas,
                   bg_ymax=bg_ymax,
                   bg_ymin=bg_ymin)
 
-  #  source("functions/build_plot_int.R")
-  #if(interactive==TRUE){p <- build_plot_int(conmat, data, background, node.size=node.size, view,
-  #                                             node.color=node.color, thr=NULL, uthr=NULL,
-  #                                             edge.color=edge.color,edge.alpha=edge.alpha,
-  #                                             edge.width=edge.width,  scale.edge.width=scale.edge.width,
-  #                                             show.legend=show.legend, labels=labels, label.size=label.size,
-  #                                             include.vec=include.vec, view=view, edge.color.weighted=edge.color.weighted)}
   return(p)
-
-
-
-
 }
