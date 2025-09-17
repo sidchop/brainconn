@@ -14,5 +14,5 @@ list_atlases <- function() {
   for (a in 1:length(atlas.list)) {
     message(atlas.list[a])
   }
-  message("You can also input your own custom atlas, as along as it meets certain requirement. See vignette and use the check_atlas() function to make sure the requirements are met.")
+  message("You can also input your own custom atlas, as long as it meets certain requirements. See vignette and use the check_atlas() function to make sure the requirements are met.")
 }

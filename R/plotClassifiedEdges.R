@@ -33,10 +33,10 @@
 #           words, the number of unique edges in adj equals the number of
 #           edges in the upper triangle (including the diagonal) of out.
 #
-# outPC     - The out matrix normalized by the number of unqiue edge to
+# outPC     - The out matrix normalized by the number of unique edges to
 #           yield the proportion of edges for each category.
 #
-# outNorm   - this matrix is normalized separetly for each pair of regions
+# outNorm   - this matrix is normalized separately for each pair of regions
 #           by the total number of edges between them. The values thus
 #           represent the connection density of the subgraph of nodes
 #           belonging to a given pair of modules. This normalization
@@ -53,7 +53,7 @@
 # May 2020 (Sidhant Chopra)
 # 1) Converted function from matlab to r
 #
-#2)Fixed the normalisation factor for outNorm matrix. Previously, the normalisaion
+#2)Fixed the normalisation factor for outNorm matrix. Previously, the normalisation
 # was taking into account total number of edges between AND within two nodes (i.e. nSubTot = length(inds_i) + length(inds_j) ;
 # (nSubTot^2 - nSubTot)/2). For between network connections, the normFactor should probably be computed by multiplying the numbers of regions
 # in each pair of networks: length(inds_i)*length(inds_j) and for within network connections using length(inds_i)^2)-(length(inds_i))/2.
@@ -91,7 +91,7 @@ plotClassifiedEdges <- function(adj, ids, labels){
 
       normFactor <- length(index_i)*length(index_j)
 
-      if(i==j) {normFactor <- ((length(index_i)^2)-length(index_i))/2} #remove diagnal elements with computing within network connections
+      if(i==j) {normFactor <- ((length(index_i)^2)-length(index_i))/2} #remove diagonal elements when computing within network connections
 
       outNorm[i,j] <- tempsum/normFactor
       outNorm[j,i] <- tempsum/normFactor

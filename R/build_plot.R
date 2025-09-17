@@ -100,20 +100,13 @@ build_plot <- function(conmat,
   }
 
 
-  #is matrix directed (i.e. symetric)
-  ifelse(isSymmetric.matrix(conmat)==TRUE,
-         directed <- FALSE,
-         directed <- TRUE)
+  #is matrix directed (i.e. symmetric)
+  directed <- !isSymmetric.matrix(conmat)
 
-  #is matrix weighed
-  ifelse(all(conmat %in% c(0,1))==TRUE,
-         weighted <- FALSE,
-         weighted <- TRUE)
+  #is matrix weighted
+  weighted <- !all(conmat %in% c(0,1))
 
-  #should edges be colored by weight
-  #  ifelse(edge.color=="weight", edge.color.weighted <- T, edge.color.weighted <- F)
-
-  if (!exists("conmat")) stop(print("Please enter a valid connectivity matrix"))
+  if (!exists("conmat")) stop("Please enter a valid connectivity matrix")
 
 
   if(directed == F) {
@@ -143,7 +136,6 @@ build_plot <- function(conmat,
                        edge_alpha = edge.alpha,
                        arrow = arrow(length = unit(3, 'mm')),
                        end_cap = circle((node.size/2)+0.6, 'mm'))  +
-    #  ggraph::geom_edge_loop0(aes(strength=node.size*3), color=edge.color, edge_width = edge.width, arrow = arrow(length = unit(1, 'mm'))) +
     coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
   }
 
@@ -312,19 +304,20 @@ build_plot <- function(conmat,
   if(view=="right") {
     p <- p + coord_fixed(xlim = c(-98,64), ylim = c(-44,76)) }
 
-  #set node size with degree option  #### NOT WORKING ###
-  #ifelse(node.size=="degree", node.size <- as.vector((degree(graph_from_adjacency_matrix(conmat)))*0.2), node.size <- node.size)
-
   #add nodes
   if(directed == T){
-    ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet))),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+    if(node.color=="network"){
+      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet)))
+    } else {
+      p <- p + geom_node_point(size=node.size, colour=node.color)
+    }
   }
   if(directed == F){
-    ifelse(node.color=="network",
-           p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network))),
-           p <- p + geom_node_point(size=node.size, colour=node.color))
+    if(node.color=="network"){
+      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network)))
+    } else {
+      p <- p + geom_node_point(size=node.size, colour=node.color)
+    }
   }
 
 
