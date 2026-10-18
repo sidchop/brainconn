@@ -6,3 +6,5 @@
 ^Meta$
 ^revdep$
 ^\.github$
+^docs$
+^_config\.yml$

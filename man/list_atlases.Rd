@@ -2,13 +2,18 @@
 % Please edit documentation in R/list_atlases.R
 \name{list_atlases}
 \alias{list_atlases}
-\title{Title}
+\title{List the included atlases}
 \usage{
 list_atlases()
 }
 \value{
-
+Invisibly, a character vector of atlas names.
 }
 \description{
-Title
+Prints the names of the atlases included with brainconn, which can be
+passed as the \code{atlas} argument of \code{brainconn()} and
+\code{brainconn3D()}.
+}
+\examples{
+list_atlases()
 }

@@ -4,12 +4,19 @@ export(brainconn)
 export(brainconn3D)
 export(check_atlas)
 export(list_atlases)
-import(OpenImageR)
 import(cowplot)
 import(ggplot2)
 import(ggraph)
 import(grid)
-import(igraph, except = groups)
-import(plotly, except = last_plot)
-import(scales)
+importFrom(OpenImageR,readImage)
 importFrom(grDevices,rgb)
+importFrom(igraph,
+  graph_from_adjacency_matrix,
+  set_vertex_attr
+)
+importFrom(plotly,
+  add_trace,
+  layout,
+  plot_ly
+)
+importFrom(utils,data)

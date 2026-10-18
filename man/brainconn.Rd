@@ -27,25 +27,26 @@ brainconn(
   bg_xmax = 0,
   bg_xmin = 0,
   bg_ymax = 0,
-  bg_ymin = 0
+  bg_ymin = 0,
+  hemi.labels = TRUE
 )
 }
 \arguments{
 \item{atlas}{Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}}
 
-\item{background}{'ICBM152', currently the only background option}
+\item{background}{'ICBM152' (the default), or the path to a custom background image (RGB or RGBA). A custom background cannot be used with \code{view = "ortho"}.}
 
-\item{view}{A sting to choose the view. Can be any of these: c("ortho", "top", "bottom", "left", "right")}
+\item{view}{A string to choose the view. One of \code{c("top", "bottom", "left", "right", "front", "back", "ortho")}. \code{"ortho"} combines the top, left and front views.}
 
-\item{conmat}{A adjacency matrix. Can be binary, weights, directed or undirected. see example_* data.}
+\item{conmat}{A adjacency matrix. Can be binary, weights, directed or undirected. see example_* data. If \code{NULL}, only the nodes are plotted.}
 
-\item{node.size}{A integer that determines the diameter of the nodes. Can also be a vector of integers with a length equal to the number of ROIs in the atlas}
+\item{node.size}{A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
 \item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas}
 
-\item{all.nodes}{if \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.}
+\item{all.nodes}{if \code{TRUE}, then all nodes will be shown. If \code{FALSE}, then only nodes with connecting edges will be shown.}
 
-\item{edge.color}{A string that sets the edge color. e.g. "blue".}
+\item{edge.color}{A string that sets the edge color. e.g. "blue". Can also be a ggraph edge colour scale, e.g. \code{scale_edge_color_gradient(low = "blue", high = "red")}, for use with \code{edge.color.weighted = TRUE}.}
 
 \item{edge.alpha}{Number between 0-1 to  set the transparency of the edges.}
 
@@ -53,7 +54,7 @@ brainconn(
 
 \item{edge.color.weighted}{A boolean that applies when the conmat is weighted. if \code{TRUE}, then edges will be colored according to the weight \code{FALSE}, the edges will be sized according to weight.}
 
-\item{labels}{if \code{TRUE}, ROI labels for all visible nodes will be shown. If \code{FALSE}, then no labes will be shown.}
+\item{labels}{if \code{TRUE}, ROI labels for all visible nodes will be shown. If \code{FALSE}, then no labels will be shown.}
 
 \item{show.legend}{if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown.}
 
@@ -68,12 +69,24 @@ brainconn(
 \item{label.edge.weight}{if \code{TRUE}, then the edge weight will be labels along the edge.}
 
 \item{background.alpha}{Number between 0-1 to  set the transparency of the background.}
+
+\item{bg_xmin, bg_xmax, bg_ymin, bg_ymax}{Offsets (in mm) to nudge the edges of the background image, e.g. to line up a custom background with the nodes.}
+
+\item{hemi.labels}{if \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views to mark the left and right hemispheres.}
 }
 \value{
 a ggraph object
 }
 \description{
-\code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix..
+\code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix.
+}
+\details{
+Each view shows the brain as seen from that side. In the \code{"top"} and
+\code{"back"} views the subject's left hemisphere is on the left of the
+plot; in the \code{"bottom"} and \code{"front"} views it is on the right.
+Set \code{hemi.labels = TRUE} (the default) to mark the hemispheres with
+"L" and "R". In the \code{"left"} and \code{"right"} views, nodes in the
+hemisphere nearest the viewer are drawn on top.
 }
 \examples{
 library(brainconn)

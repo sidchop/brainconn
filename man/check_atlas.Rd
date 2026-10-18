@@ -2,23 +2,23 @@
 % Please edit documentation in R/check_atlas.R
 \name{check_atlas}
 \alias{check_atlas}
-\title{Title}
+\title{Check a custom atlas}
 \usage{
 check_atlas(atlas)
 }
 \arguments{
-\item{atlas}{a .data.frame with a 4 collums named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}}
+\item{atlas}{a data.frame with at least 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}. An optional "network" column is used to colour nodes.}
 }
 \value{
-a message
+Invisibly, \code{TRUE} if the atlas passes and \code{FALSE} if it is not a data.frame. Errors if columns are missing or not numeric.
 }
 \description{
-Title
+Checks that a custom atlas meets the requirements of \code{brainconn()} and
+\code{brainconn3D()}.
 }
 \examples{
 \dontrun{
 library(brainconn)
 check_atlas(custom_atlas_example)
 }
-
 }

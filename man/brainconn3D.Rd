@@ -14,7 +14,7 @@ brainconn3D(
   edge.color = "black",
   opacity = 0.28,
   d.factor = 1.05,
-  show.legend = F,
+  show.legend = FALSE,
   thr = NULL,
   uthr = NULL
 )
@@ -22,13 +22,13 @@ brainconn3D(
 \arguments{
 \item{atlas}{Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}}
 
-\item{conmat}{A adjacency matrix. Has ti be binary and undirected (i.e. symetric). see example_* data.}
+\item{conmat}{A adjacency matrix. Can be binary, weighted, directed or undirected, see example_* data. If \code{NULL}, only the nodes are plotted.}
 
-\item{all.nodes}{f \code{TRUE}, then all nodes will be shown be hemisphere without ticks. If \code{FALSE}, then only nodes with connecting edges will be shown.}
+\item{all.nodes}{If \code{TRUE}, then all nodes will be shown. If \code{FALSE}, then only nodes with connecting edges will be shown.}
 
 \item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas}
 
-\item{node.size}{A integer that determines the diameter of the nodes. Can also be a vector of integers with a length equal to the number of ROIs in the atlas}
+\item{node.size}{A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
 \item{edge.width}{Number to set the width of the edges.}
 
@@ -36,7 +36,7 @@ brainconn3D(
 
 \item{opacity}{Number between 0-1 to  set the transparency of the mesh brain}
 
-\item{d.factor}{An int to change the distance between the nodes and brain surface.}
+\item{d.factor}{A number to change the distance between the nodes and brain surface.}
 
 \item{show.legend}{if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown}
 
@@ -48,12 +48,17 @@ brainconn3D(
 a plotly object
 }
 \description{
-\code{brainconn} plots and returns a interactive plotly object of plotted brain connectivity matrix..
+\code{brainconn3D} plots and returns a interactive plotly object of plotted brain connectivity matrix.
+}
+\details{
+Edges are drawn as straight lines between nodes. Edge weights and
+directions are not shown; any non-zero value in \code{conmat} is drawn as
+an edge.
 }
 \examples{
 \dontrun{
 library(brainconn)
-brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
+brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = FALSE)
 }
 }
 \author{
