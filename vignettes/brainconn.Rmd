@@ -19,6 +19,8 @@ The minimum user input requirements for the `brainconn()` function is a connecti
 
 By default, the `view` is a top view, the `node.color` is by network.
 
+In the `top`, `bottom`, `front` and `back` views the subject's left hemisphere is always on the left of the plot. "L" and "R" labels mark the hemispheres in these views; turn them off with `hemi.labels = FALSE`.
+
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
 library(brainconn)
 x <- example_unweighted_undirected
@@ -81,7 +83,7 @@ brainconn(atlas ="schaefer300_n7", conmat=x, node.size = d)
 
 
 ## Basic use of `brainconn3D()`
-Currently, `brainconn3D()` is only able to visualize binary undirected connectivity matrices. 
+`brainconn3D()` accepts the same kinds of connectivity matrices as `brainconn()`. Every non-zero edge is drawn as a line; edge weights and directions are not shown in 3D. 
 
 ```{r, out.width='50%',  warning=FALSE, message=FALSE}
 p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)

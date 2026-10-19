@@ -1,36 +1,29 @@
-#' Title
+#' Check a custom atlas
 #'
-#' @param atlas a .data.frame with a 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}
-#' @return a message
-#'@export
+#' Checks that a custom atlas meets the requirements of \code{brainconn()} and
+#' \code{brainconn3D()}.
+#'
+#' @param atlas a data.frame with at least 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}. An optional "network" column is used to colour nodes.
+#' @return Invisibly, \code{TRUE} if the atlas passes and \code{FALSE} if it is not a data.frame. Errors if columns are missing or not numeric.
+#' @export
 #' @examples
 #' \dontrun{
-#'library(brainconn)
-#'check_atlas(custom_atlas_example)
-#'}
-#'
-#===================================
-# This function checks user input atlas to make sure it will play nice with the
-# brainconn and brainconn3d functions.
-#===================================
+#' library(brainconn)
+#' check_atlas(custom_atlas_example)
+#' }
 check_atlas <- function(atlas) {
-  if(!is.data.frame(atlas)) {
-    message("Please convert atlas to a dataframe (e.g. as.dataframe())")
-    return(invisible(NULL))
+  if (!is.data.frame(atlas)) {
+    message("Please convert atlas to a dataframe (e.g. as.data.frame())")
+    return(invisible(FALSE))
   }
-  essential_cols <-  c("ROI.Name", "x.mni", "y.mni", "z.mni")
-  col.check <- essential_cols %in% names(atlas)
-  pass <- !any(col.check == FALSE)
-  if(!pass){
-    stop(paste("File missing", essential_cols[which(col.check == FALSE)], "column."))
+  essential_cols <- c("ROI.Name", "x.mni", "y.mni", "z.mni")
+  missing_cols <- setdiff(essential_cols, names(atlas))
+  if (length(missing_cols) > 0) {
+    stop(paste("File missing", missing_cols, "column."))
   }
-  pass <- is.integer(atlas$x.mni) & is.integer(atlas$y.mni) & is.integer(atlas$z.mni)
-  if(!pass){
-    stop("x.mni, y.mni and z.mni columns need to be integers.")
+  if (!all(vapply(atlas[c("x.mni", "y.mni", "z.mni")], is.numeric, logical(1)))) {
+    stop("x.mni, y.mni and z.mni columns need to be numeric.")
   }
-
-  if(pass){
-    message("Atlas fits brainconn specifications and should work with brainconn() and brainconn3d().")
-  }
+  message("Atlas fits brainconn specifications and should work with brainconn() and brainconn3D().")
+  invisible(TRUE)
 }
-

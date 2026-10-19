@@ -7,34 +7,32 @@
 build_plot(
   conmat,
   data,
-  data.row = NULL,
-  data.col = NULL,
   background,
+  view,
   node.size,
   node.color = "network",
-  thr = NULL,
-  uthr = NULL,
-  view,
-  edge.color,
-  edge.alpha,
-  edge.width,
-  show.legend,
-  label.size,
-  labels,
-  include.vec = NULL,
-  scale.edge.width,
-  edge.color.weighted,
-  label.edge.weight,
+  edge.color = "black",
+  edge.alpha = 0.8,
+  edge.width = 1,
+  edge.color.weighted = FALSE,
+  scale.edge.width = NULL,
+  show.legend = TRUE,
+  labels = FALSE,
+  label.size = 1.5,
+  label.edge.weight = FALSE,
+  hemi.labels = TRUE,
   bg_xmin = 0,
-  bg_ymin = 0,
   bg_xmax = 0,
-  bg_ymax = 0,
-  ...
+  bg_ymin = 0,
+  bg_ymax = 0
 )
 }
 \description{
-returns a ggraph object of plotted brain connectivity matrix
+Returns a ggraph object of a plotted brain connectivity matrix for a
+single view. \code{conmat}, \code{data} and \code{node.size} must already
+be restricted to the nodes being plotted.
 }
 \author{
 Sidhant Chopra
 }
+\keyword{internal}

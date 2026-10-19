@@ -1,359 +1,199 @@
+# Geometry of each 2D view. The subject's left hemisphere is always on the
+# left of the plot: the bottom and front views are shown mirrored (as if seen
+# through the brain from the top or back), with the background image flipped
+# to match.
+#   x, y, depth: MNI axis plotted on each screen axis (depth points towards
+#                the viewer, so nodes nearer the viewer are drawn on top)
+#   sign:        multiplier for x, y and depth
+#   mirror:      flip the background image left-right
+#   bg:          extent of the background image (xmin, xmax, ymin, ymax)
+#   xlim, ylim:  plot limits
+#   label_y:     screen y of the "L"/"R" hemisphere labels (NA = no labels)
+view_geometry <- list(
+  top    = list(x = "x.mni", y = "y.mni", depth = "z.mni", sign = c( 1, 1,  1),
+                mirror = FALSE, bg = c(-75, 70, -107, 73),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 65),
+  bottom = list(x = "x.mni", y = "y.mni", depth = "z.mni", sign = c( 1, 1, -1),
+                mirror = TRUE, bg = c(-70, 70, -107, 73),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 65),
+  front  = list(x = "x.mni", y = "z.mni", depth = "y.mni", sign = c( 1, 1,  1),
+                mirror = TRUE, bg = c(-70, 70, -48, 80),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 75),
+  back   = list(x = "x.mni", y = "z.mni", depth = "y.mni", sign = c( 1, 1, -1),
+                mirror = FALSE, bg = c(-70, 70, -48, 80),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 75),
+  left   = list(x = "y.mni", y = "z.mni", depth = "x.mni", sign = c(-1, 1, -1),
+                mirror = FALSE, bg = c(-72, 103, -50, 77),
+                xlim = c(-64, 98), ylim = c(-44, 76), label_y = NA),
+  right  = list(x = "y.mni", y = "z.mni", depth = "x.mni", sign = c( 1, 1,  1),
+                mirror = FALSE, bg = c(-103, 72, -50, 77),
+                xlim = c(-98, 64), ylim = c(-44, 76), label_y = NA)
+)
+
+# Screen coordinates (x, y, depth) of each atlas region in a given view.
+view_coords <- function(data, view) {
+  g <- view_geometry[[view]]
+  data.frame(x     = data[[g$x]]     * g$sign[1],
+             y     = data[[g$y]]     * g$sign[2],
+             depth = data[[g$depth]] * g$sign[3])
+}
+
 #' workhorse function for \code{brainconn()}
 #'
-#' returns a ggraph object of plotted brain connectivity matrix
+#' Returns a ggraph object of a plotted brain connectivity matrix for a
+#' single view. \code{conmat}, \code{data} and \code{node.size} must already
+#' be restricted to the nodes being plotted.
 #' @author Sidhant Chopra
 #' @import ggraph
 #' @import ggplot2
 #' @import grid
-
-
-
-
+#' @importFrom igraph graph_from_adjacency_matrix set_vertex_attr
+#' @keywords internal
 build_plot <- function(conmat,
                        data,
-                       data.row=NULL,
-                       data.col=NULL,
                        background,
-                       node.size,
-                       node.color="network",
-                       thr=NULL,
-                       uthr=NULL,
                        view,
-                       edge.color,
-                       edge.alpha,
-                       edge.width,
-                       show.legend,
-                       label.size,
-                       labels,
-                       include.vec=NULL,
-                       scale.edge.width,
-                       edge.color.weighted,
-                       label.edge.weight,
-                       bg_xmin=0,
-                       bg_ymin=0,
-                       bg_xmax=0,
-                       bg_ymax=0,
-                       ...) {
+                       node.size,
+                       node.color = "network",
+                       edge.color = "black",
+                       edge.alpha = 0.8,
+                       edge.width = 1,
+                       edge.color.weighted = FALSE,
+                       scale.edge.width = NULL,
+                       show.legend = TRUE,
+                       labels = FALSE,
+                       label.size = 1.5,
+                       label.edge.weight = FALSE,
+                       hemi.labels = TRUE,
+                       bg_xmin = 0,
+                       bg_xmax = 0,
+                       bg_ymin = 0,
+                       bg_ymax = 0) {
 
+  geom <- view_geometry[[view]]
+  coords <- view_coords(data, view)
 
-  if (view =="top"){
-    x.mni<-data$x.mni
-    y.mni<-data$y.mni
-    depth <- data$z.mni
-    xmax = 70     + bg_xmax
-    xmin = -75    + bg_xmin
-    ymax = 73     + bg_ymax
-    ymin = -107   + bg_ymin
+  # Draw nodes furthest from the viewer first, so the near hemisphere is on top
+  ord <- order(coords$depth)
+  coords <- coords[ord, , drop = FALSE]
+  data <- data[ord, , drop = FALSE]
+  conmat <- conmat[ord, ord, drop = FALSE]
+  if (length(node.size) > 1) node.size <- node.size[ord]
+
+  directed <- !isSymmetric(conmat)
+  weighted <- !all(conmat %in% c(0, 1))
+
+  g <- graph_from_adjacency_matrix(conmat,
+                                   mode = if (directed) "directed" else "undirected",
+                                   weighted = if (weighted) TRUE else NULL,
+                                   diag = TRUE)
+  g <- set_vertex_attr(g, "ROI.Name", value = as.character(data$ROI.Name))
+  if (identical(node.color, "network")) {
+    g <- set_vertex_attr(g, "network", value = as.factor(data$network))
+  }
+  layout <- create_layout(g, layout = "manual", x = coords$x, y = coords$y)
+
+  # A ggplot2 scale can be passed as edge.color, e.g. scale_edge_color_gradient()
+  edge.scale <- NULL
+  if (inherits(edge.color, "ggproto")) {
+    edge.scale <- edge.color
+    edge.color <- "black"
   }
 
-  if (view =="bottom"){
-    x.mni<-data$x.mni*-1
-    y.mni<-data$y.mni
-    depth <- data$z.mni*-1
-    xmax = 70     + bg_xmax
-    xmin = -70    + bg_xmin
-    ymax = 73     + bg_ymax
-    ymin = -107   + bg_ymin
+  # Edge aesthetics: weight maps to colour or width, or neither if unweighted
+  edge.mapping <- list()
+  edge.params <- list(edge_alpha = edge.alpha)
+  if (weighted && edge.color.weighted) {
+    edge.mapping$edge_colour <- quote(weight)
+  } else {
+    edge.params$edge_colour <- edge.color
+  }
+  if (weighted && !edge.color.weighted) {
+    edge.mapping$edge_width <- quote(weight)
+  } else {
+    edge.params$edge_width <- edge.width
+  }
+  label.params <- list()
+  if (weighted && label.edge.weight) {
+    edge.mapping$label <- quote(round(weight, 3))
+    label.params <- list(label_size = 2, fontface = "bold")
   }
 
-  if (view =="front"){
-    x.mni<-data$x.mni*-1
-    y.mni<-data$z.mni
-    depth <- data$y.mni
-    xmax = 70     + bg_xmax
-    xmin = -70    + bg_xmin
-    ymax = 80     + bg_ymax
-    ymin = -48    + bg_ymin
+  p <- ggraph(layout) +
+    annotation_custom(background,
+                      xmin = geom$bg[1] + bg_xmin, xmax = geom$bg[2] + bg_xmax,
+                      ymin = geom$bg[3] + bg_ymin, ymax = geom$bg[4] + bg_ymax)
+
+  if (directed) {
+    arrow.head <- arrow(length = unit(3, "mm"))
+    p <- p + do.call(geom_edge_parallel,
+                     c(list(mapping = do.call(aes, edge.mapping),
+                            arrow = arrow.head,
+                            end_cap = circle(max(node.size) / 2 + 0.6, "mm")),
+                       edge.params, label.params,
+                       if (length(label.params)) list(angle_calc = "along",
+                                                      label_dodge = unit(2.5, "mm"))))
+    if (any(diag(conmat) != 0)) {
+      p <- p + do.call(geom_edge_loop,
+                       c(list(mapping = do.call(aes, edge.mapping),
+                              arrow = arrow.head,
+                              strength = max(node.size) * 3),
+                         edge.params, label.params,
+                         if (length(label.params)) list(angle_calc = "none",
+                                                        label_dodge = unit(6, "mm"),
+                                                        vjust = -1)))
+    }
+  } else {
+    p <- p + do.call(geom_edge_link,
+                     c(list(mapping = do.call(aes, edge.mapping)),
+                       edge.params, label.params,
+                       if (length(label.params)) list(angle_calc = "along",
+                                                      label_dodge = unit(2.5, "mm"))))
   }
 
-
-  if (view =="back"){
-    x.mni<-data$x.mni
-    y.mni<-data$z.mni
-    depth <- data$y.mni*-1
-    xmax = 70    + bg_xmax
-    xmin = -70   + bg_xmin
-    ymax = 80    + bg_ymax
-    ymin = -48   + bg_ymin
-  }
-
-
-  if (view =="left"){
-    x.mni<-data$y.mni*-1
-    y.mni<-data$z.mni
-    depth <- data$x.mni
-    xmax = 103   + bg_xmax
-    xmin = -72   + bg_xmin
-    ymax = 77    + bg_ymax
-    ymin = -50   + bg_ymin
-  }
-
-  ##fix below
-  if (view =="right"){
-    x.mni<-data$y.mni
-    y.mni<-data$z.mni
-    depth <- data$x.mni*-1
-    xmax = 103   + bg_xmax
-    xmin = -140  + bg_xmin
-    ymax = 77    + bg_ymax
-    ymin = -50   + bg_ymin
-  }
-
-
-  #is matrix directed (i.e. symmetric)
-  directed <- !isSymmetric.matrix(conmat)
-
-  #is matrix weighted
-  weighted <- !all(conmat %in% c(0,1))
-
-  if (!exists("conmat")) stop("Please enter a valid connectivity matrix")
-
-
-  if(directed == F) {
-    conmat[upper.tri(conmat)] <- 0 #only take bottom tri of matrix to stop the edge labels being plotted twice
-    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
-    layout$x <- x.mni
-    layout$y <- y.mni
-  }
-
-
-
-  if(directed == T) {
-    layout <- create_layout(graph = conmat, layout ="stress", circular=TRUE)
-    layout$x <- x.mni
-    layout$y <- y.mni
-    layout$facet <- include.vec
-  }
-
-
-  #make graph
-
-  if(directed == T && weighted==F){
-    p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(color=edge.color,
-                       edge_width = edge.width,
-                       edge_alpha = edge.alpha,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle((node.size/2)+0.6, 'mm'))  +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-  if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==F){p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(aes(width=weight),
-                       color=edge.color,
-                       edge_alpha = edge.alpha,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle(node.size/2, 'mm'))  +
-    geom_edge_loop0(aes(strength=node.size*3, width=weight),
-                    color=edge.color,
-                    edge_alpha = edge.alpha,
-                    arrow = arrow(length = unit(3, 'mm'))) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-
-  }
-
-  if(directed == T && weighted==T && edge.color.weighted==F && label.edge.weight==T){p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(aes(width=weight, label=round(weight,3)),
-                       color=edge.color,
-                       edge_alpha = edge.alpha,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle(node.size/2, 'mm'),
-                       angle_calc = 'along',
-                       alpha = 0,
-                       label_dodge = unit(2.5, 'mm'),
-                       label_size = 2,
-                       fontface = "bold")  +
-    geom_edge_loop0(aes(strength=node.size*3, width=weight, label=round(weight,3)),
-                    color=edge.color,
-                    edge_alpha = edge.alpha,
-                    arrow = arrow(length = unit(3, 'mm')),
-                    angle_calc = 'none',
-                    alpha = 0,
-                    label_dodge = unit(6, 'mm'),
-                    label_size = 2,
-                    vjust = -1,
-                    fontface = "bold") +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-
-  }
-
-  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==F){
-    p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(aes(color=weight),
-                       edge_alpha = edge.alpha,
-                       edge_width = edge.width,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle(node.size/2, 'mm')) +
-    geom_edge_loop(aes(strength=node.size*3, color=weight),
-                   edge_width = edge.width,
-                   edge_alpha = edge.alpha,
-                   arrow = arrow(length = unit(3, 'mm'))) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-
-  }
-
-
-
-  if(directed == T && weighted==T && edge.color.weighted==T && label.edge.weight==T){p <- ggraph(layout) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_parallel(aes(color=weight, label=round(weight,3)),
-                       #color=edge.color,
-                       edge_alpha = edge.alpha,
-                       edge_width = edge.width,
-                       arrow = arrow(length = unit(3, 'mm')),
-                       end_cap = circle(node.size/2, 'mm'),
-                       angle_calc = 'along',
-                       alpha = 0,
-                       label_dodge = unit(2.5, 'mm'),
-                       label_size = 2,
-                       fontface = "bold") +
-    geom_edge_loop(aes(strength=node.size*3, color=weight, label=round(weight,3)),
-                   edge_width = edge.width,
-                   edge_alpha = edge.alpha,
-                   arrow = arrow(length = unit(3, 'mm')),
-                   angle_calc = 'none',
-                   alpha = 0,
-                   label_dodge = unit(6, 'mm'),
-                   label_size = 2,
-                   vjust = -1,
-                   fontface = "bold") +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-
-  }
-
-
-
-  if(directed == F && weighted==F){p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(color=edge.color,
-                   edge_width = edge.width,
-                   edge_alpha = edge.alpha) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-
-
-
-  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==F){
-    p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(aes(width=weight),
-                   color=edge.color,
-                   edge_alpha = edge.alpha) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-  if(directed == F && weighted==T && edge.color.weighted==F && label.edge.weight==T){
-    p <- ggraph(layout, circular = FALSE) +
-      annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-      geom_edge_link(aes(width=weight, label=round(weight,3)),
-                     color=edge.color,
-                     edge_alpha = edge.alpha,
-                     angle_calc = 'along',
-                     alpha = 0,
-                     label_dodge = unit(2.5, 'mm'),
-                     label_size = 2,
-                     fontface = "bold") +
-      coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-
-
-  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==F){
-    p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(aes(colour=weight),
-                   edge_width = edge.width,
-                   edge_alpha = edge.alpha) +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-  if(directed == F && weighted==T && edge.color.weighted==T && label.edge.weight==T){
-    p <- ggraph(layout, circular = FALSE) +
-    annotation_custom(background, xmax = xmax ,xmin = xmin , ymax = ymax , ymin = ymin ) +
-    geom_edge_link(aes(colour=weight, label=round(weight,3)),
-                   edge_width = edge.width,
-                   edge_alpha = edge.alpha,
-                   angle_calc = 'along',
-                   alpha = 0,
-                   label_dodge = unit(2.5, 'mm'),
-                   label_size = 2,
-                   fontface = "bold") +
-    coord_fixed(xlim = c(-70,70), ylim = c(-107,73))
-  }
-
-
-
-
-
-  ##scale edge weight for weighted networks
-  if (weighted==T && !is.null(scale.edge.width)){
+  if (!is.null(edge.scale)) p <- p + edge.scale
+  if (weighted && !edge.color.weighted && !is.null(scale.edge.width)) {
     p <- p + scale_edge_width(range = scale.edge.width)
   }
 
-
-
-
-  #adjust xylim for left and right views --- probably can get rid of this with correct inital placement ratios
-  if(view=="left") {
-    p <- p + coord_fixed(xlim = c(-64,98), ylim = c(-44,76)) }
-  if(view=="right") {
-    p <- p + coord_fixed(xlim = c(-98,64), ylim = c(-44,76)) }
-
-  #add nodes
-  if(directed == T){
-    if(node.color=="network"){
-      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network), filter = as.logical(facet)))
-    } else {
-      p <- p + geom_node_point(size=node.size, colour=node.color)
-    }
-  }
-  if(directed == F){
-    if(node.color=="network"){
-      p <- p + geom_node_point(size=node.size, aes(colour=as.factor(data$network)))
-    } else {
-      p <- p + geom_node_point(size=node.size, colour=node.color)
-    }
+  if (identical(node.color, "network")) {
+    p <- p + geom_node_point(aes(colour = network), size = node.size)
+  } else {
+    p <- p + geom_node_point(size = node.size, colour = node.color)
   }
 
-
-  ## add labs
-  if(directed == T && labels==T){
-    p <- p + geom_node_text(aes(label = data$ROI.Name, filter = as.logical(facet)),
-                            size=label.size, repel=TRUE,
-                            nudge_x = node.size+2, nudge_y = node.size)
+  if (labels) {
+    p <- p + geom_node_text(aes(label = ROI.Name),
+                            size = label.size, repel = TRUE,
+                            nudge_x = max(node.size) + 2, nudge_y = max(node.size))
   }
 
-
-  if (directed == F && labels==T){
-    p <- p + geom_node_text(aes(label = data$ROI.Name),
-                            size=label.size, repel=TRUE,
-                            nudge_x = node.size+2, nudge_y = node.size)
+  if (hemi.labels && !is.na(geom$label_y)) {
+    p <- p + annotate("text", x = c(-65, 65), y = geom$label_y,
+                      label = c("L", "R"), fontface = "bold", size = 4)
   }
 
-  #remove gridlines
-  p <- p + theme_bw() +
+  p <- p + coord_fixed(xlim = geom$xlim, ylim = geom$ylim) +
+    theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.border = element_blank(),
           panel.background = element_blank(),
-          axis.title.x=element_blank(),
-          axis.text.x=element_blank(),
-          axis.ticks.x=element_blank(),
-          axis.title.y =element_blank(),
-          axis.text.y=element_blank(),
-          axis.ticks.y=element_blank(),
+          axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
 
-    )
-  #legend
-  if (show.legend==F){p <- p + theme(legend.position="none")}
-  if (show.legend==T){p <- p + scale_color_discrete(name="Network")}
-
+  if (show.legend) {
+    if (identical(node.color, "network")) p <- p + labs(colour = "Network")
+  } else {
+    p <- p + theme(legend.position = "none")
+  }
 
   p
-
 }
+
+# Column names used in aes() above, declared to avoid R CMD check notes
+utils::globalVariables(c("weight", "network", "ROI.Name"))
