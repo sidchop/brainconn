@@ -32,6 +32,14 @@
   (`level = "network"`, with `values = TRUE` to print them), one triangle
   (`triangle`), a second matrix in the other triangle (`conmat2`), and a 45
   degree "diamond" view (`diamond = TRUE`).
+* `brainconn_circle()` draws chord diagrams of connectivity within and
+  between networks: network sectors in the standard network colours, ribbons
+  coloured by value, `top`/`thr` to keep the strongest links, and an optional
+  outer ring of network groups (`group`). Palettes include `"bkr"` and
+  `"bwr"`, which every brainconn plot now accepts.
+* The Schaefer 17-network atlases gain a `network7` column with the Yeo 7
+  network of each region, for grouping (e.g.
+  `brainconn_circle(group = "network7")`).
 * `network_matrix()` summarises a region x region matrix into a network x
   network matrix (mean, sum, count, density, median or any function), or a
   smoothed region x region matrix with `full = TRUE`. It replaces the

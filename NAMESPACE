@@ -3,6 +3,7 @@
 export(brainconn)
 export(brainconn2d)
 export(brainconn3D)
+export(brainconn_circle)
 export(brainconn_matrix)
 export(check_atlas)
 export(list_atlases)
