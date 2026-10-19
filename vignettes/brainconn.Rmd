@@ -141,6 +141,39 @@ p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, 
 p
 ```
 
+## Connectivity matrices
+
+`brainconn_matrix()` plots a region x region matrix as a heatmap with the regions grouped by network. Coloured strips and labels mark the networks, and lines mark the borders between them. Signed values get a blue-white-red scale centred on zero. `example_fc_schaefer300` is a simulated functional connectivity matrix for the `schaefer300_n7` atlas.
+
+```{r, fig.width=8, fig.height=7, out.width='70%'}
+x <- example_fc_schaefer300
+brainconn_matrix(x, atlas = "schaefer300_n7")
+```
+
+`smooth = TRUE` replaces each cell with the mean of its pair of networks, `triangle` shows only the `"lower"` or `"upper"` half, and `diamond = TRUE` rotates the lower triangle by 45 degrees.
+
+```{r, fig.width=8, fig.height=7, out.width='70%'}
+brainconn_matrix(x, atlas = "schaefer300_n7", smooth = TRUE, triangle = "lower")
+```
+
+```{r, fig.width=10, fig.height=6, out.width='80%'}
+brainconn_matrix(x, atlas = "schaefer300_n7", diamond = TRUE)
+```
+
+With `level = "network"` the matrix is summarised to one value per pair of networks (by default the mean; also `"sum"`, `"count"`, `"density"` or `"median"`). A second matrix can be shown in the upper triangle with `conmat2`, e.g. negative and positive values side by side:
+
+```{r, fig.width=8, fig.height=7, out.width='70%'}
+brainconn_matrix(x, atlas = "schaefer300_n7", level = "network", values = TRUE)
+brainconn_matrix(pmin(x, 0), conmat2 = pmax(x, 0), atlas = "schaefer300_n7",
+                 level = "network")
+```
+
+The summaries themselves come from `network_matrix()`, which is useful for analysis too, e.g. counting the edges of a thresholded network within and between networks:
+
+```{r}
+network_matrix(example_unweighted_undirected, "schaefer300_n7", fun = "count")
+```
+
 ## Using custom atlases
 
 To use you own atlas, you will require a data.frame with a minimum of four column: "ROI.name", "x.mni", "y.mni", "z.mni". You can also include a "network" column for node-coloring purposes. The x y and z.mni columns are the centroid coordinates for each roi in MNI space. These coordinates will sometimes be published with the atlas, and can also be obtained from the atlas .nii file. One way of doing this would be with FSL e.g.`fslstats roi.nii -c`.
