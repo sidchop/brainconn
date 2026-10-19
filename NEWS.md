@@ -1,3 +1,29 @@
+# brainconn (development version)
+
+## Breaking changes
+
+* `brainconn()` now draws static 3D renders in the style of BrainNet Viewer:
+  shiny sphere nodes, tube edges and a translucent glass brain, rendered with
+  the rayvertex software renderer (no OpenGL needed). It returns a ggplot
+  object. The previous 2D function is now `brainconn2d()`, unchanged. Calls to
+  `brainconn()` that use arguments only the 2D plot has (`background`,
+  `background.alpha`, `bg_*`, `label.edge.weight`, or a ggraph scale as
+  `edge.color`) are passed on to `brainconn2d()` with a warning.
+
+## New features
+
+* `brainconn()` views: `"top"`, `"bottom"`, `"left"`, `"right"`, `"front"`,
+  `"back"`, `"ortho"`, `"all"` (six panels), or any camera angle as
+  `c(azimuth, elevation)`. Edges can be sized or coloured by weight
+  (`edge.palette`, `edge.limits`); directed edges get arrowheads. The brain
+  surface can be restyled (`mesh.color`, `mesh.alpha`), removed
+  (`mesh = NULL`) or replaced with any mesh in the atlas's space (an rgl
+  `mesh3d` or a list of vertices and faces); node and edge sizes scale with
+  the mesh.
+* `network_colors()` returns the standard Yeo 7/17 network colours for
+  Yeo/Schaefer network names and common alternatives (e.g. "Frontoparietal"),
+  and evenly spaced colours otherwise.
+
 # brainconn 0.2.0
 
 ## Bug fixes

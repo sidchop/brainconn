@@ -77,18 +77,26 @@ nodes_to_keep <- function(conmat, all.nodes) {
   has_edge
 }
 
-# node.size may be a single value, one value per atlas region, or one value
-# per plotted node. Returns one value per plotted node.
-match_node_size <- function(node.size, keep) {
-  if (length(node.size) == 1 || length(node.size) == sum(keep)) {
-    return(node.size)
+# Package-level state, e.g. which one-time messages have been shown
+brainconn_env <- new.env(parent = emptyenv())
+
+# A per-node argument (e.g. node.size) may be a single value, one value per
+# atlas region, or one value per plotted node. Returns one value per plotted
+# node (or the single value).
+match_per_node <- function(x, keep, arg) {
+  if (length(x) == 1 || length(x) == sum(keep)) {
+    return(x)
   }
-  if (length(node.size) == length(keep)) {
-    return(node.size[keep])
+  if (length(x) == length(keep)) {
+    return(x[keep])
   }
-  stop("`node.size` must have length 1, the number of regions in the atlas (",
+  stop("`", arg, "` must have length 1, the number of regions in the atlas (",
        length(keep), "), or the number of plotted nodes (", sum(keep), ").",
        call. = FALSE)
+}
+
+match_node_size <- function(node.size, keep) {
+  match_per_node(node.size, keep, "node.size")
 }
 
 # Use the atlas network column for node colours if asked and available.

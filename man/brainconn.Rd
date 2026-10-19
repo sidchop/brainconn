@@ -2,13 +2,13 @@
 % Please edit documentation in R/brainconn.R
 \name{brainconn}
 \alias{brainconn}
-\title{Plots brains}
+\title{Plot brain connectivity as a 3D render}
 \usage{
 brainconn(
   atlas,
-  background = "ICBM152",
-  view = "top",
   conmat = NULL,
+  view = "top",
+  ...,
   node.size = 4,
   node.color = "network",
   all.nodes = FALSE,
@@ -16,83 +16,109 @@ brainconn(
   edge.alpha = 0.8,
   edge.width = 1,
   edge.color.weighted = FALSE,
+  edge.palette = NULL,
+  edge.limits = NULL,
+  scale.edge.width = NULL,
   labels = FALSE,
+  label.size = 2.5,
   show.legend = TRUE,
   thr = NULL,
   uthr = NULL,
-  scale.edge.width = NULL,
-  label.size = 1.5,
-  label.edge.weight = FALSE,
-  background.alpha = 1,
-  bg_xmax = 0,
-  bg_xmin = 0,
-  bg_ymax = 0,
-  bg_ymin = 0,
-  hemi.labels = TRUE
+  hemi.labels = TRUE,
+  mesh = "ICBM152",
+  mesh.color = "grey85",
+  mesh.alpha = 0.3,
+  res = 1000,
+  quality = 2,
+  bg.color = "white"
 )
 }
 \arguments{
-\item{atlas}{Either a string of one of the included atlases \code{brainconn::list_atlases()} or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}}
+\item{atlas}{Either a string of one of the included atlases (see \code{list_atlases()}) or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}.}
 
-\item{background}{'ICBM152' (the default), or the path to a custom background image (RGB or RGBA). A custom background cannot be used with \code{view = "ortho"}.}
+\item{conmat}{An adjacency matrix. Can be binary, weighted, directed or undirected; see the example_* data. If \code{NULL}, only the nodes are plotted.}
 
-\item{view}{A string to choose the view. One of \code{c("top", "bottom", "left", "right", "front", "back", "ortho")}. \code{"ortho"} combines the top, left and front views.}
+\item{view}{The view to render: one of \code{"top"}, \code{"bottom"}, \code{"left"}, \code{"right"}, \code{"front"}, \code{"back"}; \code{"ortho"} (top, left and front views together); \code{"all"} (all six views); or a numeric \code{c(azimuth, elevation)} in degrees for any other angle. Azimuth 0 is in front of the subject, 90 to their right, 180 behind and -90 to their left; elevation 90 is above and -90 below.}
 
-\item{conmat}{A adjacency matrix. Can be binary, weights, directed or undirected. see example_* data. If \code{NULL}, only the nodes are plotted.}
+\item{...}{Arguments only used by the 2D plot (see Details); when given, the call is passed on to \code{\link{brainconn2d}}.}
 
-\item{node.size}{A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
+\item{node.size}{Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
-\item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas}
+\item{node.color}{A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.}
 
-\item{all.nodes}{if \code{TRUE}, then all nodes will be shown. If \code{FALSE}, then only nodes with connecting edges will be shown.}
+\item{all.nodes}{If \code{TRUE}, all nodes are shown. If \code{FALSE}, only nodes with connecting edges are shown.}
 
-\item{edge.color}{A string that sets the edge color. e.g. "blue". Can also be a ggraph edge colour scale, e.g. \code{scale_edge_color_gradient(low = "blue", high = "red")}, for use with \code{edge.color.weighted = TRUE}.}
+\item{edge.color}{A colour for the edges, e.g. "black". Ignored when \code{edge.color.weighted = TRUE}.}
 
-\item{edge.alpha}{Number between 0-1 to  set the transparency of the edges.}
+\item{edge.alpha}{Number between 0-1 to set the transparency of the edges.}
 
-\item{edge.width}{Number to set the width of the edges.}
+\item{edge.width}{Width of the edges (relative; 1 is a tube about 1 mm wide in a human-sized brain).}
 
-\item{edge.color.weighted}{A boolean that applies when the conmat is weighted. if \code{TRUE}, then edges will be colored according to the weight \code{FALSE}, the edges will be sized according to weight.}
+\item{edge.color.weighted}{For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}); if \code{FALSE}, edge width shows the weight.}
 
-\item{labels}{if \code{TRUE}, ROI labels for all visible nodes will be shown. If \code{FALSE}, then no labels will be shown.}
+\item{edge.palette}{Colours for edge weights when \code{edge.color.weighted = TRUE}, from the lowest to the highest weight: a vector of colours, or a palette name from \code{grDevices::hcl.pals()}. The default is blue-white-red for signed weights and light-to-dark red otherwise.}
 
-\item{show.legend}{if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown.}
+\item{edge.limits}{Weights mapped to the ends of \code{edge.palette}. By default symmetric around zero for signed weights, otherwise the range of the weights.}
 
-\item{thr}{a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than the one set here will not be shown)}
+\item{scale.edge.width}{For weighted matrices with \code{edge.color.weighted = FALSE}: the range of edge widths that the weights are rescaled to. Default \code{c(0.5, 2)}.}
 
-\item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)}
+\item{labels}{If \code{TRUE}, ROI labels are shown for all plotted nodes.}
 
-\item{scale.edge.width}{If \code{edge.color.weighted=FALSE}, you can use this rescale the edge.width according to weight. e.g. \code{scale.edge.width = c(1,3)}}
+\item{label.size}{Size of the ROI labels.}
 
-\item{label.size}{If labels=TRUE then, \code{label.size} can can be set as in integer to control the size of the labels.}
+\item{show.legend}{If \code{TRUE}, show legends for the networks and (when edges are coloured by weight) the edge weights.}
 
-\item{label.edge.weight}{if \code{TRUE}, then the edge weight will be labels along the edge.}
+\item{thr}{An optional lower threshold: edges with weights below it are not shown.}
 
-\item{background.alpha}{Number between 0-1 to  set the transparency of the background.}
+\item{uthr}{An optional upper threshold: edges with weights above it are not shown.}
 
-\item{bg_xmin, bg_xmax, bg_ymin, bg_ymax}{Offsets (in mm) to nudge the edges of the background image, e.g. to line up a custom background with the nodes.}
+\item{hemi.labels}{If \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views.}
 
-\item{hemi.labels}{if \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views to mark the left and right hemispheres.}
+\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, given as an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).}
+
+\item{mesh.color}{Colour of the brain surface.}
+
+\item{mesh.alpha}{Opacity of the brain surface, from 0 (invisible) to 1 (opaque).}
+
+\item{res}{Size in pixels of the longest side of each rendered view.}
+
+\item{quality}{Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough.}
+
+\item{bg.color}{Background colour, or \code{NA} for a transparent background.}
 }
 \value{
-a ggraph object
+A ggplot object.
 }
 \description{
-\code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix.
+\code{brainconn} draws a connectivity matrix as a static 3D render: nodes
+are shiny spheres, edges are tubes, and the brain is a translucent glass
+surface, in the style of BrainNet Viewer. The result is a ggplot object, so
+it can be saved with \code{ggsave()} and combined with other plots.
 }
 \details{
 In the \code{"top"}, \code{"bottom"}, \code{"front"} and \code{"back"}
 views the subject's left hemisphere is always on the left of the plot, so
 the bottom and front views are mirror images of what a camera below or in
 front of the subject would see. \code{hemi.labels = TRUE} (the default)
-marks the hemispheres with "L" and "R". In the \code{"left"} and
-\code{"right"} views, nodes in the hemisphere nearest the viewer are drawn
-on top.
+marks the hemispheres with "L" and "R".
+
+Before brainconn 1.0.0, \code{brainconn()} drew 2D plots; that function is
+now \code{\link{brainconn2d}}. Calls that use arguments only the 2D plot
+has (\code{background}, \code{background.alpha}, \code{bg_xmin},
+\code{bg_xmax}, \code{bg_ymin}, \code{bg_ymax}, \code{label.edge.weight},
+or a ggraph scale as \code{edge.color}) are passed on to
+\code{brainconn2d()} with a warning.
 }
 \examples{
-library(brainconn)
+\donttest{
 x <- example_unweighted_undirected
-brainconn(atlas ="schaefer300_n7", conmat=x, node.size = 3, view="ortho")
+brainconn(atlas = "schaefer300_n7", conmat = x, view = "left")
+brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+          edge.color.weighted = TRUE, view = "ortho")
+}
+}
+\seealso{
+\code{\link{brainconn2d}} for 2D plots and \code{\link{brainconn3D}} for interactive 3D plots.
 }
 \author{
 Sidhant Chopra

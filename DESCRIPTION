@@ -1,6 +1,6 @@
 Package: brainconn
 Title: Plotting Tool for Brain Connectivity Data
-Version: 0.2.0
+Version: 0.2.0.9000
 Authors@R: c(person("Sidhant", "Chopra", email = "sidhantchopra4@gmail.com", role = c("aut", "cre")))
 Description: This package mainly contains two plotting functions: `brainconn()` and `brainconn3d()`, as well as data for several commonly used MNI-space brain atlases
 Depends: R (>= 3.1.0),
@@ -11,11 +11,15 @@ Imports:
     ggplot2,
     ggraph,
     cowplot,
+    ggrepel,
     grDevices,
     grid,
     igraph,
     plotly,
     OpenImageR,
+    rayvertex,
+    scales,
+    stats,
     utils
 Suggests: 
     rmarkdown,
