@@ -1,268 +1,183 @@
-# Small atlas with one node in each hemisphere, front and back, and unique names
-toy_atlas <- data.frame(
-  ROI.Name = c("L_front", "L_back", "R_front", "R_back"),
-  x.mni = c(-40L, -40L, 40L, 40L),
-  y.mni = c(40L, -60L, 40L, -60L),
-  z.mni = c(10L, 20L, 10L, 20L),
-  network = c("A", "B", "A", "B")
+# Tests for the static 3D brainconn(). Renders are kept small so tests are quick.
+
+# Two nodes: left-anterior (red) and right-posterior (blue)
+lr_atlas <- data.frame(
+  ROI.Name = c("L_ant", "R_post"),
+  x.mni = c(-40, 40), y.mni = c(40, -40), z.mni = c(0, 0),
+  network = c("A", "B")
 )
-toy_conmat <- matrix(c(0, 1, 0, 1,
-                       1, 0, 1, 0,
-                       0, 1, 0, 0,
-                       1, 0, 0, 0), 4, 4, byrow = TRUE)
+lr_conmat <- matrix(c(0, 1, 1, 0), 2, 2)
 
-# Node positions as drawn, keyed by ROI name
-node_positions <- function(p) {
-  data.frame(x = p$data$x, y = p$data$y, row.names = p$data$ROI.Name)
+render_small <- function(...) {
+  suppressMessages(brainconn(..., res = 160, quality = 1))
 }
 
-# Does a ggplot or cowplot object draw a legend anywhere? (looks for a legend
-# title grob anywhere in the drawn grob tree)
-has_legend <- function(p) {
-  grob_names <- function(g) {
-    kids <- c(if (inherits(g, "gtable")) g$grobs, if (inherits(g, "gTree")) g$children)
-    c(g$name, unlist(lapply(kids, grob_names)))
-  }
-  any(grepl("^guide\\.title", grob_names(ggplot2::ggplotGrob(p))))
+# Centre (in pixels, from the left) of the pixels close to a colour
+color_centre_x <- function(img, rgb) {
+  d <- abs(img[, , 1] - rgb[1]) + abs(img[, , 2] - rgb[2]) + abs(img[, , 3] - rgb[3])
+  hits <- which(d < 0.6, arr.ind = TRUE)
+  mean(hits[, "col"])
 }
 
-all_views <- c("top", "bottom", "left", "right", "front", "back")
+# The rendered image of a brainconn() plot, as an RGB array with values 0-1
+image_of <- function(p) {
+  layer <- Filter(function(l) inherits(l$geom, "GeomRasterAnn"), p$layers)[[1]]
+  r <- as.matrix(layer$geom_params$raster)
+  array(t(grDevices::col2rgb(r) / 255), c(dim(r), 3))
+}
 
-test_that("check_atlas works correctly", {
-  valid_atlas <- data.frame(
-    ROI.Name = c("Region1", "Region2"),
-    x.mni = as.integer(c(10, 20)),
-    y.mni = as.integer(c(15, 25)),
-    z.mni = as.integer(c(5, 35))
-  )
-  expect_message(check_atlas(valid_atlas), "Atlas fits brainconn specifications")
-
-  # Non-integer coordinates are fine
-  valid_atlas$x.mni <- c(10.5, 20.2)
-  expect_message(check_atlas(valid_atlas), "Atlas fits brainconn specifications")
-
-  invalid_atlas <- valid_atlas[, c("ROI.Name", "x.mni", "y.mni")]
-  expect_error(check_atlas(invalid_atlas), "File missing z.mni column")
-
-  valid_atlas$x.mni <- c("a", "b")
-  expect_error(check_atlas(valid_atlas), "need to be numeric")
-
-  expect_message(check_atlas(list()), "Please convert atlas to a dataframe")
-})
-
-test_that("list_atlases lists atlases but not backgrounds or examples", {
-  atlases <- suppressMessages(list_atlases())
-  expect_true(all(c("schaefer300_n7", "aal90", "dk68") %in% atlases))
-  expect_false(any(grepl("ICBM|example", atlases)))
-})
-
-test_that("left hemisphere is on the left in top, bottom, front and back views", {
+test_that("left hemisphere is on the left of the image in top, bottom, front and back views", {
   for (v in c("top", "bottom", "front", "back")) {
-    pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = v))
-    expect_lt(pos["L_front", "x"], 0, label = v)
-    expect_gt(pos["R_front", "x"], 0, label = v)
+    p <- render_small(atlas = lr_atlas, conmat = lr_conmat, view = v, mesh = NULL,
+                      node.color = c("red", "blue"), node.size = 20, edge.alpha = 0)
+    img <- image_of(p)
+    red <- color_centre_x(img, c(1, 0, 0))
+    blue <- color_centre_x(img, c(0, 0, 1))
+    expect_lt(red, blue, label = paste(v, "red x"))
   }
 })
 
-test_that("bottom and front backgrounds are mirrored to match the nodes", {
-  img <- array(0, c(2, 3, 4))
-  img[, 1, 1] <- 1  # red in the first column only
-  img[, , 4] <- 1
-  png_file <- tempfile(fileext = ".png")
-  OpenImageR::writeImage(img, png_file)
-  first_col <- function(view) as.vector(background_grob(png_file, view)$raster[1, 1])
-  expect_equal(first_col("top"), "#FF0000FF")
-  expect_equal(first_col("back"), "#FF0000FF")
-  expect_equal(first_col("bottom"), "#000000FF")
-  expect_equal(first_col("front"), "#000000FF")
-})
-
-test_that("anterior points the correct way in each view", {
-  for (v in c("top", "bottom")) {
-    pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = v))
-    expect_gt(pos["L_front", "y"], pos["L_back", "y"])
+test_that("anterior is towards the viewer's left in the left view and right in the right view", {
+  centres <- function(v) {
+    p <- render_small(atlas = lr_atlas, conmat = lr_conmat, view = v, mesh = NULL,
+                      node.color = c("red", "blue"), node.size = 20, edge.alpha = 0)
+    img <- image_of(p)
+    c(red = color_centre_x(img, c(1, 0, 0)), blue = color_centre_x(img, c(0, 0, 1)))
   }
-  # Left view: front of the brain on the viewer's left; right view: on the right
-  pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = "left"))
-  expect_lt(pos["L_front", "x"], pos["L_back", "x"])
-  pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = "right"))
-  expect_gt(pos["R_front", "x"], pos["R_back", "x"])
+  left <- centres("left")
+  expect_lt(left[["red"]], left[["blue"]])
+  right <- centres("right")
+  expect_gt(right[["red"]], right[["blue"]])
 })
 
-test_that("hemisphere labels match the side the left hemisphere is drawn on", {
-  for (v in c("top", "bottom", "front", "back")) {
-    p <- brainconn(toy_atlas, conmat = toy_conmat, view = v)
-    text_layer <- which(vapply(p$layers, function(l) inherits(l$geom, "GeomText"), logical(1)))
-    lab <- ggplot2::ggplot_build(p)$data[[text_layer]]
-    pos <- node_positions(p)
-    expect_equal(sign(lab$x[lab$label == "L"]), sign(pos["L_front", "x"]), info = v)
-  }
-  p <- brainconn(toy_atlas, conmat = toy_conmat, hemi.labels = FALSE)
-  expect_false(any(vapply(p$layers, function(l) inherits(l$geom, "GeomText"), logical(1))))
-})
-
-test_that("nodes nearest the viewer are drawn last in side views", {
-  hemi_order <- function(view) {
-    substr(rownames(node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = view))), 1, 1)
-  }
-  expect_equal(hemi_order("left"), c("R", "R", "L", "L"))
-  expect_equal(hemi_order("right"), c("L", "L", "R", "R"))
-})
-
-test_that("edges stay attached to the right nodes after reordering", {
-  p <- brainconn(toy_atlas, conmat = toy_conmat, view = "left")
-  edges <- ggraph::get_edges()(p$data)
-  pairs <- apply(cbind(edges$node1.ROI.Name, edges$node2.ROI.Name), 1,
-                 function(x) paste(sort(x), collapse = "-"))
-  expect_setequal(pairs, c("L_back-L_front", "L_front-R_back", "L_back-R_front"))
-})
-
-test_that("brainconn builds for every example matrix and view", {
-  examples <- c("example_unweighted_undirected", "example_weighted_undirected",
-                "example_unweighted_directed", "example_weighted_directed")
-  for (ex in examples) {
-    for (v in c(all_views)) {
-      p <- brainconn("schaefer300_n7", conmat = get(ex), view = v)
-      expect_s3_class(p, "ggraph")
-      expect_no_error(ggplot2::ggplot_build(p))
-    }
-    expect_s3_class(brainconn("schaefer300_n7", conmat = get(ex), view = "ortho"), "ggplot")
+test_that("projected node positions match where nodes are drawn", {
+  for (v in list("top", "front", c(-120, 30))) {
+    cam <- fit_camera(view_camera(v), as.matrix(expand.grid(c(-60, 60), c(-60, 60), c(-60, 60))))
+    pos <- project_points(cam, as.matrix(lr_atlas[, c("x.mni", "y.mni", "z.mni")]))
+    nodes <- data.frame(x = lr_atlas$x.mni, y = lr_atlas$y.mni, z = lr_atlas$z.mni,
+                        color = c("red", "blue"), radius = 6)
+    edges <- data.frame(from = integer(0), to = integer(0), color = character(0),
+                        radius = numeric(0), directed = logical(0), reciprocal = logical(0))
+    img <- render_scene(scene_objects(NULL, "grey", 1, nodes, edges, 1), cam, res = 200,
+                        quality = 1)
+    red_col <- color_centre_x(img, c(1, 0, 0))
+    expected_col <- (pos$x[1] / cam$width + 0.5) * dim(img)[2]
+    expect_equal(red_col, expected_col, tolerance = 0.05 * dim(img)[2],
+                 label = paste(format(v), "red column"))
   }
 })
 
-test_that("brainconn weighted options build", {
-  x <- example_weighted_undirected
-  for (cw in c(TRUE, FALSE)) {
-    for (lw in c(TRUE, FALSE)) {
-      p <- brainconn("schaefer300_n7", conmat = x, edge.color.weighted = cw,
-                     label.edge.weight = lw, scale.edge.width = c(1, 3))
-      expect_no_error(ggplot2::ggplot_build(p))
-    }
-  }
-  p <- brainconn("schaefer300_n7", conmat = example_weighted_directed,
-                 edge.color.weighted = TRUE, label.edge.weight = TRUE,
-                 edge.color = ggraph::scale_edge_color_gradient(low = "blue", high = "red"))
-  expect_no_error(ggplot2::ggplot_build(p))
-})
-
-test_that("brainconn handles inputs that used to fail", {
-  # No conmat: plots all nodes
-  p <- expect_message(brainconn("schaefer300_n7"), "No edges")
-  expect_equal(nrow(p$data), 300)
-
-  # Custom atlas without a network column
-  p <- expect_message(brainconn(custom_atlas_example, conmat = example_unweighted_undirected),
-                      "no 'network' column")
-  expect_no_error(ggplot2::ggplot_build(p))
-
-  # Negative weights, including nodes whose weights sum to zero
-  m <- toy_conmat
-  m[1, 2] <- m[2, 1] <- -1
-  p <- brainconn(toy_atlas, conmat = m)
-  expect_equal(nrow(p$data), 4)
-  expect_no_error(ggplot2::ggplot_build(p))
-
-  # node.size: one per atlas region, or one per plotted node
+test_that("brainconn returns a ggplot for every view type", {
   x <- example_unweighted_undirected
-  n_plotted <- sum(rowSums(x != 0) > 0)
-  expect_no_error(ggplot2::ggplot_build(brainconn("schaefer300_n7", conmat = x, node.size = 1:300)))
-  expect_no_error(ggplot2::ggplot_build(brainconn("schaefer300_n7", conmat = x, node.size = seq_len(n_plotted))))
-  expect_error(brainconn("schaefer300_n7", conmat = x, node.size = 1:7), "node.size")
-
-  # Atlas name of a data.frame in the caller's environment
-  my_atlas <- toy_atlas
-  expect_s3_class(brainconn("my_atlas", conmat = toy_conmat), "ggraph")
+  for (v in list("top", "left", c(45, 10))) {
+    expect_s3_class(render_small(atlas = "schaefer300_n7", conmat = x, view = v), "ggplot")
+  }
+  expect_s3_class(render_small(atlas = "schaefer300_n7", conmat = x, view = "ortho"), "ggplot")
+  expect_s3_class(render_small(atlas = "schaefer300_n7", conmat = x, view = "all"), "ggplot")
+  expect_error(render_small(atlas = "schaefer300_n7", conmat = x, view = "sideways"))
+  expect_error(render_small(atlas = "schaefer300_n7", conmat = x, view = c(1, 2, 3)), "azimuth")
 })
 
-test_that("brainconn gives clear errors for bad input", {
-  expect_error(brainconn("not_an_atlas"), "not found")
-  expect_error(brainconn(toy_atlas, conmat = matrix(0, 3, 3)), "atlas has 4 regions")
-  expect_error(brainconn(toy_atlas, conmat = matrix(0, 4, 3)), "square")
-  expect_error(brainconn(toy_atlas, conmat = toy_conmat, view = "sideways"))
-  expect_error(brainconn(toy_atlas, conmat = toy_conmat, view = "ortho", background = "x.png"),
-               "ortho")
+test_that("legends show networks and, when coloured by weight, edge weights", {
+  p <- render_small(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+                    edge.color.weighted = TRUE)
+  b <- ggplot2::ggplot_build(p)
+  expect_equal(b$plot$scales$get_scales("colour")$name, "Network")
+  expect_equal(b$plot$scales$get_scales("fill")$name, "Weight")
+  expect_equal(b$plot$scales$get_scales("fill")$get_limits(), c(1, 10))
+
+  p <- render_small(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+                    show.legend = FALSE)
+  expect_length(p$layers, 2)  # raster + hemisphere labels only
 })
 
-test_that("thresholds remove edges and their nodes", {
-  m <- toy_conmat
-  m[1, 2] <- m[2, 1] <- 0.2
-  m[1, 4] <- m[4, 1] <- 0.9
-  m[2, 3] <- m[3, 2] <- 0.5
-  p <- brainconn(toy_atlas, conmat = m, thr = 0.4)
-  expect_setequal(p$data$ROI.Name, c("L_front", "L_back", "R_front", "R_back"))
-  p <- brainconn(toy_atlas, conmat = m, thr = 0.6)
-  expect_setequal(p$data$ROI.Name, c("L_front", "R_back"))
-  p <- brainconn(toy_atlas, conmat = m, uthr = 0.6)
-  expect_setequal(p$data$ROI.Name, c("L_front", "L_back", "R_front"))
+test_that("network legend follows the atlas order", {
+  p <- render_small(atlas = "schaefer300_n7", conmat = example_unweighted_undirected)
+  nets <- unique(schaefer300_n7$network)
+  shown <- ggplot2::ggplot_build(p)$plot$scales$get_scales("colour")$get_limits()
+  expect_equal(shown, nets[nets %in% shown])
 })
 
-test_that("show.legend is respected, including in ortho view", {
+test_that("calls with 2D-only arguments are passed to brainconn2d with a warning", {
   x <- example_unweighted_undirected
-  expect_true(has_legend(brainconn("schaefer300_n7", conmat = x, view = "top")))
-  expect_false(has_legend(brainconn("schaefer300_n7", conmat = x, view = "top",
-                                    show.legend = FALSE)))
-  expect_true(has_legend(brainconn("schaefer300_n7", conmat = x, view = "ortho")))
-  expect_false(has_legend(brainconn("schaefer300_n7", conmat = x, view = "ortho",
-                                    show.legend = FALSE)))
+  expect_warning(p <- brainconn("schaefer300_n7", conmat = x, background.alpha = 0.5,
+                                view = "left"),
+                 "brainconn2d")
+  expect_s3_class(p, "ggraph")
+  expect_warning(brainconn("schaefer300_n7", conmat = example_weighted_undirected,
+                           edge.color.weighted = TRUE,
+                           edge.color = ggraph::scale_edge_color_gradient()),
+                 "edge.color")
+  expect_error(brainconn("schaefer300_n7", conmat = x, foo = 1), "Unused argument")
+  expect_error(brainconn("schaefer300_n7", "ICBM152"), "brainconn2d")
 })
 
-# brainconn3D -----------------------------------------------------------------
-
-traces_3d <- function(p) {
-  b <- plotly::plotly_build(p)
-  vapply(b$x$data, function(t) paste0(t$type, ":", if (is.null(t$mode)) "" else t$mode),
-         character(1))
-}
-
-test_that("brainconn3D draws mesh, nodes and edges in one scene", {
-  p <- brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected)
-  b <- plotly::plotly_build(p)
-  types <- traces_3d(p)
-  expect_equal(sum(types == "mesh3d:"), 1)
-  expect_equal(sum(types == "scatter3d:lines"), 1)
-  expect_true(all(grepl("^(mesh3d|scatter3d:(lines|markers))", types)))
-  expect_equal(grep("^scene", names(b$x$layout), value = TRUE), "scene")
-
-  # Each undirected edge drawn once: two points per edge
-  x <- as.matrix(example_unweighted_undirected)
-  n_edges <- sum(x[upper.tri(x)] != 0)
-  edge_trace <- b$x$data[[which(types == "scatter3d:lines")]]
-  expect_equal(sum(!is.na(edge_trace$x)), 2 * n_edges)
+test_that("the 3D message is shown once per session", {
+  brainconn_env$told_3d <- NULL
+  x <- example_unweighted_undirected
+  expect_message(brainconn("schaefer300_n7", conmat = x, res = 100, quality = 1), "3D renders")
+  expect_no_message(brainconn("schaefer300_n7", conmat = x, res = 100, quality = 1))
 })
 
-test_that("brainconn3D edges start and end at node positions", {
-  p <- brainconn3D(toy_atlas, conmat = toy_conmat, d.factor = 1)
-  b <- plotly::plotly_build(p)
-  types <- traces_3d(p)
-  edge <- b$x$data[[which(types == "scatter3d:lines")]]
-  pts <- unique(na.omit(data.frame(x = edge$x, y = edge$y, z = edge$z)))
-  nodes <- unique(toy_atlas[, c("x.mni", "y.mni", "z.mni")])
-  expect_true(all(paste(pts$x, pts$y, pts$z) %in% paste(nodes$x.mni, nodes$y.mni, nodes$z.mni)))
+test_that("node sizes and colours can be given per node", {
+  x <- example_unweighted_undirected
+  n_plotted <- sum(rowSums(as.matrix(x) != 0) > 0)
+  expect_s3_class(render_small(atlas = "schaefer300_n7", conmat = x, node.size = 1:300,
+                               node.color = rep(c("red", "blue"), 150)), "ggplot")
+  expect_s3_class(render_small(atlas = "schaefer300_n7", conmat = x,
+                               node.size = seq_len(n_plotted)), "ggplot")
+  expect_error(render_small(atlas = "schaefer300_n7", conmat = x, node.color = c("red", "blue")),
+               "node.color")
 })
 
-test_that("brainconn3D handles inputs that used to fail", {
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_directed)))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_weighted_undirected, thr = 0.5)))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected, node.color = "red")))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected, all.nodes = TRUE)))
-  expect_message(p <- brainconn3D(custom_atlas_example, conmat = example_unweighted_undirected),
-                 "no 'network' column")
-  expect_no_error(plotly::plotly_build(p))
-  expect_message(p <- brainconn3D("schaefer300_n7"), "No edges")
-  expect_no_error(plotly::plotly_build(p))
+test_that("custom meshes are accepted and scale node sizes", {
+  # A small box, about the size of a rat brain (20 mm long)
+  box <- list(vertices = as.matrix(expand.grid(x = c(-5, 5), y = c(-10, 10), z = c(-4, 4))),
+              faces = rbind(c(1, 2, 4), c(1, 4, 3), c(5, 6, 8), c(5, 8, 7), c(1, 2, 6),
+                            c(1, 6, 5), c(3, 4, 8), c(3, 8, 7), c(1, 3, 7), c(1, 7, 5),
+                            c(2, 4, 8), c(2, 8, 6)))
+  rat_atlas <- data.frame(ROI.Name = c("a", "b", "c"), x.mni = c(-3, 3, 0),
+                          y.mni = c(5, 5, -6), z.mni = c(1, 1, -1), network = "N")
+  rat_conmat <- matrix(c(0, 1, 1, 1, 0, 0, 1, 0, 0), 3, 3)
+  p <- render_small(atlas = rat_atlas, conmat = rat_conmat, mesh = box)
+  expect_s3_class(p, "ggplot")
+  # The view is fitted to the mesh, not to MNI space
+  expect_lt(diff(ggplot2::ggplot_build(p)$layout$panel_params[[1]]$x.range), 15)
+
+  mesh3d <- structure(list(vb = rbind(t(box$vertices), 1), it = t(box$faces)), class = "mesh3d")
+  expect_s3_class(render_small(atlas = rat_atlas, conmat = rat_conmat, mesh = mesh3d), "ggplot")
+  expect_error(resolve_mesh(list(vertices = box$vertices, faces = box$faces + 100)), "1-based")
+  expect_error(resolve_mesh(42), "mesh")
 })
 
-test_that("brainconn3D applies thresholds before choosing nodes", {
-  m <- toy_conmat
-  m[1, 2] <- m[2, 1] <- 0.2
-  m[1, 4] <- m[4, 1] <- 0.9
-  m[2, 3] <- m[3, 2] <- 0.5
-  p <- brainconn3D(toy_atlas, conmat = m, thr = 0.6)
-  b <- plotly::plotly_build(p)
-  markers <- b$x$data[grepl("markers", traces_3d(p))]
-  expect_setequal(unlist(lapply(markers, `[[`, "text")), c("L_front", "R_back"))
+test_that("edge_table maps weights to colours, widths and directions", {
+  m <- matrix(0, 3, 3)
+  m[1, 2] <- 2; m[2, 1] <- 2; m[1, 3] <- -4; m[3, 1] <- -4
+  e <- edge_table(m, "black", 1, TRUE, NULL, NULL, NULL, unit = 1)
+  expect_equal(e$limits, c(-4, 4))
+  expect_equal(nrow(e$table), 2)
+  expect_false(any(e$table$directed))
+  # Most negative weight gets the first palette colour
+  expect_equal(e$table$color[e$table$weight == -4], e$palette[1])
+
+  e <- edge_table(m, "black", 1, FALSE, NULL, NULL, c(1, 3), unit = 1)
+  expect_equal(sort(e$table$radius * 2), c(1, 3))
+
+  d <- matrix(0, 3, 3)
+  d[1, 2] <- 1; d[2, 1] <- 1; d[2, 3] <- 1
+  e <- edge_table(d, "black", 1, FALSE, NULL, NULL, NULL, unit = 1)
+  expect_true(all(e$table$directed))
+  expect_equal(sum(e$table$reciprocal), 2)
+
+  empty <- edge_table(matrix(0, 2, 2), "black", 1, FALSE, NULL, NULL, NULL, unit = 1)
+  expect_equal(nrow(empty$table), 0)
+})
+
+test_that("a transparent background keeps the translucent brain surface", {
+  p <- render_small(atlas = "schaefer300_n7", conmat = example_unweighted_undirected,
+                    bg.color = NA)
+  layer <- Filter(function(l) inherits(l$geom, "GeomRasterAnn"), p$layers)[[1]]
+  alpha <- grDevices::col2rgb(as.matrix(layer$geom_params$raster), alpha = TRUE)[4, ] / 255
+  expect_equal(min(alpha), 0)             # background
+  expect_gt(mean(alpha > 0.05 & alpha < 0.9), 0.2)  # glass brain, partly transparent
 })
