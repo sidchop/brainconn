@@ -23,12 +23,14 @@ devtools::load_all(".")
 brainconn makes publication-ready plots of brain connectivity data in R, so that visualisation can be part of reproducible analysis scripts:
 
 - `brainconn()`: static 3D renders of brain networks in the style of BrainNet Viewer, as ggplot objects.
-- `brainconn3D()`: interactive 3D plots; hover over a node to highlight its connections.
+- `brainconn3D()`: interactive 3D plots; hover over a node to see its connections, and click it to highlight them.
 - `brainconn_matrix()`: connectivity matrices grouped by network, with network borders, smoothing and network-level summaries.
 - `brainconn_circle()`: chord diagrams of connectivity within and between networks.
 - `brainconn2d()`: 2D plots over a brain image (the `brainconn()` of versions before 1.0.0).
 
-Many commonly used atlases are included (see `list_atlases()`), and you can use your own atlas and your own brain mesh, including non-human brains.
+Many commonly used atlases are included (see `list_atlases()`), and you can use your own atlas and your own brain mesh. Rat and macaque brains are included too.
+
+Start with the [Getting started](https://sidchop.github.io/brainconn/articles/brainconn.html) guide, then [A guide to every function](https://sidchop.github.io/brainconn/articles/guide.html) and [Custom atlases and other brains](https://sidchop.github.io/brainconn/articles/other-brains.html).
 
 ## Installation
 
@@ -64,8 +66,8 @@ brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
             edge.color.weighted = TRUE, highlight = TRUE)
 ```
 
-```{r, echo = FALSE}
-knitr::include_graphics("man/img/README-gif.gif")
+```{r, echo = FALSE, out.width = "80%"}
+knitr::include_graphics("vignettes/figures/brainconn3D-highlight.png")
 ```
 
 ### Connectivity matrices
@@ -78,6 +80,18 @@ brainconn_matrix(example_fc_schaefer300, atlas = "schaefer300_n7")
 
 ```{r chord, fig.width = 8, fig.height = 7}
 brainconn_circle(example_fc_schaefer300, atlas = "schaefer300_n7")
+```
+
+### Other brains
+
+```{r macaque, fig.width = 10, fig.height = 7}
+set.seed(3)
+n <- nrow(macaque_atlas)
+conmat <- matrix(0, n, n)
+conmat[sample(which(upper.tri(conmat)), 50)] <- runif(50, -1, 1)
+conmat <- conmat + t(conmat)
+brainconn(atlas = macaque_atlas, conmat = conmat, mesh = macaque_mesh, view = "ortho",
+          edge.color.weighted = TRUE)
 ```
 
 ### Report bugs or requests

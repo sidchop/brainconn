@@ -23,7 +23,7 @@
 #' @param atlas Either a string of one of the included atlases (see \code{list_atlases()}) or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}.
 #' @param conmat An adjacency matrix. Can be binary, weighted, directed or undirected; see the example_* data. If \code{NULL}, only the nodes are plotted.
 #' @param view The view to render: one of \code{"top"}, \code{"bottom"}, \code{"left"}, \code{"right"}, \code{"front"}, \code{"back"}; \code{"ortho"} (top, left and front views together); \code{"all"} (all six views); or a numeric \code{c(azimuth, elevation)} in degrees for any other angle. Azimuth 0 is in front of the subject, 90 to their right, 180 behind and -90 to their left; elevation 90 is above and -90 below.
-#' @param node.size Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Can also be a vector with one value per ROI in the atlas, or one value per plotted node.
+#' @param node.size Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Default 8. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.
 #' @param node.color A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.
 #' @param all.nodes If \code{TRUE}, all nodes are shown. If \code{FALSE}, only nodes with connecting edges are shown.
 #' @param edge.color A colour for the edges, e.g. "black". Ignored when \code{edge.color.weighted = TRUE}.
@@ -61,7 +61,7 @@ brainconn <- function(atlas,
                       conmat = NULL,
                       view = "top",
                       ...,
-                      node.size = 4,
+                      node.size = 8,
                       node.color = "network",
                       all.nodes = FALSE,
                       edge.color = "black",
@@ -247,7 +247,7 @@ view_plot <- function(img, camera, data, show.legend, labels, label.size, hemi.l
   }
   if (hemi.labels && isTRUE(camera$hemi)) {
     p <- p + annotate("text", x = c(-w, w) * 0.92, y = h * 0.92, label = c("L", "R"),
-                      fontface = "bold", size = 4)
+                      fontface = "bold", size = 6)
   }
   if (show.legend) p <- add_legends(p, network.colors, edges)
   p

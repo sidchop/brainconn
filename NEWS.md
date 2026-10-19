@@ -12,6 +12,7 @@
 
 ## New features
 
+* `brainconn()` defaults to `node.size = 8`; "L" and "R" labels are larger.
 * `brainconn()` views: `"top"`, `"bottom"`, `"left"`, `"right"`, `"front"`,
   `"back"`, `"ortho"`, `"all"` (six panels), or any camera angle as
   `c(azimuth, elevation)`. Edges can be sized or coloured by weight
@@ -20,12 +21,16 @@
   (`mesh = NULL`) or replaced with any mesh in the atlas's space (an rgl
   `mesh3d` or a list of vertices and faces); node and edge sizes scale with
   the mesh.
-* `brainconn3D(highlight = TRUE)`: hovering over a node highlights its edges
-  and neighbours and greys out the rest; clicking a node keeps it highlighted.
-  Node tooltips now show the network, degree, strength and strongest
-  connections. `brainconn3D()` also gains `edge.color.weighted` (with
-  `edge.palette` and `edge.limits`) and `mesh`, and colours networks with
-  `network_colors()`.
+* `brainconn3D()` draws nodes as shaded spheres that grow and shrink as you
+  zoom (`node.size` is now in mm, as in `brainconn()`, default 8). Hovering
+  over a node shows its network, degree, strength and strongest connections,
+  including nodes inside the brain surface, which plotly's own hover could not
+  reach. With `highlight = TRUE`, clicking a node keeps its edges and
+  neighbours and fades everything else; click it again, click elsewhere or
+  press Escape to show everything. `brainconn3D()` also gains
+  `edge.color.weighted` (with `edge.palette` and `edge.limits`) and `mesh`,
+  colours networks with `network_colors()`, and uses a simplified brain
+  surface, so pages are smaller and rotate faster.
 * `brainconn_matrix()` plots connectivity matrices with regions grouped by
   network: coloured network strips and labels, borders between networks,
   within-network smoothing (`smooth = TRUE`), network-level summaries
@@ -46,6 +51,9 @@
   unexported `plotClassifiedEdges()`.
 * New dataset `example_fc_schaefer300`: a simulated, dense, signed functional
   connectivity matrix for `schaefer300_n7`.
+* Rat and macaque brains are included: `rat_mesh` and `rat_atlas` (Waxholm
+  Space atlas of the Sprague Dawley rat, v4; 66 regions) and `macaque_mesh` and
+  `macaque_atlas` (NIMH Macaque Template v2 with CHARM level 2; 34 regions).
 * `read_brain_mesh()` reads brain surfaces in GIfTI, FreeSurfer, PLY, OBJ,
   STL, VTK, OFF and other formats (via the freesurferformats package), and
   combines separate hemispheres. Mesh files can also be passed straight to
@@ -68,8 +76,10 @@
 ## Documentation and infrastructure
 
 * Every included dataset is documented, with references for the atlases.
-* The vignette covers all functions, including custom meshes, and the README
-  has a new gallery.
+* Three vignettes: "Getting started" (focused on `brainconn()`, with a quick
+  look at everything else), "A guide to every function" (step-by-step
+  examples), and "Custom atlases and other brains" (your own atlas or mesh, and
+  the rat and macaque brains). The README has a new gallery.
 * New R CMD check workflow, an updated pkgdown workflow and a pkgdown
   reference index.
 

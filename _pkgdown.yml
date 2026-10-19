@@ -31,8 +31,23 @@ reference:
   - shen_atlases
   - stages_study
   - custom_atlas_example
+- title: Other brains
+  contents:
+  - rat_brain
+  - macaque_brain
 - title: Example data and brain surface
   contents:
   - example_matrices
   - example_fc_schaefer300
   - ICBM152
+
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - brainconn
+- title: Guides
+  navbar: Guides
+  contents:
+  - guide
+  - other-brains

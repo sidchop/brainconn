@@ -12,6 +12,7 @@ Depends:
     ggraph
 License: MIT + file LICENSE
 LazyData: true
+LazyDataCompression: xz
 Imports: 
     ggplot2,
     cowplot,
@@ -28,6 +29,7 @@ Imports:
     tools,
     utils
 Suggests: 
+    chromote,
     freesurferformats,
     gifti,
     jsonlite,
