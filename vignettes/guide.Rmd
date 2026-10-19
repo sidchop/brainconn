@@ -1,0 +1,226 @@
+---
+title: "A guide to every function"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{A guide to every function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
+                      fig.align = "center")
+```
+
+This guide walks through every brainconn function with small, complete examples. If you're new to brainconn, start with [Getting started](brainconn.html).
+
+```{r}
+library(brainconn)
+```
+
+## Your data: atlases and connectivity matrices {#data}
+
+Every plot needs an **atlas**, a table with one row per brain region, and most also need a **connectivity matrix**.
+
+```{r}
+list_atlases()
+head(schaefer300_n7)
+```
+
+An atlas needs the columns `ROI.Name`, `x.mni`, `y.mni` and `z.mni` (the region's centre). A `network` column is used to colour and group regions, and a `hemi` column to order them by hemisphere.
+
+A connectivity matrix has one row and one column per atlas region, in the atlas's order. Your own matrix is usually read from a file, for example:
+
+```{r, eval = FALSE}
+conmat <- as.matrix(read.csv("my_connectivity.csv", header = FALSE))
+```
+
+To try things out, brainconn includes a few:
+
+* `example_unweighted_undirected`, `example_weighted_undirected`, `example_unweighted_directed` and `example_weighted_directed`: sparse networks (11 to 26 edges) for `schaefer300_n7`.
+* `example_fc_schaefer300`: a dense, simulated functional connectivity matrix (correlations between -1 and 1) for `schaefer300_n7`.
+
+Two arguments work the same way everywhere: `thr` removes edges with values below a threshold, and `uthr` removes edges above one.
+
+## 3D renders: `brainconn()` {#brainconn}
+
+`brainconn()` makes a publication-ready image of the network in the brain.
+
+```{r, fig.width = 6, fig.height = 6, out.width = "55%"}
+x <- example_unweighted_undirected
+brainconn(atlas = "schaefer300_n7", conmat = x)
+```
+
+### Choosing what to show
+
+By default only regions with at least one connection are drawn; `all.nodes = TRUE` draws every region. Without a matrix, you get just the atlas:
+
+```{r, fig.width = 6, fig.height = 6, out.width = "55%"}
+brainconn(atlas = "schaefer300_n7", all.nodes = TRUE, node.size = 4)
+```
+
+### Nodes
+
+`node.size` sets the diameter of the spheres (in mm, for a human brain). It can be one number, or one number per region, e.g. to make well-connected regions bigger. `node.color` is `"network"` (the default), one colour, or one colour per region.
+
+```{r, fig.width = 6, fig.height = 6, out.width = "55%"}
+degree <- rowSums(as.matrix(x) != 0)   # number of connections of each region
+brainconn(atlas = "schaefer300_n7", conmat = x, node.size = degree * 3 + 3)
+```
+
+### Edges
+
+For a weighted matrix, edges are wider for larger weights (adjust the range with `scale.edge.width`), or coloured by weight with `edge.color.weighted = TRUE`. Choose the colours with `edge.palette`, either a palette name or a vector of colours from low to high, and the range with `edge.limits`. Signed weights get a scale centred on zero.
+
+```{r, fig.width = 10, fig.height = 4.5, out.width = "100%"}
+w <- example_weighted_undirected
+cowplot::plot_grid(
+  brainconn(atlas = "schaefer300_n7", conmat = w, view = "left", show.legend = FALSE,
+            scale.edge.width = c(0.5, 3)),
+  brainconn(atlas = "schaefer300_n7", conmat = w, view = "left", show.legend = FALSE,
+            edge.color.weighted = TRUE, edge.palette = c("gold", "darkred"), edge.width = 1.5))
+```
+
+Directed matrices are drawn with arrowheads:
+
+```{r, fig.width = 7, fig.height = 5.5, out.width = "65%"}
+brainconn(atlas = "schaefer300_n7", conmat = example_weighted_directed, view = "left",
+          labels = TRUE)
+```
+
+### The brain and the image
+
+`mesh.color` and `mesh.alpha` change the brain's colour and opacity, and `mesh = NULL` removes it. `bg.color = NA` gives a transparent background, which is handy for slides. `res` sets the size in pixels of each view, and `quality` the smoothing of edges (higher is slower).
+
+### Saving and combining
+
+Because the result is a ggplot:
+
+```{r, eval = FALSE}
+p <- brainconn(atlas = "schaefer300_n7", conmat = x, view = "ortho")
+ggplot2::ggsave("my_network.png", p, width = 10, height = 7, dpi = 300)
+p + ggplot2::ggtitle("My network")
+```
+
+## Interactive 3D: `brainconn3D()` {#brainconn3d}
+
+`brainconn3D()` makes an interactive plot that you can rotate (drag), zoom (scroll) and explore. Hover over a node to see its network, number of connections and strongest connections. With `highlight = TRUE`, click a node to keep only its connections in view; click it again, click elsewhere or press Escape to see everything again. Click a network in the legend to hide it.
+
+```{r, out.width = "100%"}
+fc <- example_fc_schaefer300
+# Keep only the 300 strongest connections
+strong <- fc
+diag(strong) <- 0
+cutoff <- sort(abs(strong[upper.tri(strong)]), decreasing = TRUE)[300]
+strong[abs(strong) < cutoff] <- 0
+brainconn3D(atlas = "schaefer300_n7", conmat = strong, highlight = TRUE,
+            edge.color.weighted = TRUE, show.legend = TRUE)
+```
+
+Most options of `brainconn()` work here too, e.g. `node.size`, `node.color`, `edge.width`, `mesh`; `opacity` sets the brain's opacity. The plot is a plotly object: save it with `htmlwidgets::saveWidget(p, "network.html")`.
+
+## Network summaries: `network_matrix()` {#network-matrix}
+
+Many questions are about networks rather than single regions: is connectivity stronger within the default network than between it and the visual network? `network_matrix()` summarises a region-by-region matrix into a network-by-network one.
+
+```{r}
+round(network_matrix(fc, "schaefer300_n7"), 2)
+```
+
+Each value is the mean of all the region pairs within a network (on the diagonal) or between two networks. Use `fun` for other summaries: `"sum"`, `"count"` (number of edges), `"density"` (proportion of possible edges), `"median"`, or any function. For example, the number of edges of a thresholded network:
+
+```{r}
+network_matrix(x, "schaefer300_n7", fun = "count")
+```
+
+## Connectivity matrices: `brainconn_matrix()` {#matrices}
+
+`brainconn_matrix()` plots a matrix as a heatmap. With an atlas, regions are grouped by network, with coloured strips, labels and lines between networks.
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_matrix(fc, atlas = "schaefer300_n7")
+```
+
+Show only one half with `triangle = "lower"` or `"upper"`, and smooth the matrix (each cell becomes the mean of its pair of networks) with `smooth = TRUE`:
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_matrix(fc, atlas = "schaefer300_n7", triangle = "lower", smooth = TRUE)
+```
+
+Summarise to one tile per pair of networks with `level = "network"`, and print the values with `values = TRUE`:
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_matrix(fc, atlas = "schaefer300_n7", level = "network", values = TRUE)
+```
+
+A second matrix can fill the other half with `conmat2`, e.g. to compare two groups, or show negative and positive values side by side:
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_matrix(pmin(fc, 0), conmat2 = pmax(fc, 0), atlas = "schaefer300_n7",
+                 level = "network", legend.title = "FC")
+```
+
+And `diamond = TRUE` turns the lower half 45 degrees:
+
+```{r, fig.width = 9, fig.height = 5, out.width = "85%"}
+brainconn_matrix(fc, atlas = "schaefer300_n7", diamond = TRUE)
+```
+
+Colours: `palette` takes a palette name (e.g. `"bkr"`, `"bwr"`, or any of `grDevices::hcl.pals()`) or a vector of colours, and `limits` the range of values.
+
+## Chord diagrams: `brainconn_circle()` {#chords}
+
+`brainconn_circle()` shows connectivity within and between networks as a chord diagram: each network is a coloured section of the circle, and ribbons join pairs of networks, coloured by their value (by default the mean, as in `network_matrix()`). Ribbons that loop back into the same section are connections within a network.
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_circle(fc, atlas = "schaefer300_n7")
+```
+
+Usually you'll want only the strongest links: `top = 30` keeps the strongest 30%, and `thr` keeps links whose absolute value is at least a threshold.
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+brainconn_circle(fc, atlas = "schaefer300_n7", top = 30, palette = "bkr")
+```
+
+Networks can be grouped, which adds an outer ring. The 17-network Schaefer atlases have a `network7` column with each network's group:
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+set.seed(1)
+fc17 <- matrix(rnorm(300^2, sd = 0.1), 300)
+fc17 <- (fc17 + t(fc17)) / 2
+same <- outer(schaefer300_n17$network, schaefer300_n17$network, "==")
+fc17[same] <- fc17[same] + 0.3
+brainconn_circle(fc17, atlas = "schaefer300_n17", group = "network7", top = 15)
+```
+
+You can also give your own groups, or plot a network-by-network matrix you already have:
+
+```{r, fig.width = 7, fig.height = 6, out.width = "65%"}
+net <- network_matrix(fc, "schaefer300_n7")
+brainconn_circle(net, thr = 0.1,
+                 group = c(Vis = "Sensory", SomMot = "Sensory", DorsAttn = "Attention",
+                           SalVentAttn = "Attention", Limbic = "Association",
+                           Cont = "Association", Default = "Association"))
+```
+
+## 2D plots: `brainconn2d()` {#brainconn2d}
+
+`brainconn2d()` draws the network flat, over a picture of the brain. It was called `brainconn()` before version 1.0.0, and calls written for that version still work.
+
+```{r, fig.width = 10, fig.height = 7, out.width = "100%"}
+brainconn2d(atlas = "schaefer300_n7", conmat = example_weighted_undirected, view = "ortho",
+            edge.color.weighted = TRUE)
+```
+
+It has some options of its own, e.g. `label.edge.weight = TRUE` to write the weights on the edges, `background.alpha` for the brain picture, or `background` for a picture of your own.
+
+## Colours: `network_colors()` {#colors}
+
+All brainconn plots colour networks the same way. For the Yeo networks (as in the Schaefer atlases), and common names for them, these are the standard colours; other networks get evenly spaced colours.
+
+```{r}
+network_colors(schaefer300_n7$network)
+network_colors(c("Frontal", "Temporal", "Occipital"))
+```
+
+Use them in your own plots too, e.g. `ggplot2::scale_colour_manual(values = network_colors(...))`.

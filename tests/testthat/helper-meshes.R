@@ -24,10 +24,10 @@ ellipsoid_mesh <- function(radii = c(6, 11, 4.5), n_lat = 16, n_lon = 24) {
 }
 
 # A small atlas inside the default ellipsoid: two regions per hemisphere
-rat_atlas <- data.frame(ROI.Name = c("L_front", "L_back", "R_front", "R_back"),
+toy_rat_atlas <- data.frame(ROI.Name = c("L_front", "L_back", "R_front", "R_back"),
                         x.mni = c(-3, -3, 3, 3), y.mni = c(6, -6, 6, -6),
                         z.mni = c(1, 0, 1, 0), network = c("A", "B", "A", "B"))
-rat_conmat <- matrix(c(0, 1, 1, 0,
+toy_rat_conmat <- matrix(c(0, 1, 1, 0,
                        1, 0, 0, 1,
                        1, 0, 0, 1,
                        0, 1, 1, 0), 4, 4)

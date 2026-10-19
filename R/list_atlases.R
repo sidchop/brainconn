@@ -12,7 +12,7 @@
 #' list_atlases()
 list_atlases <- function() {
   atlas.list <- data(package = "brainconn")$results[, "Item"]
-  atlas.list <- atlas.list[!grepl("ICBM|example", atlas.list)]
+  atlas.list <- atlas.list[!grepl("ICBM|example|_mesh$", atlas.list)]
   message("Brainconn currently contains the following atlases:")
   message(paste(atlas.list, collapse = "\n"))
   message("You can also input your own custom atlas, as long as it meets certain requirements. See vignette and use the check_atlas() function to make sure the requirements are met.")

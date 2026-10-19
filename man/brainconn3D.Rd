@@ -9,7 +9,7 @@ brainconn3D(
   conmat = NULL,
   all.nodes = FALSE,
   node.color = "network",
-  node.size = 10,
+  node.size = 8,
   edge.width = 3,
   edge.color = "black",
   opacity = 0.28,
@@ -33,7 +33,7 @@ brainconn3D(
 
 \item{node.color}{A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.}
 
-\item{node.size}{A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
+\item{node.size}{Size of the nodes, as in \code{\link{brainconn}}: the diameter in mm for a human-sized brain, scaled with the size of the mesh. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
 \item{edge.width}{Number to set the width of the edges.}
 
@@ -55,7 +55,7 @@ brainconn3D(
 
 \item{edge.palette, edge.limits}{Colours and limits for edge weights when \code{edge.color.weighted = TRUE}; see \code{\link{brainconn}}.}
 
-\item{highlight}{If \code{TRUE}, hovering over (or clicking) a node highlights its connections.}
+\item{highlight}{If \code{TRUE}, clicking a node highlights its connections.}
 }
 \value{
 a plotly object
@@ -64,12 +64,12 @@ a plotly object
 \code{brainconn3D} plots and returns a interactive plotly object of plotted brain connectivity matrix.
 }
 \details{
-Edges are drawn as straight lines between nodes; directions are not shown.
-Hovering over a node shows its name, network, degree, strength and
-strongest connections. With \code{highlight = TRUE}, hovering over a node
-also highlights its edges and neighbouring nodes and greys out the rest.
-Clicking a node keeps it highlighted until you click it again or click the
-brain surface.
+Nodes are drawn as spheres (so they grow and shrink as you zoom) and edges
+as lines between them; edge directions are not shown. Hovering over a node
+shows its name, network, degree, strength and strongest connections. With
+\code{highlight = TRUE}, clicking a node keeps its edges and neighbouring
+nodes and fades out everything else; click the node again, click anywhere
+else, or press Escape to show everything again.
 }
 \examples{
 \dontrun{

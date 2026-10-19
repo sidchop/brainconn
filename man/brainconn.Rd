@@ -9,7 +9,7 @@ brainconn(
   conmat = NULL,
   view = "top",
   ...,
-  node.size = 4,
+  node.size = 8,
   node.color = "network",
   all.nodes = FALSE,
   edge.color = "black",
@@ -42,7 +42,7 @@ brainconn(
 
 \item{...}{Arguments only used by the 2D plot (see Details); when given, the call is passed on to \code{\link{brainconn2d}}.}
 
-\item{node.size}{Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
+\item{node.size}{Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Default 8. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
 \item{node.color}{A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.}
 

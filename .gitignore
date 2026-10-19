@@ -13,3 +13,7 @@ make_atlases.R
 make_mesh.R
 doc
 test1
+data-raw/cache/
+vignettes/*.knit.md
+vignettes/*.html
+vignettes/*_files/
