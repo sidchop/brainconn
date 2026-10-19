@@ -56,10 +56,30 @@ network_colors <- function(networks) {
   stats::setNames(unname(cols), nets)
 }
 
+# Named palettes, from the lowest to the highest value. "bkr" (blue-black-red,
+# from cyan through blue and black to red and yellow) is the 80-step scale used
+# for chord diagrams in Chopra et al.; "bwr" is blue-white-red.
+named_palettes <- list(
+  bkr = c(
+    "#99FFFF", "#66FFFF", "#33FFFF", "#00FFFF", "#00E5FF", "#00CCFF", "#00B2FF", "#0099FF",
+    "#0080FF", "#0066FF", "#004DFF", "#0033FF", "#001AFF", "#0000FF", "#0000F5", "#0000EB",
+    "#0000E2", "#0000D8", "#0000CE", "#0000C4", "#0000BA", "#0000B1", "#0000A7", "#00009D",
+    "#000093", "#000089", "#000080", "#000076", "#00006C", "#000062", "#000058", "#00004E",
+    "#000045", "#00003B", "#000031", "#000027", "#00001D", "#000014", "#00000A", "#000000",
+    "#000000", "#0A0000", "#140000", "#1D0000", "#270000", "#310000", "#3B0000", "#450000",
+    "#4E0000", "#580000", "#620000", "#6C0000", "#760000", "#800000", "#890000", "#930000",
+    "#9D0000", "#A70000", "#B10000", "#BA0000", "#C40000", "#CE0000", "#D80000", "#E20000",
+    "#EB0000", "#F50000", "#FF0000", "#FF1A00", "#FF3300", "#FF4D00", "#FF6600", "#FF8000",
+    "#FF9900", "#FFB200", "#FFCC00", "#FFE500", "#FFFF00", "#FFFF33", "#FFFF66", "#FFFF99"
+  ),
+  bwr = c("blue", "white", "red")
+)
+
 # A vector of n colours, from the lowest to the highest weight, for mapping
 # edge weights. `palette` may be NULL (dark-to-light blue then light-to-dark
-# red for signed weights, light-to-dark red otherwise), a palette name from
-# grDevices::hcl.pals(), or a vector of colours to interpolate.
+# red for signed weights, light-to-dark red otherwise), "bkr" or "bwr", a
+# palette name from grDevices::hcl.pals(), or a vector of colours to
+# interpolate.
 edge_palette <- function(palette, signed, n = 256) {
   if (is.null(palette)) {
     # No white in the middle: weights near zero must stay visible on a pale brain
@@ -70,9 +90,12 @@ edge_palette <- function(palette, signed, n = 256) {
     }
   }
   if (length(palette) == 1) {
+    if (palette %in% names(named_palettes)) {
+      return(grDevices::colorRampPalette(named_palettes[[palette]])(n))
+    }
     if (!palette %in% grDevices::hcl.pals()) {
-      stop("Unknown palette '", palette, "'. Use a name from grDevices::hcl.pals() ",
-           "or a vector of colours.", call. = FALSE)
+      stop("Unknown palette '", palette, "'. Use \"bkr\", \"bwr\", a name from ",
+           "grDevices::hcl.pals() or a vector of colours.", call. = FALSE)
     }
     return(grDevices::hcl.colors(n, palette))
   }
