@@ -9,12 +9,18 @@ A data.frame with 316 rows and columns \code{ROI.Name},
   \code{x.mni}, \code{y.mni}, \code{z.mni} (MNI centroid, mm), \code{network},
   \code{hemi} and \code{index}.
 }
+\source{
+Tian Y, Margulies DS, Breakspear M, Zalesky A (2020). Topographic
+  organization of the human subcortex unveiled with functional connectivity
+  gradients. Nature Neuroscience, 23, 1421-1432.
+}
 \usage{
 stages_study
 }
 \description{
 A custom 316-region parcellation made for the STAGES study (Chopra et al.,
 JAMA Psychiatry): 284 cortical regions labelled with the 7 Yeo networks,
-and 32 subcortical regions.
+and the 32 subcortical regions of the Melbourne Subcortex Atlas at scale II
+(Tian et al., 2020).
 }
 \keyword{datasets}
