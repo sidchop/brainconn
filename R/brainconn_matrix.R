@@ -161,8 +161,11 @@ brainconn_matrix <- function(conmat,
     # (distance from zero for signed values, from the low end otherwise)
     strength <- abs(scales::rescale(pmin(pmax(shown$value, limits[1]), limits[2]),
                                     from = limits, to = if (signed) c(-1, 1) else c(0, 1)))
+    # Whole numbers (e.g. edge counts) without decimals, other values to 2 decimals
+    whole <- all(shown$value == round(shown$value))
+    shown$label <- formatC(shown$value, digits = if (whole) 0 else 2, format = "f")
     p <- p + geom_text(data = shown,
-                       aes(x = j, y = k - i + 1, label = formatC(value, digits = 2, format = "f")),
+                       aes(x = j, y = k - i + 1, label = label),
                        colour = ifelse(strength > 0.6, "white", "black"),
                        size = label.size * 0.9)
   }
