@@ -1,32 +1,33 @@
-# Geometry of each 2D view. Each view is a camera looking at the brain from
-# that side, so e.g. in the front view the subject's left hemisphere is on the
-# viewer's right, and in the top view it is on the viewer's left.
+# Geometry of each 2D view. The subject's left hemisphere is always on the
+# left of the plot: the bottom and front views are shown mirrored (as if seen
+# through the brain from the top or back), with the background image flipped
+# to match.
 #   x, y, depth: MNI axis plotted on each screen axis (depth points towards
 #                the viewer, so nodes nearer the viewer are drawn on top)
 #   sign:        multiplier for x, y and depth
+#   mirror:      flip the background image left-right
 #   bg:          extent of the background image (xmin, xmax, ymin, ymax)
 #   xlim, ylim:  plot limits
-#   left_x:      screen x of the "L" hemisphere label (NA = no label)
-#   label_y:     screen y of the hemisphere labels
+#   label_y:     screen y of the "L"/"R" hemisphere labels (NA = no labels)
 view_geometry <- list(
   top    = list(x = "x.mni", y = "y.mni", depth = "z.mni", sign = c( 1, 1,  1),
-                bg = c(-75, 70, -107, 73), xlim = c(-70, 70), ylim = c(-107, 73),
-                left_x = -65, label_y = 65),
-  bottom = list(x = "x.mni", y = "y.mni", depth = "z.mni", sign = c(-1, 1, -1),
-                bg = c(-70, 70, -107, 73), xlim = c(-70, 70), ylim = c(-107, 73),
-                left_x = 65, label_y = 65),
-  front  = list(x = "x.mni", y = "z.mni", depth = "y.mni", sign = c(-1, 1,  1),
-                bg = c(-70, 70, -48, 80), xlim = c(-70, 70), ylim = c(-107, 73),
-                left_x = 65, label_y = 75),
+                mirror = FALSE, bg = c(-75, 70, -107, 73),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 65),
+  bottom = list(x = "x.mni", y = "y.mni", depth = "z.mni", sign = c( 1, 1, -1),
+                mirror = TRUE, bg = c(-70, 70, -107, 73),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 65),
+  front  = list(x = "x.mni", y = "z.mni", depth = "y.mni", sign = c( 1, 1,  1),
+                mirror = TRUE, bg = c(-70, 70, -48, 80),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 75),
   back   = list(x = "x.mni", y = "z.mni", depth = "y.mni", sign = c( 1, 1, -1),
-                bg = c(-70, 70, -48, 80), xlim = c(-70, 70), ylim = c(-107, 73),
-                left_x = -65, label_y = 75),
+                mirror = FALSE, bg = c(-70, 70, -48, 80),
+                xlim = c(-70, 70), ylim = c(-107, 73), label_y = 75),
   left   = list(x = "y.mni", y = "z.mni", depth = "x.mni", sign = c(-1, 1, -1),
-                bg = c(-72, 103, -50, 77), xlim = c(-64, 98), ylim = c(-44, 76),
-                left_x = NA, label_y = NA),
+                mirror = FALSE, bg = c(-72, 103, -50, 77),
+                xlim = c(-64, 98), ylim = c(-44, 76), label_y = NA),
   right  = list(x = "y.mni", y = "z.mni", depth = "x.mni", sign = c( 1, 1,  1),
-                bg = c(-103, 72, -50, 77), xlim = c(-98, 64), ylim = c(-44, 76),
-                left_x = NA, label_y = NA)
+                mirror = FALSE, bg = c(-103, 72, -50, 77),
+                xlim = c(-98, 64), ylim = c(-44, 76), label_y = NA)
 )
 
 # Screen coordinates (x, y, depth) of each atlas region in a given view.
@@ -167,8 +168,8 @@ build_plot <- function(conmat,
                             nudge_x = max(node.size) + 2, nudge_y = max(node.size))
   }
 
-  if (hemi.labels && !is.na(geom$left_x)) {
-    p <- p + annotate("text", x = c(geom$left_x, -geom$left_x), y = geom$label_y,
+  if (hemi.labels && !is.na(geom$label_y)) {
+    p <- p + annotate("text", x = c(-65, 65), y = geom$label_y,
                       label = c("L", "R"), fontface = "bold", size = 4)
   }
 

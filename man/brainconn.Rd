@@ -81,12 +81,13 @@ a ggraph object
 \code{brainconn} plots and returns a ggraph object of plotted brain connectivity matrix.
 }
 \details{
-Each view shows the brain as seen from that side. In the \code{"top"} and
-\code{"back"} views the subject's left hemisphere is on the left of the
-plot; in the \code{"bottom"} and \code{"front"} views it is on the right.
-Set \code{hemi.labels = TRUE} (the default) to mark the hemispheres with
-"L" and "R". In the \code{"left"} and \code{"right"} views, nodes in the
-hemisphere nearest the viewer are drawn on top.
+In the \code{"top"}, \code{"bottom"}, \code{"front"} and \code{"back"}
+views the subject's left hemisphere is always on the left of the plot, so
+the bottom and front views are mirror images of what a camera below or in
+front of the subject would see. \code{hemi.labels = TRUE} (the default)
+marks the hemispheres with "L" and "R". In the \code{"left"} and
+\code{"right"} views, nodes in the hemisphere nearest the viewer are drawn
+on top.
 }
 \examples{
 library(brainconn)

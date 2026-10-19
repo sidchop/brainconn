@@ -100,7 +100,7 @@ resolve_node_color <- function(node.color, data) {
   node.color
 }
 
-# Raster grob for the background image of a view.
+# Raster grob for the background image of a view, mirrored if the view is.
 background_grob <- function(background, view, alpha = 1) {
   if (identical(background, "ICBM152")) {
     m <- package_data(paste0("ICBM152_", view))
@@ -110,6 +110,7 @@ background_grob <- function(background, view, alpha = 1) {
   if (length(dim(m)) != 3 || !dim(m)[3] %in% c(3, 4)) {
     stop("Background image must be RGB or RGBA.", call. = FALSE)
   }
+  if (view_geometry[[view]]$mirror) m <- m[, rev(seq_len(dim(m)[2])), , drop = FALSE]
   a <- if (dim(m)[3] == 4) m[, , 4] else 1
   w <- matrix(rgb(m[, , 1], m[, , 2], m[, , 3], a * alpha), nrow = dim(m)[1])
   rasterGrob(w)

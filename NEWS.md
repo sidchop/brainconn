@@ -2,12 +2,16 @@
 
 ## Bug fixes
 
-* Left/right orientation: `"left"` and `"right"` views now draw the hemisphere
+* Left/right orientation: the subject's left hemisphere is now on the left of
+  the plot in every top, bottom, front and back view (the bottom and front
+  views, and their backgrounds, are mirrored). Previously the front view put
+  the left hemisphere on the right, which was inconsistent with the top view
+  in `view = "ortho"` (#33).
+* `"left"` and `"right"` views now draw the hemisphere
   nearest the viewer on top, instead of mixing both hemispheres' nodes. The
   `"right"` view background is now aligned with the nodes.
 * New `hemi.labels` argument (default `TRUE`) marks "L" and "R" on the top,
-  bottom, front and back views, so the orientation of each view (and of the
-  ortho layout) is unambiguous.
+  bottom, front and back views.
 * `brainconn3D()` now works with directed matrices, custom atlases without an
   `index` column, and no `conmat`. Thresholds (`thr`, `uthr`) are applied
   before choosing which nodes to show. All traces share a single 3D scene

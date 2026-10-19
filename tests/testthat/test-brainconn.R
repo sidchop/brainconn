@@ -56,19 +56,25 @@ test_that("list_atlases lists atlases but not backgrounds or examples", {
   expect_false(any(grepl("ICBM|example", atlases)))
 })
 
-test_that("left hemisphere is on the correct side in each view", {
-  # Viewed from above or behind, the subject's left is on the viewer's left;
-  # viewed from below or the front, it is on the viewer's right.
-  for (v in c("top", "back")) {
+test_that("left hemisphere is on the left in top, bottom, front and back views", {
+  for (v in c("top", "bottom", "front", "back")) {
     pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = v))
-    expect_lt(pos["L_front", "x"], 0)
-    expect_gt(pos["R_front", "x"], 0)
+    expect_lt(pos["L_front", "x"], 0, label = v)
+    expect_gt(pos["R_front", "x"], 0, label = v)
   }
-  for (v in c("bottom", "front")) {
-    pos <- node_positions(brainconn(toy_atlas, conmat = toy_conmat, view = v))
-    expect_gt(pos["L_front", "x"], 0)
-    expect_lt(pos["R_front", "x"], 0)
-  }
+})
+
+test_that("bottom and front backgrounds are mirrored to match the nodes", {
+  img <- array(0, c(2, 3, 4))
+  img[, 1, 1] <- 1  # red in the first column only
+  img[, , 4] <- 1
+  png_file <- tempfile(fileext = ".png")
+  OpenImageR::writeImage(img, png_file)
+  first_col <- function(view) as.vector(background_grob(png_file, view)$raster[1, 1])
+  expect_equal(first_col("top"), "#FF0000FF")
+  expect_equal(first_col("back"), "#FF0000FF")
+  expect_equal(first_col("bottom"), "#000000FF")
+  expect_equal(first_col("front"), "#000000FF")
 })
 
 test_that("anterior points the correct way in each view", {

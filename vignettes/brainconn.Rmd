@@ -19,7 +19,7 @@ The minimum user input requirements for the `brainconn()` function is a connecti
 
 By default, the `view` is a top view, the `node.color` is by network.
 
-Each view shows the brain as seen from that side: in the `top` and `back` views the subject's left hemisphere is on the left, and in the `bottom` and `front` views it is on the right. "L" and "R" labels mark the hemispheres in these views; turn them off with `hemi.labels = FALSE`.
+In the `top`, `bottom`, `front` and `back` views the subject's left hemisphere is always on the left of the plot. "L" and "R" labels mark the hemispheres in these views; turn them off with `hemi.labels = FALSE`.
 
 ```{r, out.width='50%', warning=FALSE, message=FALSE}
 library(brainconn)
