@@ -26,6 +26,18 @@
   connections. `brainconn3D()` also gains `edge.color.weighted` (with
   `edge.palette` and `edge.limits`) and `mesh`, and colours networks with
   `network_colors()`.
+* `brainconn_matrix()` plots connectivity matrices with regions grouped by
+  network: coloured network strips and labels, borders between networks,
+  within-network smoothing (`smooth = TRUE`), network-level summaries
+  (`level = "network"`, with `values = TRUE` to print them), one triangle
+  (`triangle`), a second matrix in the other triangle (`conmat2`), and a 45
+  degree "diamond" view (`diamond = TRUE`).
+* `network_matrix()` summarises a region x region matrix into a network x
+  network matrix (mean, sum, count, density, median or any function), or a
+  smoothed region x region matrix with `full = TRUE`. It replaces the
+  unexported `plotClassifiedEdges()`.
+* New dataset `example_fc_schaefer300`: a simulated, dense, signed functional
+  connectivity matrix for `schaefer300_n7`.
 * `network_colors()` returns the standard Yeo 7/17 network colours for
   Yeo/Schaefer network names and common alternatives (e.g. "Frontoparietal"),
   and evenly spaced colours otherwise.
