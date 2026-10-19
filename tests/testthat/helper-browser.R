@@ -9,6 +9,7 @@ run_widget_js <- function(widget, js, data = NULL) {
   chrome <- chrome[nzchar(chrome) & file.exists(chrome)]
   testthat::skip_if(length(chrome) == 0, "Chrome not available")
   testthat::skip_on_cran()
+  testthat::skip_on_ci()  # headless WebGL support varies between CI runners
 
   hook <- paste0("function(el, x, data) {",
                  "  try { var out = (function() {", js, "})();",

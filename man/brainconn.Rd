@@ -74,7 +74,7 @@ brainconn(
 
 \item{hemi.labels}{If \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views.}
 
-\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, given as an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).}
+\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).}
 
 \item{mesh.color}{Colour of the brain surface.}
 

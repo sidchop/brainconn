@@ -1,9 +1,14 @@
 #' Check a custom atlas
 #'
-#' Checks that a custom atlas meets the requirements of \code{brainconn()} and
-#' \code{brainconn3D()}.
+#' Checks that a custom atlas meets the requirements of the brainconn plotting
+#' functions.
 #'
-#' @param atlas a data.frame with at least 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}. An optional "network" column is used to colour nodes.
+#' Despite their names, the \code{x.mni}, \code{y.mni} and \code{z.mni}
+#' columns can be in any space, as long as it matches the brain mesh: MNI space
+#' for the included ICBM152 brain, or the space of your own mesh (see
+#' \code{\link{read_brain_mesh}}), e.g. for a macaque or rat brain.
+#'
+#' @param atlas a data.frame with at least 4 columns named: c("ROI.Name", "x.mni", "y.mni", "z.mni"), see \code{vignette("brainconn")}. An optional "network" column is used to colour nodes, and an optional "hemi" column orders regions in \code{brainconn_matrix()}.
 #' @return Invisibly, \code{TRUE} if the atlas passes and \code{FALSE} if it is not a data.frame. Errors if columns are missing or not numeric.
 #' @export
 #' @examples

@@ -1,16 +1,19 @@
 Package: brainconn
 Title: Plotting Tool for Brain Connectivity Data
-Version: 0.2.0.9000
+Version: 1.0.0
 Authors@R: c(person("Sidhant", "Chopra", email = "sidhantchopra4@gmail.com", role = c("aut", "cre")))
-Description: This package mainly contains two plotting functions: `brainconn()` and `brainconn3d()`, as well as data for several commonly used MNI-space brain atlases
+Description: Plots brain connectivity data: static 3D renders of brain networks in the
+    style of BrainNet Viewer, interactive 3D plots with highlighting, 2D plots,
+    chord diagrams and connectivity matrices grouped by network. Includes many
+    commonly used MNI-space brain atlases, and works with custom atlases and brain
+    meshes of any species.
 Depends: 
     R (>= 3.5),
     ggraph
-License: MIT
+License: MIT + file LICENSE
 LazyData: true
 Imports: 
     ggplot2,
-    ggraph,
     cowplot,
     ggrepel,
     grDevices,
@@ -22,8 +25,11 @@ Imports:
     rayvertex,
     scales,
     stats,
+    tools,
     utils
 Suggests: 
+    freesurferformats,
+    gifti,
     jsonlite,
     rmarkdown,
     testthat,
@@ -31,6 +37,6 @@ Suggests:
     devtools
 VignetteBuilder: knitr
 Encoding: UTF-8
-URL: https://github.com/sidchop/brainconn
+URL: https://sidchop.github.io/brainconn/, https://github.com/sidchop/brainconn
 BugReports: https://github.com/sidchop/brainconn/issues
 Config/roxygen2/version: 8.1.1

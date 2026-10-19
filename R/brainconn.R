@@ -39,7 +39,7 @@
 #' @param thr An optional lower threshold: edges with weights below it are not shown.
 #' @param uthr An optional upper threshold: edges with weights above it are not shown.
 #' @param hemi.labels If \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views.
-#' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, given as an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).
+#' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).
 #' @param mesh.color Colour of the brain surface.
 #' @param mesh.alpha Opacity of the brain surface, from 0 (invisible) to 1 (opaque).
 #' @param res Size in pixels of the longest side of each rendered view.

@@ -8,3 +8,4 @@
 ^\.github$
 ^docs$
 ^_config\.yml$
+^_pkgdown\.yml$

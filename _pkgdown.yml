@@ -1,0 +1,38 @@
+url: https://sidchop.github.io/brainconn/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Brain plots
+  contents:
+  - brainconn
+  - brainconn3D
+  - brainconn2d
+- title: Network matrices and chord diagrams
+  contents:
+  - brainconn_matrix
+  - brainconn_circle
+  - network_matrix
+- title: Atlases, meshes and colours
+  contents:
+  - list_atlases
+  - check_atlas
+  - read_brain_mesh
+  - network_colors
+- title: Included atlases
+  contents:
+  - schaefer_atlases
+  - schaefer300_17_cog_lang
+  - aal_atlases
+  - dk_atlases
+  - craddock200
+  - gordon_333
+  - shen_atlases
+  - stages_study
+  - custom_atlas_example
+- title: Example data and brain surface
+  contents:
+  - example_matrices
+  - example_fc_schaefer300
+  - ICBM152

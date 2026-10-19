@@ -161,3 +161,14 @@ test_that("brainconn3D applies thresholds before choosing nodes", {
   shown <- sub("<b>(.*?)</b>.*", "\\1", unlist(lapply(markers, `[[`, "text")))
   expect_setequal(shown, c("a", "b"))
 })
+
+test_that("the page stays small: one mesh colour, no unbuilt copy, short numbers", {
+  p <- brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected)
+  expect_null(p$x$attrs)
+  mesh <- p$x$data[[1]]
+  expect_equal(mesh$color, "#F0F0F0")
+  expect_null(mesh$facecolor)
+  # Vertices are on a 0.25 mm grid, so they print with few digits
+  expect_true(all(mesh$x * 4 == round(mesh$x * 4)))
+  expect_lt(nchar(htmlwidgets:::toJSON(htmlwidgets:::createPayload(p))), 6e6)
+})
