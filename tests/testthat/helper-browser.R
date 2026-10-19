@@ -22,7 +22,7 @@ run_widget_js <- function(widget, js, data = NULL) {
   dom <- suppressWarnings(system2(chrome[1], c(
     "--headless=new", "--disable-gpu", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
     "--no-first-run", "--virtual-time-budget=10000", "--dump-dom",
-    shQuote(paste0("file://", file))), stdout = TRUE, stderr = FALSE))
+    shQuote(paste0("file://", file))), stdout = TRUE, stderr = FALSE, timeout = 60))
   title <- regmatches(dom, regexpr("<title>.*?</title>", dom))
   title <- gsub("^<title>|</title>$", "", title)
   title <- title[grepl("^(RESULT|ERROR):", title)]
