@@ -16,7 +16,12 @@ brainconn3D(
   d.factor = 1.05,
   show.legend = FALSE,
   thr = NULL,
-  uthr = NULL
+  uthr = NULL,
+  mesh = "ICBM152",
+  edge.color.weighted = FALSE,
+  edge.palette = NULL,
+  edge.limits = NULL,
+  highlight = FALSE
 )
 }
 \arguments{
@@ -26,13 +31,13 @@ brainconn3D(
 
 \item{all.nodes}{If \code{TRUE}, then all nodes will be shown. If \code{FALSE}, then only nodes with connecting edges will be shown.}
 
-\item{node.color}{A string that sets the node color. e.g. "blue". If set to "network", then nodes will be colored according to the network column of the atlas}
+\item{node.color}{A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.}
 
 \item{node.size}{A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
 
 \item{edge.width}{Number to set the width of the edges.}
 
-\item{edge.color}{A string that sets the edge color. e.g. "blue".}
+\item{edge.color}{A string that sets the edge color. e.g. "blue". Ignored when \code{edge.color.weighted = TRUE}.}
 
 \item{opacity}{Number between 0-1 to  set the transparency of the mesh brain}
 
@@ -43,6 +48,14 @@ brainconn3D(
 \item{thr}{a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than the one set here will not be shown)}
 
 \item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)}
+
+\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (see \code{\link{brainconn}}).}
+
+\item{edge.color.weighted}{For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}).}
+
+\item{edge.palette, edge.limits}{Colours and limits for edge weights when \code{edge.color.weighted = TRUE}; see \code{\link{brainconn}}.}
+
+\item{highlight}{If \code{TRUE}, hovering over (or clicking) a node highlights its connections.}
 }
 \value{
 a plotly object
@@ -51,14 +64,19 @@ a plotly object
 \code{brainconn3D} plots and returns a interactive plotly object of plotted brain connectivity matrix.
 }
 \details{
-Edges are drawn as straight lines between nodes. Edge weights and
-directions are not shown; any non-zero value in \code{conmat} is drawn as
-an edge.
+Edges are drawn as straight lines between nodes; directions are not shown.
+Hovering over a node shows its name, network, degree, strength and
+strongest connections. With \code{highlight = TRUE}, hovering over a node
+also highlights its edges and neighbouring nodes and greys out the rest.
+Clicking a node keeps it highlighted until you click it again or click the
+brain surface.
 }
 \examples{
 \dontrun{
 library(brainconn)
 brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = FALSE)
+brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+            edge.color.weighted = TRUE, highlight = TRUE)
 }
 }
 \author{

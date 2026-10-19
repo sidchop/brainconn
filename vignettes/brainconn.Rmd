@@ -112,7 +112,7 @@ brainconn2d(atlas ="schaefer300_n7", conmat=x, node.size = d)
 
 
 ## Basic use of `brainconn3D()`
-`brainconn3D()` draws an interactive 3D plot that you can rotate and zoom. It accepts the same kinds of connectivity matrices as `brainconn()`. Every non-zero edge is drawn as a line; edge weights and directions are not shown in 3D. 
+`brainconn3D()` draws an interactive 3D plot that you can rotate and zoom. It accepts the same kinds of connectivity matrices as `brainconn()`. Every non-zero edge is drawn as a line; edge directions are not shown. 
 
 ```{r, out.width='50%',  warning=FALSE, message=FALSE}
 p <- brainconn3D(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, show.legend = F)
@@ -125,6 +125,15 @@ p <- brainconn3D(atlas = "schaefer300_n7", conmat=example_unweighted_undirected,
 p
 ```
 
+
+### Highlighting connections
+
+With `highlight = TRUE`, hovering over a node highlights its edges and neighbouring nodes and greys out the rest. Clicking a node keeps it highlighted until you click it again or click the brain. Hovering over any node shows its network, degree, strength and strongest connections. Edges can also be coloured by weight with `edge.color.weighted = TRUE`.
+
+```{r, out.width='70%', warning=FALSE, message=FALSE}
+brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+            edge.color.weighted = TRUE, highlight = TRUE, show.legend = TRUE)
+```
 
 The `d.factor` can be adjusted for different purposes. The default is set to 1.05.
 ```{r, out.width='50%',  warning=FALSE, message=FALSE}

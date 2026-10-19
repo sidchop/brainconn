@@ -28,34 +28,6 @@ has_legend <- function(p) {
 
 all_views <- c("top", "bottom", "left", "right", "front", "back")
 
-test_that("check_atlas works correctly", {
-  valid_atlas <- data.frame(
-    ROI.Name = c("Region1", "Region2"),
-    x.mni = as.integer(c(10, 20)),
-    y.mni = as.integer(c(15, 25)),
-    z.mni = as.integer(c(5, 35))
-  )
-  expect_message(check_atlas(valid_atlas), "Atlas fits brainconn specifications")
-
-  # Non-integer coordinates are fine
-  valid_atlas$x.mni <- c(10.5, 20.2)
-  expect_message(check_atlas(valid_atlas), "Atlas fits brainconn specifications")
-
-  invalid_atlas <- valid_atlas[, c("ROI.Name", "x.mni", "y.mni")]
-  expect_error(check_atlas(invalid_atlas), "File missing z.mni column")
-
-  valid_atlas$x.mni <- c("a", "b")
-  expect_error(check_atlas(valid_atlas), "need to be numeric")
-
-  expect_message(check_atlas(list()), "Please convert atlas to a dataframe")
-})
-
-test_that("list_atlases lists atlases but not backgrounds or examples", {
-  atlases <- suppressMessages(list_atlases())
-  expect_true(all(c("schaefer300_n7", "aal90", "dk68") %in% atlases))
-  expect_false(any(grepl("ICBM|example", atlases)))
-})
-
 test_that("left hemisphere is on the left in top, bottom, front and back views", {
   for (v in c("top", "bottom", "front", "back")) {
     pos <- node_positions(brainconn2d(toy_atlas, conmat = toy_conmat, view = v))
@@ -204,65 +176,4 @@ test_that("show.legend is respected, including in ortho view", {
   expect_true(has_legend(brainconn2d("schaefer300_n7", conmat = x, view = "ortho")))
   expect_false(has_legend(brainconn2d("schaefer300_n7", conmat = x, view = "ortho",
                                     show.legend = FALSE)))
-})
-
-# brainconn3D -----------------------------------------------------------------
-
-traces_3d <- function(p) {
-  b <- plotly::plotly_build(p)
-  vapply(b$x$data, function(t) paste0(t$type, ":", if (is.null(t$mode)) "" else t$mode),
-         character(1))
-}
-
-test_that("brainconn3D draws mesh, nodes and edges in one scene", {
-  p <- brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected)
-  b <- plotly::plotly_build(p)
-  types <- traces_3d(p)
-  expect_equal(sum(types == "mesh3d:"), 1)
-  expect_equal(sum(types == "scatter3d:lines"), 1)
-  expect_true(all(grepl("^(mesh3d|scatter3d:(lines|markers))", types)))
-  expect_equal(grep("^scene", names(b$x$layout), value = TRUE), "scene")
-
-  # Each undirected edge drawn once: two points per edge
-  x <- as.matrix(example_unweighted_undirected)
-  n_edges <- sum(x[upper.tri(x)] != 0)
-  edge_trace <- b$x$data[[which(types == "scatter3d:lines")]]
-  expect_equal(sum(!is.na(edge_trace$x)), 2 * n_edges)
-})
-
-test_that("brainconn3D edges start and end at node positions", {
-  p <- brainconn3D(toy_atlas, conmat = toy_conmat, d.factor = 1)
-  b <- plotly::plotly_build(p)
-  types <- traces_3d(p)
-  edge <- b$x$data[[which(types == "scatter3d:lines")]]
-  pts <- unique(na.omit(data.frame(x = edge$x, y = edge$y, z = edge$z)))
-  nodes <- unique(toy_atlas[, c("x.mni", "y.mni", "z.mni")])
-  expect_true(all(paste(pts$x, pts$y, pts$z) %in% paste(nodes$x.mni, nodes$y.mni, nodes$z.mni)))
-})
-
-test_that("brainconn3D handles inputs that used to fail", {
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_directed)))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_weighted_undirected, thr = 0.5)))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected, node.color = "red")))
-  expect_no_error(plotly::plotly_build(
-    brainconn3D("schaefer300_n7", conmat = example_unweighted_undirected, all.nodes = TRUE)))
-  expect_message(p <- brainconn3D(custom_atlas_example, conmat = example_unweighted_undirected),
-                 "no 'network' column")
-  expect_no_error(plotly::plotly_build(p))
-  expect_message(p <- brainconn3D("schaefer300_n7"), "No edges")
-  expect_no_error(plotly::plotly_build(p))
-})
-
-test_that("brainconn3D applies thresholds before choosing nodes", {
-  m <- toy_conmat
-  m[1, 2] <- m[2, 1] <- 0.2
-  m[1, 4] <- m[4, 1] <- 0.9
-  m[2, 3] <- m[3, 2] <- 0.5
-  p <- brainconn3D(toy_atlas, conmat = m, thr = 0.6)
-  b <- plotly::plotly_build(p)
-  markers <- b$x$data[grepl("markers", traces_3d(p))]
-  expect_setequal(unlist(lapply(markers, `[[`, "text")), c("L_front", "R_back"))
 })

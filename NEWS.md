@@ -20,6 +20,12 @@
   (`mesh = NULL`) or replaced with any mesh in the atlas's space (an rgl
   `mesh3d` or a list of vertices and faces); node and edge sizes scale with
   the mesh.
+* `brainconn3D(highlight = TRUE)`: hovering over a node highlights its edges
+  and neighbours and greys out the rest; clicking a node keeps it highlighted.
+  Node tooltips now show the network, degree, strength and strongest
+  connections. `brainconn3D()` also gains `edge.color.weighted` (with
+  `edge.palette` and `edge.limits`) and `mesh`, and colours networks with
+  `network_colors()`.
 * `network_colors()` returns the standard Yeo 7/17 network colours for
   Yeo/Schaefer network names and common alternatives (e.g. "Frontoparietal"),
   and evenly spaced colours otherwise.
