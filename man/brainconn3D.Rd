@@ -49,7 +49,7 @@ brainconn3D(
 
 \item{uthr}{a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)}
 
-\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (see \code{\link{brainconn}}).}
+\item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, e.g. mesh file path(s); see \code{\link{read_brain_mesh}} and \code{\link{brainconn}}.}
 
 \item{edge.color.weighted}{For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}).}
 

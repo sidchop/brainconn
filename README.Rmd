@@ -1,6 +1,4 @@
 ---
-title: "Plotting tool for brain connectivity data"
-author: "Sidhant Chopra"
 output: github_document
 ---
 
@@ -8,47 +6,36 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/img/README-",
-  echo = TRUE,
+  fig.path = "man/figures/README-",
+  dpi = 110,
   warning = FALSE,
   message = FALSE
 )
-library(magrittr)
-if (!require("processx")) install.packages("processx")
 devtools::load_all(".")
 ```
 
-
-# brainconn <img src="man/img/logo.png" align="right" alt="" width="180" />  
+# brainconn <img src="man/img/logo.png" align="right" alt="" width="180" />
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/LCBC-UiO/ggseg.svg?branch=master)](https://travis-ci.com/sidchop/brainconn)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/LCBC-UiO/ggseg?branch=master&svg=true)](https://ci.appveyor.com/project/sidchop/brainconn)
-[![Coverage status](https://codecov.io/gh/sidchop/brainconn/branch/master/graph/badge.svg)](https://codecov.io/gh/sidchop/brainconn)
-[![CRAN status](https://www.r-pkg.org/badges/version/brainconn)](https://CRAN.R-project.org/package=brainconn)
-[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![R-CMD-check](https://github.com/sidchop/brainconn/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sidchop/brainconn/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
+brainconn makes publication-ready plots of brain connectivity data in R, so that visualisation can be part of reproducible analysis scripts:
 
-The purpose of this package is to allow for flexible, programmatic and interactive plotting of brain connectivity data within Rstudio - negating the need to swap to other visualization tools and allowing for reproducible integration of visualization with analysis scripts that are written in R. 
+- `brainconn()`: static 3D renders of brain networks in the style of BrainNet Viewer, as ggplot objects.
+- `brainconn3D()`: interactive 3D plots; hover over a node to highlight its connections.
+- `brainconn_matrix()`: connectivity matrices grouped by network, with network borders, smoothing and network-level summaries.
+- `brainconn_circle()`: chord diagrams of connectivity within and between networks.
+- `brainconn2d()`: 2D plots over a brain image (the `brainconn()` of versions before 1.0.0).
 
-The primary plotting functions: `brainconn()` and `brainconn3D()`. The primary user input into these function is a connectivity matrix. Several brain atlases come pre-installed and users can also provide a custom atlas (see vignette).
-
-The `brainconn()` function allows users to input a binary/weighted and directed/non-directed (i.e. symmetric) connectivity matrix which can be plotted onto MNI coordinates using [ggraph](https://github.com/ggraph).
-
-The `brainconn3D()` allows users to input a binary and non-directed connectivity matrix which is plotted in a 3D and interactive way using [plottly](https://github.com/plotly).
-
-The atlases currently included with in the package can be listed using the `list_atlases()` function: `aal116`, `aal90`, `craddock200`, `dk68`, `dk82_aspree`, `dkt62`, `gordon_333`, `shen_268`, `shen_368`, `schaefer1000_n7`, `schaefer1000_n17`, `schaefer300_n7`, `schaefer300_n17` (and all other iterations of the schaefer atlases). Custom atlases can be easily added as long as you have centroid coordinates in MNI space, see [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html). The `check_atlas()` function checks that custom atlases meet the requirements of the plotting functions. 
+Many commonly used atlases are included (see `list_atlases()`), and you can use your own atlas and your own brain mesh, including non-human brains.
 
 ## Installation
-The package can be installed using devtools.
 
-```{r eval=F}
+```{r eval = FALSE}
 install.packages("remotes")
 remotes::install_github("sidchop/brainconn")
 ```
-
-The functions are now installed, and you may load them when you want to use them.
 
 ## Citation
 
@@ -59,48 +46,44 @@ The functions are now installed, and you may load them when you want to use them
 **https://doi.org/10.52294/001c.85104**
 
 ## Use
-The package also has a vignette, to help you get started. You can access it [here](https://sidchop.github.io/brainconn/articles/brainconn.html), or via R:
 
-```{r, out.width='50%', eval=FALSE}
+See the [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html) (or `vignette("brainconn")`) for more examples. The main input is a connectivity matrix, `conmat`, whose rows and columns match the regions of an atlas.
+
+### 3D renders
+
+```{r render, fig.width = 10, fig.height = 7}
 library(brainconn)
-vignette("brainconn")
+brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+          view = "ortho", edge.color.weighted = TRUE)
 ```
 
-The primary user input is a connectivity matrix (`conmat`). 
+### Interactive 3D, with highlighting
 
-```{r, out.width='50%', echo=T, warning=F, eval=F}
-brainconn(atlas ="schaefer300_n7", conmat=example_unweighted_undirected, view="ortho")
-```
-```{r, echo = FALSE,warning=F, error=F}
-knitr::include_graphics("man/figures/000010.png")
+```{r, eval = FALSE}
+brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
+            edge.color.weighted = TRUE, highlight = TRUE)
 ```
 
-Modifiable features for `brainconn` include: `view`, `node.size`, `node.color`, `edge.width`, `edge.color`, `edge.alpha`, `background.alpha`, `labels` and others (see vignette)
-
-
-```{r, results = 'hide', eval=F, echo=T, warning=F}
-x <- example_unweighted_undirected
-p <- brainconn3D(atlas ="schaefer300_n7", conmat=x, show.legend = F)
-p
-```
-
-Included below is a gif of the interactive output (see [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html) for more information): 
-
-```{r, echo = FALSE,warning=F, error=F}
+```{r, echo = FALSE}
 knitr::include_graphics("man/img/README-gif.gif")
 ```
 
-Modifiable features for `brainconn3D` include: `node.size`, `node.color`, `edge.width`, `edge.color`, `adge.alpha`, `background.alpha`, `labels` and others (see [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html))
+### Connectivity matrices
 
+```{r matrix, fig.width = 8, fig.height = 7}
+brainconn_matrix(example_fc_schaefer300, atlas = "schaefer300_n7")
+```
 
-### Report bugs or requests  
-Don't hesitate to ask for support or new features using [github issues](https://github.com/sidchop/brainconn).
+### Chord diagrams
 
-### Other R packages you might be intrested in:
-* [ggseg](https://github.com/LCBC-UiO/ggseg) & [ggseg3D](https://github.com/LCBC-UiO/ggseg3d): Plotting tool for brain atlases, in ggplot/plotly
-* [brainGraph](https://github.com/cwatson/brainGraph): Graph theory analysis of brain MRI data
-* [fsbrain](https://github.com/dfsp-spirit/fsbrain): Provides high-level functions to access (read and write) and visualize surface-based brain morphometry data (e.g. cortical thickness) for individual subjects and groups.
-* [NBR](https://github.com/zchuri/NBR/): Network Based R-statistics for Mixed Effects Models
-* [fslr](https://github.com/muschellij2/fslr): FSL-R Interface package
+```{r chord, fig.width = 8, fig.height = 7}
+brainconn_circle(example_fc_schaefer300, atlas = "schaefer300_n7")
+```
 
+### Report bugs or requests
 
+Don't hesitate to ask for support or new features using [GitHub issues](https://github.com/sidchop/brainconn/issues).
+
+### Other R packages you might be interested in
+
+* [ggseg](https://github.com/ggseg/ggseg) & [ggseg3d](https://github.com/ggseg/ggseg3d): plotting tools for brain atlases, in ggplot/plotly

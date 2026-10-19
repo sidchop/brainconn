@@ -1,4 +1,4 @@
-# brainconn (development version)
+# brainconn 1.0.0
 
 ## Breaking changes
 
@@ -46,9 +46,32 @@
   unexported `plotClassifiedEdges()`.
 * New dataset `example_fc_schaefer300`: a simulated, dense, signed functional
   connectivity matrix for `schaefer300_n7`.
+* `read_brain_mesh()` reads brain surfaces in GIfTI, FreeSurfer, PLY, OBJ,
+  STL, VTK, OFF and other formats (via the freesurferformats package), and
+  combines separate hemispheres. Mesh files can also be passed straight to
+  the `mesh` argument of `brainconn()` and `brainconn3D()`, so connectivity
+  can be plotted on any brain (e.g. macaque or rat), as long as the atlas is in
+  the same space.
 * `network_colors()` returns the standard Yeo 7/17 network colours for
   Yeo/Schaefer network names and common alternatives (e.g. "Frontoparietal"),
   and evenly spaced colours otherwise.
+
+## Bug fixes and data
+
+* `schaefer300_17_cog_lang` can now be plotted (its region name column was
+  `ROI.name` instead of `ROI.Name`).
+* `stages_study` network names no longer contain stray non-ASCII characters
+  and whitespace, and `shen_368` region names are no longer padded.
+* `brainconn3D()` pages are about four times smaller (one surface colour,
+  shorter coordinates, and no duplicate copy of the plot data).
+
+## Documentation and infrastructure
+
+* Every included dataset is documented, with references for the atlases.
+* The vignette covers all functions, including custom meshes, and the README
+  has a new gallery.
+* New R CMD check workflow, an updated pkgdown workflow and a pkgdown
+  reference index.
 
 # brainconn 0.2.0
 

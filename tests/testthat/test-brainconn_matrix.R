@@ -71,6 +71,10 @@ test_that("network level plots one tile per network pair, with values", {
   expect_equal(nrow(tiles), 49)
   txt <- p$layers[[2]]$data
   expect_equal(nrow(txt), 49)
+  expect_equal(txt$label[1], formatC(txt$value[1], digits = 2, format = "f"))
+  counts <- brainconn_matrix(example_unweighted_undirected, atlas = "schaefer300_n7",
+                             level = "network", fun = "count", values = TRUE)
+  expect_true(all(c("0", "4") %in% counts$layers[[2]]$data$label))
   p <- brainconn_matrix(example_fc_schaefer300, atlas = "schaefer300_n7", level = "network",
                         triangle = "lower")
   expect_equal(nrow(layer_data_of(p, "GeomTile")), 28)

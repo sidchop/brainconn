@@ -8,3 +8,5 @@
 ^\.github$
 ^docs$
 ^_config\.yml$
+^_pkgdown\.yml$
+^man/img/README-gif\.gif$

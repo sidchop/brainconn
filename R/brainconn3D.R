@@ -23,12 +23,12 @@
 #' @param show.legend if \code{TRUE}, legend will be shown. If \code{FALSE}, then no legend will be shown
 #' @param thr a optional value to set a threshold on the conmat (e.g. edges with a weighted value lower than the one set here will not be shown)
 #' @param uthr a optional value to set a upper threshold on the conmat (e.g. edges with a weighted value higher than the one set here will not be shown)
-#' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (see \code{\link{brainconn}}).
+#' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, e.g. mesh file path(s); see \code{\link{read_brain_mesh}} and \code{\link{brainconn}}.
 #' @param edge.color.weighted For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}).
 #' @param edge.palette,edge.limits Colours and limits for edge weights when \code{edge.color.weighted = TRUE}; see \code{\link{brainconn}}.
 #' @param highlight If \code{TRUE}, hovering over (or clicking) a node highlights its connections.
 #' @return a plotly object
-#' @importFrom plotly plot_ly add_trace layout
+#' @importFrom plotly plot_ly add_trace layout plotly_build
 #' @examples
 #' \dontrun{
 #' library(brainconn)
@@ -84,11 +84,14 @@ brainconn3D <- function(atlas = NULL,
   # brain clear a highlighted node.
   mesh <- resolve_mesh(mesh)
   if (!is.null(mesh)) {
+    # Coordinates rounded to 0.25 mm are exact in binary, so they are written
+    # to the page with few digits; this keeps the page small (the default mesh
+    # has 82k vertices). The colour is set after building, below.
+    v <- round(mesh$vertices * 4) / 4
     p <- add_trace(p,
                    type = "mesh3d",
-                   x = mesh$vertices[, 1], y = mesh$vertices[, 2], z = mesh$vertices[, 3],
+                   x = v[, 1], y = v[, 2], z = v[, 3],
                    i = mesh$faces[, 1] - 1, j = mesh$faces[, 2] - 1, k = mesh$faces[, 3] - 1,
-                   facecolor = rep("#F0F0F0", nrow(mesh$faces)),
                    opacity = opacity,
                    hoverinfo = if (highlight) "none" else "skip",
                    showlegend = FALSE)
@@ -182,6 +185,13 @@ brainconn3D <- function(atlas = NULL,
                            yaxis = hidden_axis,
                            zaxis = hidden_axis,
                            aspectmode = "data"))
+
+  # plotly_build() turns `color =` into a colour scale, so a single surface
+  # colour is set on the built trace
+  p <- plotly::plotly_build(p)
+  if (!is.null(mesh)) p$x$data[[1]]$color <- "#F0F0F0"
+  # The built traces are all the page needs; the unbuilt copy would double its size
+  p$x$attrs <- NULL
 
   if (highlight) {
     n_before_nodes <- as.integer(!is.null(mesh)) + if (nrow(e) > 0) 2L else 0L
