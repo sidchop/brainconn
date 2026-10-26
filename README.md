@@ -113,7 +113,7 @@ A series of renders makes an animation, e.g. a network diffusion model
 spreading from the left temporal pole (see [Animating brain
 networks](https://sidchop.github.io/brainconn/articles/animations.html)):
 
-<img src="vignettes/figures/animation-spread.gif" width="50%" />
+![](vignettes/figures/animation-spread.gif)
 
 ### Report bugs or requests
 

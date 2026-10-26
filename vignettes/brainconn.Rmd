@@ -139,7 +139,7 @@ brainconn(atlas = rat_atlas, conmat = rat_conmat, mesh = rat_mesh, view = c(-60,
 
 A series of `brainconn()` images makes an animation, e.g. a disease process spreading from one region through the network:
 
-```{r, echo = FALSE, out.width = "50%"}
+```{r, echo = FALSE, out.width = "100%"}
 knitr::include_graphics("figures/animation-spread.gif")
 ```
 

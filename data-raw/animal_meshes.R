@@ -74,10 +74,25 @@ for (chunk in split(seq_along(pages), ceiling(seq_along(pages) / 32))) {
 # running alongside the (excluded) spinal cord, so the surface stops there
 page_y <- -24.3359375 + (1023 - (pages - 1)) * 0.0390625
 mask[page_y < -16, , ] <- 0L
-surface <- Rvcg::vcgIsosurface(mask, threshold = 0.5, IJK2RAS = diag(4))
+# Blurring the mask before extracting the surface gives a smooth surface rather
+# than a smoothed staircase of voxels
+blur3d <- function(vol, sigma) {
+  k <- stats::dnorm(-ceiling(3 * sigma):ceiling(3 * sigma), sd = sigma)
+  k <- k / sum(k)
+  along <- function(a, perm) {
+    a <- aperm(a, perm)
+    d <- dim(a)
+    m <- stats::filter(matrix(a, d[1]), k, sides = 2)
+    m[is.na(m)] <- 0
+    aperm(array(m, d), order(perm))
+  }
+  along(along(along(vol, c(1, 2, 3)), c(2, 1, 3)), c(3, 1, 2))
+}
+smooth_mask <- array(as.integer(round(blur3d(mask * 1, sigma = 1.5) * 100)), dim(mask))
+surface <- Rvcg::vcgIsosurface(smooth_mask, threshold = 50, IJK2RAS = diag(4))
 surface <- Rvcg::vcgIsolated(surface, silent = TRUE)   # keep the largest piece
-surface <- Rvcg::vcgSmooth(surface, type = "taubin", iteration = 30)
-rat_mesh <- decimate(new_brain_mesh(to_waxholm(t(surface$vb[1:3, ]) * 78), t(surface$it)), 40000)
+surface <- Rvcg::vcgSmooth(surface, type = "taubin", iteration = 10)
+rat_mesh <- decimate(new_brain_mesh(to_waxholm(t(surface$vb[1:3, ]) * 78), t(surface$it)), 50000)
 
 # Regions (WHS structure ids) and the anatomical group used as their network
 rat_regions <- data.frame(
@@ -111,8 +126,14 @@ nmt <- "https://templateflow.s3.amazonaws.com/tpl-NMT31Sym/"
 nmt_file <- function(f) download(paste0(nmt, f), f)
 lh <- read_brain_mesh(nmt_file("tpl-NMT31Sym_hemi-L_pial.surf.gii"))
 rh <- read_brain_mesh(nmt_file("tpl-NMT31Sym_hemi-R_pial.surf.gii"))
-lh <- decimate(lh, 25000)
-rh <- decimate(rh, 25000)
+# Light smoothing removes small bumps from the template surface
+smooth <- function(mesh) {
+  m3d <- structure(list(vb = rbind(t(mesh$vertices), 1), it = t(mesh$faces)), class = "mesh3d")
+  m3d <- Rvcg::vcgSmooth(m3d, type = "taubin", iteration = 15)
+  new_brain_mesh(t(m3d$vb[1:3, ]), t(m3d$it))
+}
+lh <- decimate(smooth(lh), 35000)
+rh <- decimate(smooth(rh), 35000)
 macaque_mesh <- new_brain_mesh(rbind(lh$vertices, rh$vertices),
                                rbind(lh$faces, rh$faces + nrow(lh$vertices)))
 
