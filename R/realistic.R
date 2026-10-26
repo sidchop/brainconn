@@ -1,0 +1,415 @@
+# The experimental "realistic" style of brainconn(): an opaque, tissue-coloured
+# brain with blood vessels, and the network drawn as glowing nodes and edges
+# seen through the brain, like an x-ray.
+#
+# The vessels are illustrative, not anatomical. Each vessel system is a tree of
+# shortest paths over the surface, from a few root points to many random tips:
+# veins drain to the dorsal midline (where the superior sagittal sinus is), and
+# arteries spread from roots near the Sylvian fissure, the medial frontal lobe
+# and the posterior-inferior surface. Sizes are given in mm for a human brain
+# and scale with the mesh, like node and edge sizes.
+
+# Unit normals per vertex (area-weighted face normals), pointing out of the
+# brain.
+vertex_normals <- function(vertices, faces) {
+  a <- vertices[faces[, 1], , drop = FALSE]
+  ab <- vertices[faces[, 2], , drop = FALSE] - a
+  ac <- vertices[faces[, 3], , drop = FALSE] - a
+  n <- cbind(ab[, 2] * ac[, 3] - ab[, 3] * ac[, 2],
+             ab[, 3] * ac[, 1] - ab[, 1] * ac[, 3],
+             ab[, 1] * ac[, 2] - ab[, 2] * ac[, 1])
+  sums <- rowsum(rbind(n, n, n), c(faces[, 1], faces[, 2], faces[, 3]))
+  out <- matrix(0, nrow(vertices), 3)
+  out[as.integer(rownames(sums)), ] <- sums
+  out <- out / pmax(sqrt(rowSums(out^2)), 1e-12)
+  # Faces wound the other way give inward normals; most normals point away from the centre
+  if (mean(rowSums(out * sweep(vertices, 2, colMeans(vertices)))) < 0) out <- -out
+  out
+}
+
+# Each edge of a triangle mesh once, as a two-column matrix of vertex indices.
+mesh_edges <- function(faces) {
+  e <- rbind(faces[, 1:2], faces[, 2:3], faces[, c(3, 1)])
+  e <- cbind(pmin(e[, 1], e[, 2]), pmax(e[, 1], e[, 2]))
+  e[!duplicated(e), , drop = FALSE]
+}
+
+# Laplacian smoothing of per-vertex values (one row per vertex): each step
+# moves every value halfway towards the mean of its neighbours.
+smooth_vertex_values <- function(values, edges, iterations) {
+  values <- as.matrix(values)
+  n <- nrow(values)
+  from <- c(edges[, 1], edges[, 2])
+  to <- c(edges[, 2], edges[, 1])
+  degree <- pmax(tabulate(from, n), 1)
+  for (k in seq_len(iterations)) {
+    sums <- rowsum(values[to, , drop = FALSE], from)
+    mean_nb <- matrix(0, n, ncol(values))
+    mean_nb[as.integer(rownames(sums)), ] <- sums
+    values <- 0.5 * values + 0.5 * mean_nb / degree
+  }
+  values
+}
+
+# Maximum of a per-vertex value over its neighbours, `iterations` edges away.
+dilate_vertex_values <- function(values, edges, iterations) {
+  from <- c(edges[, 1], edges[, 2])
+  to <- c(edges[, 2], edges[, 1])
+  for (k in seq_len(iterations)) {
+    nb <- values[to]
+    o <- order(from, -nb)
+    first <- o[!duplicated(from[o])]
+    values[from[first]] <- pmax(values[from[first]], nb[first])
+  }
+  values
+}
+
+# Run code with a fixed random seed, leaving the user's random numbers alone.
+with_seed <- function(seed, code) {
+  old <- if (exists(".Random.seed", globalenv())) get(".Random.seed", globalenv()) else NULL
+  on.exit(if (is.null(old)) {
+    rm(".Random.seed", envir = globalenv())
+  } else {
+    assign(".Random.seed", old, envir = globalenv())
+  })
+  set.seed(seed)
+  code
+}
+
+# A tree of vessels from `roots` (vertex indices) to `tips`: the union of
+# shortest paths over the mesh. Path costs vary smoothly over the surface, so
+# vessels meander, and are higher in sulci. The paths are found a few times,
+# each time making the edges already used cheaper, so that vessels join into
+# trunks rather than running side by side.
+vessel_tree <- function(geometry, roots, tips, noise = 1, sulcus.cost = 0.15, rounds = 3,
+                        gamma = 0.6) {
+  edges <- geometry$edges
+  n <- nrow(geometry$vertices)
+  field <- smooth_vertex_values(stats::rnorm(n), edges, geometry$iterations$noise)[, 1]
+  field <- (field - mean(field)) / max(stats::sd(field), 1e-12)
+  vertex_cost <- exp(noise * 0.5 * field) * (1 + sulcus.cost * pmax(-geometry$sulc, 0))
+  base <- geometry$edge_length * (vertex_cost[edges[, 1]] + vertex_cost[edges[, 2]]) / 2
+  root <- n + 1
+  g <- igraph::graph_from_edgelist(rbind(edges, cbind(root, roots)), directed = FALSE)
+  weight <- base
+  for (r in seq_len(rounds)) {
+    sp <- suppressWarnings(igraph::shortest_paths(
+      g, from = root, to = tips, output = "both", algorithm = "dijkstra",
+      weights = c(weight, rep(1e-9, length(roots)))))
+    used <- tabulate(unlist(lapply(sp$epath, as.integer)), igraph::ecount(g))[seq_len(nrow(edges))]
+    weight <- base / (1 + used)^gamma
+  }
+  paths <- lapply(sp$vpath, as.integer)
+  paths <- paths[lengths(paths) > 2]
+  flow <- tabulate(unlist(paths), root)
+  list(paths = paths, flow = flow, root = root)
+}
+
+# Split a vessel tree into chains of vertices, each running from a tip towards
+# the root until it joins a chain found earlier (longest paths first, so the
+# trunks are single chains).
+tree_chains <- function(tree) {
+  paths <- tree$paths[order(-lengths(tree$paths))]
+  used <- logical(tree$root)
+  chains <- list()
+  for (p in paths) {
+    p <- rev(p[p != tree$root])
+    joins <- which(used[p])[1]
+    if (!is.na(joins)) {
+      if (joins == 1) next
+      p <- p[seq_len(joins)]
+    }
+    used[p] <- TRUE
+    chains[[length(chains) + 1]] <- p
+  }
+  chains
+}
+
+# One mesh of tubes along polylines: `paths` is a list of m x 3 matrices and
+# `radii` a list of m radii. Returns vertices, faces (1-based) and normals.
+tube_mesh <- function(paths, radii, sides = 8) {
+  angle <- 2 * pi * (seq_len(sides) - 1) / sides
+  vertices <- normals <- faces <- vector("list", length(paths))
+  offset <- 0
+  for (k in seq_along(paths)) {
+    p <- paths[[k]]
+    r <- radii[[k]]
+    keep <- c(TRUE, rowSums(diff(p)^2) > 1e-12)
+    p <- p[keep, , drop = FALSE]
+    r <- r[keep]
+    m <- nrow(p)
+    if (m < 2) next
+    tangent <- p[c(2:m, m), , drop = FALSE] - p[c(1, 1:(m - 1)), , drop = FALSE]
+    tangent <- tangent / sqrt(rowSums(tangent^2))
+    # Rings are oriented by parallel transport, so tubes don't twist
+    u <- cross3(tangent[1, ], if (abs(tangent[1, 3]) < 0.9) c(0, 0, 1) else c(1, 0, 0))
+    side1 <- side2 <- matrix(0, m, 3)
+    for (i in seq_len(m)) {
+      u <- unit3(u - sum(u * tangent[i, ]) * tangent[i, ])
+      side1[i, ] <- u
+      side2[i, ] <- cross3(tangent[i, ], u)
+    }
+    ring <- normal <- matrix(0, m * sides, 3)
+    for (s in seq_len(sides)) {
+      rows <- (seq_len(m) - 1) * sides + s
+      normal[rows, ] <- cos(angle[s]) * side1 + sin(angle[s]) * side2
+      ring[rows, ] <- p + r * normal[rows, ]
+    }
+    start <- rep((seq_len(m - 1) - 1) * sides, each = sides)
+    s0 <- rep(seq_len(sides) - 1, m - 1)
+    s1 <- (s0 + 1) %% sides
+    a <- start + s0
+    b <- start + s1
+    faces[[k]] <- rbind(cbind(a, b, a + sides), cbind(b, b + sides, a + sides)) + offset + 1L
+    vertices[[k]] <- ring
+    normals[[k]] <- normal
+    offset <- offset + nrow(ring)
+  }
+  list(vertices = do.call(rbind, vertices), faces = do.call(rbind, faces),
+       normals = do.call(rbind, normals))
+}
+
+# Tubes for a vessel tree. Radii grow with the number of tips a vessel drains,
+# tips taper, and vessels lie on the envelope of the brain (bridging sulci).
+vessel_tubes <- function(geometry, tree, radius.range, power = 0.6, min.length = 6) {
+  chains <- tree_chains(tree)
+  chains <- chains[lengths(chains) >= min.length]
+  if (length(chains) == 0) return(NULL)
+  max_flow <- max(tree$flow[seq_len(nrow(geometry$vertices))])
+  env <- geometry$envelope
+  paths <- radii <- vector("list", length(chains))
+  for (k in seq_along(chains)) {
+    p <- chains[[k]]
+    r <- radius.range[1] + diff(radius.range) * (tree$flow[p] / max_flow)^power
+    if (tree$flow[p[1]] <= 1) {
+      taper <- min(length(p), 6)
+      r[seq_len(taper)] <- r[seq_len(taper)] * seq(0.25, 1, length.out = taper)
+    }
+    xyz <- env$vertices[p, , drop = FALSE] + env$normals[p, , drop = FALSE] * (env$height[p] + 0.9 * r)
+    # Smooth the path, keeping its ends
+    m <- nrow(xyz)
+    if (m > 2) {
+      for (it in 1:3) xyz[2:(m - 1), ] <- (xyz[1:(m - 2), ] + 2 * xyz[2:(m - 1), ] + xyz[3:m, ]) / 4
+    }
+    paths[[k]] <- xyz
+    radii[[k]] <- r
+  }
+  tube_mesh(paths, radii)
+}
+
+# Surface measures used by the realistic style. `unit` is the size of a
+# millimetre in a human-sized brain (see brainconn()).
+brain_geometry <- function(mesh, unit) {
+  vertices <- mesh$vertices
+  faces <- mesh$faces
+  edges <- mesh_edges(faces)
+  edge_length <- sqrt(rowSums((vertices[edges[, 1], , drop = FALSE] -
+                                 vertices[edges[, 2], , drop = FALSE])^2))
+  # Smoothing steps reach about as far (in mm) on every mesh, whatever its resolution
+  steps <- function(mm) {
+    max(2L, min(200L, as.integer(round((mm * unit / mean(edge_length))^2))))
+  }
+  iterations <- list(envelope = steps(5.3), sulc = steps(9.5), noise = steps(7.5),
+                     patches = steps(9.5))
+  normals <- vertex_normals(vertices, faces)
+  # Envelope: a smoothed surface, raised to the height of the nearby gyral crowns
+  env_vertices <- smooth_vertex_values(vertices, edges, iterations$envelope)
+  env_normals <- vertex_normals(env_vertices, faces)
+  height <- rowSums((vertices - env_vertices) * env_normals)
+  crowns <- dilate_vertex_values(height, edges, max(2L, as.integer(round(7.5 * unit / mean(edge_length)))))
+  crowns <- smooth_vertex_values(pmax(crowns, height), edges, 4)[, 1]
+  # Sulcal depth: height above a more smoothed surface (> 0 on gyri, < 0 in sulci), in mm
+  smoother <- smooth_vertex_values(env_vertices, edges, iterations$sulc - iterations$envelope)
+  sulc <- rowSums((vertices - smoother) * vertex_normals(smoother, faces)) / unit
+  list(vertices = vertices, faces = faces, normals = normals, edges = edges,
+       edge_length = edge_length, sulc = sulc, iterations = iterations,
+       envelope = list(vertices = env_vertices, normals = env_normals,
+                       height = pmax(crowns, height)))
+}
+
+# Vertices of `geometry` nearest to points given relative to the mesh's
+# bounding box (-1 to 1 on each axis).
+nearest_vertices <- function(geometry, relative) {
+  v <- geometry$vertices
+  centre <- colMeans(apply(v, 2, range))
+  half <- apply(v, 2, function(x) diff(range(x))) / 2
+  apply(relative, 1, function(p) which.min(colSums((t(v) - (centre + p * half))^2)))
+}
+
+# Vein and artery tube meshes for a brain.
+brain_vessels <- function(geometry, unit) {
+  v <- geometry$vertices
+  n <- nrow(v)
+  centre <- colMeans(apply(v, 2, range))
+  half <- apply(v, 2, function(x) diff(range(x))) / 2
+  rel <- sweep(sweep(v, 2, centre), 2, half, "/")
+  # Veins drain to the dorsal midline, from tips on the lateral surfaces
+  sinus <- which(abs(rel[, 1]) < 0.09 & rel[, 3] > 0.15 + 0.25 * abs(rel[, 2]))
+  if (length(sinus) < 3) sinus <- order(abs(rel[, 1]) - rel[, 3])[seq_len(min(n, 30))]
+  lateral <- which(geometry$normals[, 1] * sign(rel[, 1]) > -0.2 & abs(rel[, 1]) > 0.29)
+  if (length(lateral) < 10) lateral <- seq_len(n)
+  scale <- min(1, n / 80000)
+  veins <- vessel_tree(geometry, sinus, sample(lateral, min(length(lateral), round(350 * scale))))
+  # Arteries: middle, anterior and posterior cerebral arteries, both sides
+  roots <- nearest_vertices(geometry, rbind(c(-0.58, 0.34, -0.46), c(0.58, 0.34, -0.46),
+                                            c(-0.06, 0.55, -0.22), c(0.06, 0.55, -0.22),
+                                            c(-0.29, -0.26, -0.46), c(0.29, -0.26, -0.46)))
+  arteries <- vessel_tree(geometry, unique(roots), sample(n, min(n, round(1200 * scale))),
+                          noise = 1.2, sulcus.cost = 0.1, gamma = 0.4)
+  list(veins = vessel_tubes(geometry, veins, c(0.3, 2.3) * unit),
+       arteries = vessel_tubes(geometry, arteries, c(0.14, 1.3) * unit, min.length = 3))
+}
+
+# A texture for the brain surface, sampled by sulcal depth (across) and by
+# slowly varying colour patches (down): dark red in sulci, pale pink on gyri.
+tissue_texture <- function() {
+  file <- file.path(tempdir(), "brainconn-tissue.png")
+  if (file.exists(file)) return(file)
+  pink <- grDevices::col2rgb(grDevices::colorRampPalette(
+    c("#5e2422", "#a3554f", "#c9867b", "#ddb0a2"))(256)) / 255
+  grey <- grDevices::col2rgb(grDevices::colorRampPalette(
+    c("#5a2a2c", "#9c5a5e", "#c48e8c", "#d8b4ab"))(256)) / 255
+  img <- array(0, c(64, 256, 3))
+  for (row in 1:64) {
+    t <- (row - 1) / 63
+    for (ch in 1:3) img[row, , ch] <- (1 - t) * pink[ch, ] + t * grey[ch, ]
+  }
+  OpenImageR::writeImage(img, file)
+  file
+}
+
+# rayvertex objects for the realistic brain: the textured surface, a thin
+# glossy membrane over it (it makes the surface look wet), veins and arteries.
+# The last brain is cached, as making the vessels takes a few seconds.
+realistic_brain <- function(mesh, unit) {
+  key <- paste(nrow(mesh$vertices), nrow(mesh$faces), signif(sum(mesh$vertices), 10),
+               signif(sum(mesh$vertices[, 1] * seq_len(nrow(mesh$vertices))), 10), unit)
+  texture <- tissue_texture()
+  cached <- brainconn_env$realistic
+  if (!is.null(cached) && identical(cached$key, key) && identical(cached$texture, texture)) {
+    return(cached$objects)
+  }
+  with_seed(1, {
+    geometry <- brain_geometry(mesh, unit)
+    patches <- smooth_vertex_values(stats::rnorm(nrow(mesh$vertices)), geometry$edges,
+                                    geometry$iterations$patches)[, 1]
+    vessels <- brain_vessels(geometry, unit)
+  })
+  patches <- (patches - mean(patches)) / max(stats::sd(patches), 1e-12)
+  uv <- cbind(pmin(pmax((geometry$sulc + 3) / 6, 0.02), 0.98),
+              pmin(pmax(0.5 + 0.3 * patches, 0.02), 0.98))
+  surface <- rayvertex::construct_mesh(
+    vertices = mesh$vertices, indices = mesh$faces - 1L, texcoords = uv,
+    tex_indices = mesh$faces - 1L,
+    material = rayvertex::material_list(type = "phong", diffuse = "white",
+                                        texture_location = texture, ambient = "#b8675f",
+                                        ambient_intensity = 0.6, specular = "#fff4ee",
+                                        specular_intensity = 0.15, shininess = 45))
+  env <- geometry$envelope
+  membrane <- rayvertex::construct_mesh(
+    vertices = env$vertices + env$normals * (env$height + 0.4 * unit),
+    indices = mesh$faces - 1L,
+    material = rayvertex::material_list(type = "phong", diffuse = "#f3d6cf",
+                                        ambient = "#f3d6cf", ambient_intensity = 0.2,
+                                        dissolve = 0.15, specular = "white",
+                                        specular_intensity = 0.9, shininess = 90))
+  tubes <- function(m, color) {
+    if (is.null(m)) return(NULL)
+    rayvertex::construct_mesh(
+      vertices = m$vertices, indices = m$faces - 1L, normals = m$normals,
+      norm_indices = m$faces - 1L,
+      material = rayvertex::material_list(type = "phong", diffuse = color, ambient = color,
+                                          ambient_intensity = 0.4, specular = "white",
+                                          specular_intensity = 0.45, shininess = 60))
+  }
+  objects <- c(list(rayvertex::smooth_normals_mesh(surface),
+                    rayvertex::smooth_normals_mesh(membrane)),
+               Filter(Negate(is.null), list(tubes(vessels$veins, "#3f3466"),
+                                            tubes(vessels$arteries, "#a8231c"))))
+  brainconn_env$realistic <- list(key = key, texture = texture, objects = objects)
+  objects
+}
+
+# Soft lights from the camera's side: a key light above right, a fill light
+# from the left and a little light from below.
+realistic_lights <- function(camera) {
+  key <- rayvertex::directional_light(camera$dir + 0.6 * camera$up + 0.4 * camera$right,
+                                      intensity = 0.75)
+  fill <- rayvertex::directional_light(camera$dir - 0.5 * camera$right - 0.2 * camera$up,
+                                       intensity = 0.35)
+  below <- rayvertex::directional_light(camera$dir - 0.8 * camera$up, intensity = 0.15)
+  rayvertex::add_light(rayvertex::add_light(key, fill), below)
+}
+
+# Gaussian blur of a matrix (sigma in pixels), by FFT, with zero padding.
+blur_image <- function(m, sigma) {
+  pad <- ceiling(3 * sigma)
+  h <- nrow(m) + 2 * pad
+  w <- ncol(m) + 2 * pad
+  z <- matrix(0, h, w)
+  z[pad + seq_len(nrow(m)), pad + seq_len(ncol(m))] <- m
+  kernel <- function(len) {
+    d <- pmin(0:(len - 1), len - 0:(len - 1))
+    k <- exp(-0.5 * (d / sigma)^2)
+    k / sum(k)
+  }
+  out <- Re(stats::fft(stats::fft(z) * stats::fft(outer(kernel(h), kernel(w))), inverse = TRUE)) /
+    (h * w)
+  out[pad + seq_len(nrow(m)), pad + seq_len(ncol(m))]
+}
+
+# Darken colours by a factor between 0 and 1.
+shade_colors <- function(colors, factor) {
+  rgb <- grDevices::col2rgb(colors) / 255
+  grDevices::rgb(t(rgb * rep(factor, each = 3)))
+}
+
+# Render one view in the realistic style. The brain and the network are
+# rendered separately; the network is then laid over the brain, mostly opaque
+# (it is inside the brain, so this shows it as if seen through the tissue),
+# with a glow around it. Parts of the network further from the camera are
+# darker. Returns an RGBA array, like render_scene().
+render_realistic <- function(brain, nodes, edges, edge.alpha, camera, res, quality, bg.color,
+                             unit, depth_points) {
+  depth_of <- function(xyz) as.vector(sweep(xyz, 2, camera$lookat) %*% camera$dir)
+  depth_range <- range(depth_of(depth_points))
+  nearness <- function(xyz) {
+    0.35 + 0.65 * pmin(pmax((depth_of(xyz) - depth_range[1]) / max(diff(depth_range), 1e-9), 0), 1)
+  }
+  xyz <- as.matrix(nodes[, c("x", "y", "z")])
+  node_near <- nearness(xyz)
+  nodes$color <- shade_colors(nodes$color, node_near)
+  if (nrow(edges) > 0) {
+    edges$color <- shade_colors(edges$color, (node_near[edges$from] + node_near[edges$to]) / 2)
+  }
+  network <- render_scene(scene_objects(NULL, NULL, NULL, nodes, edges, edge.alpha), camera,
+                          res = res, quality = quality, bg.color = NA)
+  if (length(brain) > 0) {
+    img <- render_scene(brain, camera, res = res, quality = quality, bg.color = bg.color,
+                        lights = realistic_lights(camera), ssao = TRUE, ssao_radius = 3 * unit,
+                        ssao_intensity = 1.5)
+  } else {
+    img <- network
+    background <- if (is.na(bg.color)) c(0, 0, 0, 0) else c(grDevices::col2rgb(bg.color) / 255, 1)
+    for (ch in 1:4) img[, , ch] <- background[ch]
+  }
+  # Composite with premultiplied colours, so it also works on a transparent background
+  ghost <- 0.9
+  glow_strength <- 1.5
+  sigma <- max(1, res / 140)
+  a_brain <- img[, , 4]
+  a_net <- network[, , 4] * ghost
+  alpha <- a_brain * (1 - a_net) + a_net
+  glow_alpha <- 0
+  out <- img
+  for (ch in 1:3) {
+    colour <- img[, , ch] * a_brain * (1 - a_net) + network[, , ch] * a_net
+    glow <- pmin(pmax(glow_strength * blur_image(network[, , ch] * network[, , 4], sigma), 0), 1)
+    out[, , ch] <- colour + glow - colour * glow
+    glow_alpha <- pmax(glow_alpha, glow)
+  }
+  alpha <- alpha + glow_alpha * (1 - alpha)
+  for (ch in 1:3) out[, , ch] <- ifelse(alpha > 0, pmin(out[, , ch] / pmax(alpha, 1e-6), 1), 0)
+  out[, , 4] <- alpha
+  pmin(pmax(out, 0), 1)
+}

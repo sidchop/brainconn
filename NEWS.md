@@ -12,6 +12,14 @@
 
 ## New features
 
+* `brainconn(style = "realistic")` (experimental) draws an opaque,
+  tissue-coloured brain with blood vessels on its surface, and the network
+  glowing through it, with nodes and edges further from the viewer darker.
+  The vessels are illustrative, grown over any brain surface (also the rat
+  and macaque brains) the same way every time.
+* Background colours other than white in `brainconn()` now come out as given
+  (rayvertex darkened them), and legend labels are no longer clipped at the
+  right edge. Text is white on dark backgrounds.
 * `brainconn()` defaults to `node.size = 8`; "L" and "R" labels are larger.
 * `brainconn()` views: `"top"`, `"bottom"`, `"left"`, `"right"`, `"front"`,
   `"back"`, `"ortho"`, `"all"` (six panels), or any camera angle as

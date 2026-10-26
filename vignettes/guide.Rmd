@@ -92,6 +92,20 @@ brainconn(atlas = "schaefer300_n7", conmat = example_weighted_directed, view = "
 
 `mesh.color` and `mesh.alpha` change the brain's colour and opacity, and `mesh = NULL` removes it. `bg.color = NA` gives a transparent background, which is handy for slides. `res` sets the size in pixels of each view, and `quality` the smoothing of edges (higher is slower).
 
+### A realistic brain (experimental)
+
+`style = "realistic"` replaces the glass brain with an opaque, tissue-coloured one, with veins (blue) and arteries (red) on its surface. The network is drawn as if seen through the brain, with a soft glow, and nodes and edges further from you are darker, which helps to tell the near hemisphere from the far one. The background is dark and the edges a warm yellow, unless you set `bg.color` and `edge.color`.
+
+```{r, fig.width = 8, fig.height = 5.5, out.width = "85%", dev.args = list(bg = "grey5")}
+w <- example_fc_schaefer300
+diag(w) <- 0
+w[w < quantile(w[upper.tri(w)], 0.998)] <- 0   # the strongest 0.2% of connections
+brainconn(atlas = "schaefer300_n7", conmat = w, view = "top", style = "realistic",
+          edge.color.weighted = TRUE, edge.palette = c("gold", "orangered"))
+```
+
+The blood vessels are illustrations, not anatomy: they are grown over the surface of the brain, from the places where the main arteries and veins are, the same way every time. They work on any brain surface, such as the macaque and rat brains (see [other brains](other-brains.html)). This style is slower than the glass brain: the vessels take a few seconds to make the first time a brain is drawn in a session, and each view takes a few seconds to render.
+
 ### Saving and combining
 
 Because the result is a ggplot:

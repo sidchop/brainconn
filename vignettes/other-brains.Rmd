@@ -134,6 +134,13 @@ brainconn(atlas = macaque_atlas, conmat = mac_conmat, mesh = macaque_mesh, view 
           labels = TRUE, edge.color.weighted = TRUE)
 ```
 
+The experimental realistic style (see [the guide](guide.html#a-realistic-brain-experimental)) grows blood vessels over any brain surface:
+
+```{r, fig.width = 7, fig.height = 5, out.width = "70%", dev.args = list(bg = "grey5")}
+brainconn(atlas = macaque_atlas, conmat = mac_conmat, mesh = macaque_mesh, view = c(-110, 20),
+          style = "realistic", edge.color.weighted = TRUE)
+```
+
 ## Where the animal brains come from
 
 * **Rat:** Waxholm Space atlas of the Sprague Dawley rat brain, version 4 (Kleven H, et al. 2023, *Nature Methods* 20:1822-1829; Papp EA, et al. 2014, *NeuroImage* 97:374-386), CC BY 4.0. The surface was made from the atlas labels without the nerves and spinal cord.

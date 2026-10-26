@@ -68,6 +68,15 @@ brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
 
 ![](man/figures/README-render-1.png)<!-- -->
 
+### A realistic brain (experimental)
+
+``` r
+brainconn(atlas = "schaefer300_n7", conmat = example_unweighted_undirected,
+          view = c(-125, 25), style = "realistic", res = 1400)
+```
+
+![](man/figures/README-realistic-1.png)<!-- -->
+
 ### Interactive 3D, with highlighting
 
 ``` r

@@ -28,6 +28,7 @@ brainconn(
   mesh = "ICBM152",
   mesh.color = "grey85",
   mesh.alpha = 0.3,
+  style = c("glass", "realistic"),
   res = 1000,
   quality = 2,
   bg.color = "white"
@@ -48,7 +49,7 @@ brainconn(
 
 \item{all.nodes}{If \code{TRUE}, all nodes are shown. If \code{FALSE}, only nodes with connecting edges are shown.}
 
-\item{edge.color}{A colour for the edges, e.g. "black". Ignored when \code{edge.color.weighted = TRUE}.}
+\item{edge.color}{A colour for the edges, e.g. "black" (the default; "#ffd98a" for \code{style = "realistic"}). Ignored when \code{edge.color.weighted = TRUE}.}
 
 \item{edge.alpha}{Number between 0-1 to set the transparency of the edges.}
 
@@ -76,15 +77,17 @@ brainconn(
 
 \item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).}
 
-\item{mesh.color}{Colour of the brain surface.}
+\item{mesh.color}{Colour of the brain surface (glass style only).}
 
-\item{mesh.alpha}{Opacity of the brain surface, from 0 (invisible) to 1 (opaque).}
+\item{mesh.alpha}{Opacity of the brain surface, from 0 (invisible) to 1 (opaque) (glass style only).}
+
+\item{style}{\code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a tissue-like brain with blood vessels and a glowing network; see Details.}
 
 \item{res}{Size in pixels of the longest side of each rendered view.}
 
 \item{quality}{Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough.}
 
-\item{bg.color}{Background colour, or \code{NA} for a transparent background.}
+\item{bg.color}{Background colour, or \code{NA} for a transparent background. Default \code{"white"}, or \code{"grey5"} for \code{style = "realistic"}.}
 }
 \value{
 A ggplot object.
@@ -102,6 +105,16 @@ the bottom and front views are mirror images of what a camera below or in
 front of the subject would see. \code{hemi.labels = TRUE} (the default)
 marks the hemispheres with "L" and "R".
 
+\code{style = "realistic"} (experimental) draws the brain as opaque,
+tissue-coloured cortex with blood vessels on its surface, and the network as
+glowing nodes and edges seen through the brain, as in an x-ray. Parts of the
+network further from the viewer are darker. The vessels are illustrative,
+not anatomical: they are generated for each brain surface, the same way
+every time. This style is slower: making the vessels takes a few seconds
+the first time a brain is drawn, and each view is rendered twice. The
+default background is near-black and the default edge colour a warm yellow;
+\code{mesh.color} and \code{mesh.alpha} are not used.
+
 Before brainconn 1.0.0, \code{brainconn()} drew 2D plots; that function is
 now \code{\link{brainconn2d}}. Calls that use arguments only the 2D plot
 has (\code{background}, \code{background.alpha}, \code{bg_xmin},
@@ -115,6 +128,8 @@ x <- example_unweighted_undirected
 brainconn(atlas = "schaefer300_n7", conmat = x, view = "left")
 brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
           edge.color.weighted = TRUE, view = "ortho")
+# Experimental: a realistic brain with blood vessels
+brainconn(atlas = "schaefer300_n7", conmat = x, view = "left", style = "realistic")
 }
 }
 \seealso{

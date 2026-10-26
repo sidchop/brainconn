@@ -77,6 +77,14 @@ brainconn(atlas = "schaefer300_n7", conmat = x, view = "right",
 
 See `?brainconn` for every option, and [the guide](guide.html#brainconn) for more examples.
 
+### Experimental: a realistic brain
+
+`style = "realistic"` draws the brain as tissue, with blood vessels on its surface, and the network glowing through it. It is slower than the default glass brain.
+
+```{r, fig.width = 8, fig.height = 5.5, out.width = "85%", dev.args = list(bg = "grey5")}
+brainconn(atlas = "schaefer300_n7", conmat = x, view = c(-125, 25), style = "realistic")
+```
+
 ## Everything else, at a glance
 
 ### Interactive 3D: `brainconn3D()`
