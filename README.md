@@ -11,8 +11,8 @@ so that visualisation can be part of reproducible analysis scripts:
 
 - `brainconn()`: static 3D renders of brain networks in the style of
   BrainNet Viewer, as ggplot objects.
-- `brainconn3D()`: interactive 3D plots; hover over a node to highlight
-  its connections.
+- `brainconn3D()`: interactive 3D plots; hover over a node to see its
+  connections, and click it to highlight them.
 - `brainconn_matrix()`: connectivity matrices grouped by network, with
   network borders, smoothing and network-level summaries.
 - `brainconn_circle()`: chord diagrams of connectivity within and
@@ -21,8 +21,17 @@ so that visualisation can be part of reproducible analysis scripts:
   versions before 1.0.0).
 
 Many commonly used atlases are included (see `list_atlases()`), and you
-can use your own atlas and your own brain mesh, including non-human
-brains.
+can use your own atlas and your own brain mesh. Rat and macaque brains
+are included too.
+
+Start with the [Getting
+started](https://sidchop.github.io/brainconn/articles/brainconn.html)
+guide, then [A guide to every
+function](https://sidchop.github.io/brainconn/articles/guide.html),
+[Custom atlases and other
+brains](https://sidchop.github.io/brainconn/articles/other-brains.html)
+and [Animating brain
+networks](https://sidchop.github.io/brainconn/articles/animations.html).
 
 ## Installation
 
@@ -54,7 +63,7 @@ of an atlas.
 ``` r
 library(brainconn)
 brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
-          view = "ortho", edge.color.weighted = TRUE)
+          view = "ortho", edge.color.weighted = TRUE, res = 1400)
 ```
 
 ![](man/figures/README-render-1.png)<!-- -->
@@ -66,7 +75,7 @@ brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
             edge.color.weighted = TRUE, highlight = TRUE)
 ```
 
-![](man/img/README-gif.gif)<!-- -->
+![](man/figures/README-brainconn3D.gif)
 
 ### Connectivity matrices
 
@@ -83,6 +92,28 @@ brainconn_circle(example_fc_schaefer300, atlas = "schaefer300_n7")
 ```
 
 ![](man/figures/README-chord-1.png)<!-- -->
+
+### Other brains
+
+``` r
+set.seed(3)
+n <- nrow(macaque_atlas)
+conmat <- matrix(0, n, n)
+conmat[sample(which(upper.tri(conmat)), 50)] <- runif(50, -1, 1)
+conmat <- conmat + t(conmat)
+brainconn(atlas = macaque_atlas, conmat = conmat, mesh = macaque_mesh, view = "ortho",
+          edge.color.weighted = TRUE, res = 1400)
+```
+
+![](man/figures/README-macaque-1.png)<!-- -->
+
+### Animations
+
+A series of renders makes an animation, e.g. a network diffusion model
+spreading from the left temporal pole (see [Animating brain
+networks](https://sidchop.github.io/brainconn/articles/animations.html)):
+
+![](vignettes/figures/animation-spread.gif)
 
 ### Report bugs or requests
 

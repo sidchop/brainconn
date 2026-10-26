@@ -2,12 +2,12 @@
 #'
 #' \code{brainconn3D} plots and returns a interactive plotly object of plotted brain connectivity matrix.
 #'
-#' Edges are drawn as straight lines between nodes; directions are not shown.
-#' Hovering over a node shows its name, network, degree, strength and
-#' strongest connections. With \code{highlight = TRUE}, hovering over a node
-#' also highlights its edges and neighbouring nodes and greys out the rest.
-#' Clicking a node keeps it highlighted until you click it again or click the
-#' brain surface.
+#' Nodes are drawn as spheres (so they grow and shrink as you zoom) and edges
+#' as lines between them; edge directions are not shown. Hovering over a node
+#' shows its name, network, degree, strength and strongest connections. With
+#' \code{highlight = TRUE}, clicking a node keeps its edges and neighbouring
+#' nodes and fades out everything else; click the node again, click anywhere
+#' else, or press Escape to show everything again.
 #' @author Sidhant Chopra
 #'
 #'
@@ -15,7 +15,7 @@
 #' @param conmat A adjacency matrix. Can be binary, weighted, directed or undirected, see example_* data. If \code{NULL}, only the nodes are plotted.
 #' @param all.nodes If \code{TRUE}, then all nodes will be shown. If \code{FALSE}, then only nodes with connecting edges will be shown.
 #' @param node.color A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.
-#' @param node.size A number that determines the diameter of the nodes. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.
+#' @param node.size Size of the nodes, as in \code{\link{brainconn}}: the diameter in mm for a human-sized brain, scaled with the size of the mesh. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.
 #' @param edge.width Number to set the width of the edges.
 #' @param edge.color A string that sets the edge color. e.g. "blue". Ignored when \code{edge.color.weighted = TRUE}.
 #' @param opacity Number between 0-1 to  set the transparency of the mesh brain
@@ -26,7 +26,7 @@
 #' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates, e.g. mesh file path(s); see \code{\link{read_brain_mesh}} and \code{\link{brainconn}}.
 #' @param edge.color.weighted For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}).
 #' @param edge.palette,edge.limits Colours and limits for edge weights when \code{edge.color.weighted = TRUE}; see \code{\link{brainconn}}.
-#' @param highlight If \code{TRUE}, hovering over (or clicking) a node highlights its connections.
+#' @param highlight If \code{TRUE}, clicking a node highlights its connections.
 #' @return a plotly object
 #' @importFrom plotly plot_ly add_trace layout plotly_build
 #' @examples
@@ -42,7 +42,7 @@ brainconn3D <- function(atlas = NULL,
                         conmat = NULL,
                         all.nodes = FALSE,
                         node.color = "network",
-                        node.size = 10,
+                        node.size = 8,
                         edge.width = 3,
                         edge.color = "black",
                         opacity = 0.28,
@@ -78,23 +78,31 @@ brainconn3D <- function(atlas = NULL,
   colored <- !is.null(edges$palette)
   e <- edges$table
 
-  p <- plot_ly()
+  # Node sizes are in mm for a human brain and scale with the mesh, as in brainconn()
+  # The default brain is a simplified ICBM152 surface, which is plenty for a
+  # translucent backdrop and keeps the page small and fast
+  mesh <- if (identical(mesh, "ICBM152")) icbm152_lite else resolve_mesh(mesh)
+  extent_points <- if (is.null(mesh)) xyz else mesh$vertices
+  extent <- max(apply(extent_points, 2, function(p) diff(range(p))))
+  unit <- if (is.null(mesh)) max(extent, 1) / 130 else extent / 170
+  radius <- node.size / 2 * unit
 
-  # Brain surface. Hover events on it (without a tooltip) let a click on the
-  # brain clear a highlighted node.
-  mesh <- resolve_mesh(mesh)
+  p <- plot_ly()
+  trace <- 0L
+
+  # Brain surface. Vertices are rounded to a power-of-two grid fine enough for
+  # the brain's size; such numbers are exact in binary, so they are written to
+  # the page with few digits. Its colour is set after building, below.
   if (!is.null(mesh)) {
-    # Coordinates rounded to 0.25 mm are exact in binary, so they are written
-    # to the page with few digits; this keeps the page small (the default mesh
-    # has 82k vertices). The colour is set after building, below.
-    v <- round(mesh$vertices * 4) / 4
+    v <- quantise(mesh$vertices, extent / 600)
     p <- add_trace(p,
                    type = "mesh3d",
                    x = v[, 1], y = v[, 2], z = v[, 3],
                    i = mesh$faces[, 1] - 1, j = mesh$faces[, 2] - 1, k = mesh$faces[, 3] - 1,
                    opacity = opacity,
-                   hoverinfo = if (highlight) "none" else "skip",
+                   hoverinfo = "skip",
                    showlegend = FALSE)
+    trace <- trace + 1L
   }
 
   # Edges: one trace, with NA between edges to break the line
@@ -107,6 +115,7 @@ brainconn3D <- function(atlas = NULL,
     }
     line
   }
+  edge_trace <- hl_trace <- NA
   if (nrow(e) > 0) {
     path <- function(v) as.vector(rbind(v[e$from], v[e$to], NA))
     line <- edge_line(edge.width)
@@ -124,55 +133,78 @@ brainconn3D <- function(atlas = NULL,
                    opacity = 1,
                    hoverinfo = "skip",
                    showlegend = FALSE)
+    edge_trace <- trace
+    trace <- trace + 1L
     if (highlight) {
-      # Filled in by the highlighting JavaScript
+      # Filled in by the JavaScript with the selected node's edges
       p <- add_trace(p,
                      type = "scatter3d",
                      mode = "lines",
                      x = numeric(0), y = numeric(0), z = numeric(0),
-                     line = edge_line(edge.width * 2.5),
+                     line = edge_line(edge.width * 1.5),
                      hoverinfo = "skip",
                      showlegend = FALSE)
+      hl_trace <- trace
+      trace <- trace + 1L
     }
   }
 
-  # Nodes: one trace per network (or one trace), with per-node colours and
-  # the node's index (0-based) as customdata
-  hover <- node_hover_text(data, conmat)
+  # Nodes: spheres, one mesh trace per network (or one trace). Plotly's own
+  # hover can't reach nodes inside the brain surface, so the JavaScript finds
+  # the node under the mouse itself; the spheres are not pickable.
+  # Simpler spheres for big networks keep the page small
+  sphere <- unit_sphere(if (nrow(data) > 150) 1 else 2)
   groups <- if (by_network) factor(data$network, levels = names(network.colors)) else
     factor(rep("Nodes", nrow(data)))
   groups <- droplevels(groups)
+  node_traces <- list()
   for (g in levels(groups)) {
     idx <- which(groups == g)
+    s <- sphere_meshes(sphere, xyz[idx, , drop = FALSE], radius[idx], unit)
     p <- add_trace(p,
-                   type = "scatter3d",
-                   mode = "markers",
-                   x = xyz[idx, 1], y = xyz[idx, 2], z = xyz[idx, 3],
-                   marker = list(size = I(node.size[idx]), color = I(node.color[idx]),
-                                 line = list(width = 0)),
+                   type = "mesh3d",
+                   x = s$vertices[, 1], y = s$vertices[, 2], z = s$vertices[, 3],
+                   i = s$faces[, 1] - 1, j = s$faces[, 2] - 1, k = s$faces[, 3] - 1,
                    name = g,
                    legendgroup = g,
-                   customdata = I(idx - 1),
-                   text = hover[idx],
-                   hoverinfo = "text",
-                   showlegend = by_network && !highlight)
+                   hoverinfo = "skip",
+                   showlegend = FALSE)
+    node_traces[[g]] <- list(trace = trace, nodes = I(idx - 1L), colors = I(node.color[idx]))
+    trace <- trace + 1L
   }
-  # Highlighting greys out nodes, which would also grey out the legend, so the
-  # legend gets its own traces: one point on a node of each network, which the
-  # JavaScript removes from the scene once the plot is drawn. Clicking a legend
-  # entry still hides its network's nodes, which share its legendgroup.
-  if (by_network && highlight) {
+  # Highlighting fades the node traces and redraws the selected node and its
+  # neighbours on this trace (opacity can only be set per trace). It starts as
+  # one zero-area triangle.
+  sel_trace <- NA
+  if (highlight) {
+    p <- add_trace(p,
+                   type = "mesh3d",
+                   x = rep(xyz[1, 1], 3), y = rep(xyz[1, 2], 3), z = rep(xyz[1, 3], 3),
+                   i = 0, j = 1, k = 2,
+                   hoverinfo = "skip",
+                   showlegend = FALSE)
+    sel_trace <- trace
+    trace <- trace + 1L
+  }
+  # Legend entries: plotly colours a mesh's legend entry like its first vertex,
+  # which fading would grey out, so each network gets a one-point trace for its
+  # legend entry, which the JavaScript removes from the scene. Clicking an entry
+  # still hides the network's nodes, which share its legendgroup.
+  legend_traces <- integer(0)
+  if (by_network) {
     for (g in levels(groups)) {
       first <- which(groups == g)[1]
       p <- add_trace(p,
                      type = "scatter3d",
                      mode = "markers",
                      x = xyz[first, 1], y = xyz[first, 2], z = xyz[first, 3],
-                     marker = list(size = node.size[first], color = network.colors[[g]]),
+                     marker = list(size = 8, color = network.colors[[g]]),
                      name = g,
                      legendgroup = g,
                      hoverinfo = "skip",
                      showlegend = TRUE)
+      legend_traces <- c(legend_traces, trace)
+      trace <- trace + 1L
     }
   }
 
@@ -186,30 +218,97 @@ brainconn3D <- function(atlas = NULL,
                            zaxis = hidden_axis,
                            aspectmode = "data"))
 
-  # plotly_build() turns `color =` into a colour scale, so a single surface
-  # colour is set on the built trace
+  # plotly_build() would turn `color =` into a colour scale, so colours are set
+  # on the built traces
   p <- plotly::plotly_build(p)
   if (!is.null(mesh)) p$x$data[[1]]$color <- "#F0F0F0"
+  n_vertices <- nrow(sphere$vertices)
+  lighting <- list(ambient = 0.55, diffuse = 0.7, specular = 0.35, roughness = 0.4)
+  for (nt in node_traces) {
+    tr <- p$x$data[[nt$trace + 1]]
+    tr$vertexcolor <- rep(unclass(nt$colors), each = n_vertices)
+    tr$flatshading <- FALSE
+    tr$lighting <- lighting
+    p$x$data[[nt$trace + 1]] <- tr
+  }
+  if (highlight) {
+    p$x$data[[sel_trace + 1]]$vertexcolor <- rep(node.color[1], 3)
+    p$x$data[[sel_trace + 1]]$flatshading <- FALSE
+    p$x$data[[sel_trace + 1]]$lighting <- lighting
+  }
   # The built traces are all the page needs; the unbuilt copy would double its size
   p$x$attrs <- NULL
 
-  if (highlight) {
-    n_before_nodes <- as.integer(!is.null(mesh)) + if (nrow(e) > 0) 2L else 0L
-    payload <- highlight_payload(xyz, e, colored, nrow(data))
-    n_groups <- length(levels(groups))
-    payload$nodeTraces <- I(n_before_nodes + seq_len(n_groups) - 1L)
-    payload$legendTraces <- I(if (by_network) n_before_nodes + n_groups + seq_len(n_groups) - 1L
-                              else integer(0))
-    # NA becomes null in JavaScript
-    payload$edgeTrace <- if (nrow(e) > 0) as.integer(!is.null(mesh)) else NA
-    payload$hlTrace <- if (nrow(e) > 0) payload$edgeTrace + 1L else NA
-    payload$dimColor <- "#D9D9D9"
-    payload$dimOpacity <- 0.12
-    js <- paste(readLines(system.file("js", "brainconn-highlight.js", package = "brainconn")),
-                collapse = "\n")
-    p <- htmlwidgets::onRender(p, js, data = payload)
+  payload <- list(
+    centres = I(lapply(seq_len(nrow(xyz)), function(i) I(xyz[i, ]))),
+    radii = I(radius),
+    hover = I(node_hover_text(data, conmat)),
+    nodeTraces = unname(node_traces),
+    legendTraces = I(legend_traces),
+    verticesPerNode = n_vertices,
+    highlight = highlight,
+    edgeTrace = edge_trace,   # NA becomes null in JavaScript
+    hlTrace = hl_trace,
+    selTrace = sel_trace,
+    nodeOpacity = 0.12,
+    dimOpacity = 0.06
+  )
+  if (highlight) payload <- c(payload, highlight_payload(xyz, e, colored, nrow(data)))
+  js <- paste(readLines(system.file("js", "brainconn3D.js", package = "brainconn")),
+              collapse = "\n")
+  htmlwidgets::onRender(p, js, data = payload)
+}
+
+# Round to a power-of-two grid no coarser than `step`: such numbers are exact in
+# binary, so they print with few digits.
+quantise <- function(x, step) {
+  q <- 2^floor(log2(step))
+  round(x / q) * q
+}
+
+# A unit icosphere: an icosahedron with each triangle split into four
+# `subdivisions` times (2 gives 162 vertices).
+unit_sphere <- function(subdivisions = 2) {
+  key <- paste0("sphere", subdivisions)
+  if (!is.null(brainconn_env[[key]])) return(brainconn_env[[key]])
+  t <- (1 + sqrt(5)) / 2
+  v <- rbind(c(-1, t, 0), c(1, t, 0), c(-1, -t, 0), c(1, -t, 0), c(0, -1, t), c(0, 1, t),
+             c(0, -1, -t), c(0, 1, -t), c(t, 0, -1), c(t, 0, 1), c(-t, 0, -1), c(-t, 0, 1))
+  f <- rbind(c(1, 12, 6), c(1, 6, 2), c(1, 2, 8), c(1, 8, 11), c(1, 11, 12), c(2, 6, 10),
+             c(6, 12, 5), c(12, 11, 3), c(11, 8, 7), c(8, 2, 9), c(4, 10, 5), c(4, 5, 3),
+             c(4, 3, 7), c(4, 7, 9), c(4, 9, 10), c(5, 10, 6), c(3, 5, 12), c(7, 3, 11),
+             c(9, 7, 8), c(10, 9, 2))
+  for (s in seq_len(subdivisions)) {
+    midpoints <- new.env()
+    mid <- function(a, b) {
+      k <- paste(min(a, b), max(a, b))
+      if (is.null(midpoints[[k]])) {
+        v <<- rbind(v, (v[a, ] + v[b, ]) / 2)
+        midpoints[[k]] <- nrow(v)
+      }
+      midpoints[[k]]
+    }
+    f <- do.call(rbind, lapply(seq_len(nrow(f)), function(r) {
+      a <- f[r, 1]; b <- f[r, 2]; c <- f[r, 3]
+      ab <- mid(a, b); bc <- mid(b, c); ca <- mid(c, a)
+      rbind(c(a, ab, ca), c(b, bc, ab), c(c, ca, bc), c(ab, bc, ca))
+    }))
   }
-  p
+  sphere <- list(vertices = v / sqrt(rowSums(v^2)), faces = f)
+  brainconn_env[[key]] <- sphere
+  sphere
+}
+
+# One sphere per node, combined into one mesh. Vertices are rounded to a grid
+# fine enough for the node sizes.
+sphere_meshes <- function(sphere, centres, radius, unit) {
+  nv <- nrow(sphere$vertices)
+  n <- nrow(centres)
+  vertices <- do.call(rbind, lapply(seq_len(n), function(i) {
+    sweep(sphere$vertices * radius[i], 2, centres[i, ], "+")
+  }))
+  faces <- do.call(rbind, lapply(seq_len(n), function(i) sphere$faces + (i - 1) * nv))
+  list(vertices = quantise(vertices, unit / 32), faces = faces)
 }
 
 # Colour stops for plotly from a vector of colours (lowest to highest).

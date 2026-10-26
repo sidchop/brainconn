@@ -74,6 +74,8 @@ mesh_formats <- c(gii = "gii", ply = "ply", obj = "obj", stl = "stl", vtk = "vtk
 #'   matrix of coordinates) and \code{faces} (an f x 3 matrix of 1-based vertex
 #'   indices).
 #' @export
+#' @seealso \code{\link{rat_brain}} and \code{\link{macaque_brain}} for rat and
+#'   macaque meshes and atlases included with brainconn.
 #' @examples
 #' \dontrun{
 #' # A macaque template surface (e.g. from the NMT), with an atlas in the same space

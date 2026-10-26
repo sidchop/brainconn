@@ -9,4 +9,5 @@
 ^docs$
 ^_config\.yml$
 ^_pkgdown\.yml$
-^man/img/README-gif\.gif$
+^man/figures/README-brainconn3D\.gif$
+^man/figures/README-.*\.png$

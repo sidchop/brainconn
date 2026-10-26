@@ -36,10 +36,25 @@
 #'   cerebral cortex estimated by intrinsic functional connectivity. Journal of
 #'   Neurophysiology, 106(3), 1125-1165.
 #' @name schaefer_atlases
-#' @aliases schaefer100_n7 schaefer100_n17 schaefer200_n7 schaefer200_n17
-#'   schaefer300_n7 schaefer300_n17 schaefer400_n7 schaefer400_n17 schaefer500_n7
-#'   schaefer500_n17 schaefer600_n7 schaefer600_n17 schaefer700_n7 schaefer700_n17
-#'   schaefer800_n7 schaefer900_n7 schaefer900_n17 schaefer1000_n7 schaefer1000_n17
+#' @aliases schaefer100_n7
+#' @aliases schaefer100_n17
+#' @aliases schaefer200_n7
+#' @aliases schaefer200_n17
+#' @aliases schaefer300_n7
+#' @aliases schaefer300_n17
+#' @aliases schaefer400_n7
+#' @aliases schaefer400_n17
+#' @aliases schaefer500_n7
+#' @aliases schaefer500_n17
+#' @aliases schaefer600_n7
+#' @aliases schaefer600_n17
+#' @aliases schaefer700_n7
+#' @aliases schaefer700_n17
+#' @aliases schaefer800_n7
+#' @aliases schaefer900_n7
+#' @aliases schaefer900_n17
+#' @aliases schaefer1000_n7
+#' @aliases schaefer1000_n17
 #' @docType data
 #' @keywords datasets
 NULL
@@ -175,8 +190,10 @@ NULL
 #'
 #' @format A 300 x 300 data.frame, in the region order of \code{schaefer300_n7}.
 #' @name example_matrices
-#' @aliases example_unweighted_undirected example_weighted_undirected
-#'   example_unweighted_directed example_weighted_directed
+#' @aliases example_unweighted_undirected
+#' @aliases example_weighted_undirected
+#' @aliases example_unweighted_directed
+#' @aliases example_weighted_directed
 #' @docType data
 #' @keywords datasets
 NULL
@@ -198,8 +215,83 @@ NULL
 #' @source Xia M, Wang J, He Y (2013). BrainNet Viewer: a network visualization
 #'   tool for human brain connectomics. PLoS ONE, 8(7), e68910.
 #' @name ICBM152
-#' @aliases ICBM152_mesh_vb ICBM152_mesh_it ICBM152_top ICBM152_bottom ICBM152_left
-#'   ICBM152_right ICBM152_front ICBM152_back
+#' @aliases ICBM152_mesh_vb
+#' @aliases ICBM152_mesh_it
+#' @aliases ICBM152_top
+#' @aliases ICBM152_bottom
+#' @aliases ICBM152_left
+#' @aliases ICBM152_right
+#' @aliases ICBM152_front
+#' @aliases ICBM152_back
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Rat brain: surface mesh and atlas (Waxholm Space)
+#'
+#' A rat brain surface and a 66-region atlas in Waxholm Space, from the
+#' Waxholm Space atlas of the Sprague Dawley rat brain, version 4 (Kleven et
+#' al. 2023). Use them together, e.g.
+#' \code{brainconn(rat_atlas, conmat, mesh = rat_mesh)}.
+#'
+#' \code{rat_mesh} was made from the atlas labels (at 78 micrometre resolution,
+#' without the cranial nerves, spinal cord and inner ear), smoothed and
+#' simplified to 40,000 triangles. \code{rat_atlas} has 33 regions per
+#' hemisphere: cortical areas, the hippocampal region, olfactory bulb,
+#' amygdala and septum, basal ganglia, thalamic groups, hypothalamus, midbrain,
+#' pons and cerebellum; each region's coordinates are the centre of its surface
+#' in each hemisphere. See \code{data-raw/animal_meshes.R} in the package
+#' source for how they were made.
+#'
+#' Coordinates are in Waxholm Space: millimetres, with x to the right, y to the
+#' front and z up, and the origin at the decussation of the anterior commissure.
+#'
+#' @format \code{rat_mesh}: a mesh (see \code{\link{read_brain_mesh}}) with
+#'   \code{vertices} and \code{faces}. \code{rat_atlas}: a data.frame with 66
+#'   rows and columns \code{ROI.Name} (e.g. "L_M" for the left motor cortex),
+#'   \code{x.mni}, \code{y.mni}, \code{z.mni} (Waxholm Space, mm),
+#'   \code{network} (anatomical group), \code{hemi}, \code{name} (full region
+#'   name), \code{whs_id} (Waxholm structure id) and \code{index}.
+#' @source Kleven H, et al. (2023). Waxholm Space atlas of the rat brain: a 3D
+#'   atlas supporting data analysis and integration. Nature Methods, 20,
+#'   1822-1829. \doi{10.1038/s41592-023-02034-3}. Papp EA, et al. (2014).
+#'   Waxholm Space atlas of the Sprague Dawley rat brain. NeuroImage, 97,
+#'   374-386. \doi{10.1016/j.neuroimage.2014.04.001}. Licence: CC BY 4.0.
+#' @name rat_brain
+#' @aliases rat_mesh rat_atlas
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Macaque brain: surface mesh and atlas (NMT v2, CHARM)
+#'
+#' A rhesus macaque brain surface and a 34-region atlas in the space of the
+#' NIMH Macaque Template v2 (NMT v2, symmetric), with the regions of level 2 of
+#' the Cortical Hierarchy Atlas of the Rhesus Macaque (CHARM; Jung et al. 2021).
+#' Use them together, e.g.
+#' \code{brainconn(macaque_atlas, conmat, mesh = macaque_mesh)}.
+#'
+#' \code{macaque_mesh} is the NMT v2 pial surface of both hemispheres,
+#' simplified to 25,000 triangles each. \code{macaque_atlas} has the 17 CHARM
+#' level 2 regions in each hemisphere, grouped into the four lobes of CHARM
+#' level 1 (\code{network}); coordinates are region centroids. See
+#' \code{data-raw/animal_meshes.R} in the package source for how they were made.
+#'
+#' Coordinates are in NMT v2 space: millimetres, with x to the right, y to the
+#' front and z up.
+#'
+#' @format \code{macaque_mesh}: a mesh (see \code{\link{read_brain_mesh}}) with
+#'   \code{vertices} and \code{faces}. \code{macaque_atlas}: a data.frame with 34
+#'   rows and columns \code{ROI.Name} (e.g. "L_V1"), \code{x.mni}, \code{y.mni},
+#'   \code{z.mni} (NMT v2 space, mm), \code{network} (lobe), \code{hemi},
+#'   \code{name} (full region name), \code{charm_id} (CHARM label) and
+#'   \code{index}.
+#' @source Jung B, et al. (2021). A comprehensive macaque fMRI pipeline and
+#'   hierarchical atlas. NeuroImage, 235, 117997.
+#'   \doi{10.1016/j.neuroimage.2021.117997}. Files from TemplateFlow
+#'   (tpl-NMT31Sym). Licence: public domain (CC0).
+#' @name macaque_brain
+#' @aliases macaque_mesh macaque_atlas
 #' @docType data
 #' @keywords datasets
 NULL

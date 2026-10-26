@@ -41,3 +41,7 @@ brainconn(atlas = macaque_atlas, conmat = macaque_conmat, mesh = mesh)
 brainconn3D(atlas = macaque_atlas, conmat = macaque_conmat, mesh = mesh)
 }
 }
+\seealso{
+\code{\link{rat_brain}} and \code{\link{macaque_brain}} for rat and
+  macaque meshes and atlases included with brainconn.
+}

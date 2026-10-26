@@ -170,7 +170,7 @@ build_plot <- function(conmat,
 
   if (hemi.labels && !is.na(geom$label_y)) {
     p <- p + annotate("text", x = c(-65, 65), y = geom$label_y,
-                      label = c("L", "R"), fontface = "bold", size = 4)
+                      label = c("L", "R"), fontface = "bold", size = 6)
   }
 
   p <- p + coord_fixed(xlim = geom$xlim, ylim = geom$ylim) +

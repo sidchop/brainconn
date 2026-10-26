@@ -48,7 +48,7 @@ test_that("mesh files work in brainconn() and brainconn3D(), with sizes that fit
   m <- ellipsoid_mesh()
   file <- tempfile(fileext = ".ply")
   freesurferformats::write.fs.surface.ply(file, m$vertices, m$faces)
-  p <- suppressMessages(brainconn(rat_atlas, conmat = rat_conmat, mesh = file, view = "top",
+  p <- suppressMessages(brainconn(toy_rat_atlas, conmat = toy_rat_conmat, mesh = file, view = "top",
                                   res = 200, quality = 1, labels = TRUE))
   panel <- ggplot2::ggplot_build(p)$layout$panel_params[[1]]
   # The view is fitted to the 12 x 22 mm mesh, not to MNI space
@@ -59,7 +59,7 @@ test_that("mesh files work in brainconn() and brainconn3D(), with sizes that fit
   expect_true(all(labels$x[startsWith(labels$label, "L_")] < 0))
   expect_true(all(labels$x[startsWith(labels$label, "R_")] > 0))
 
-  p3d <- brainconn3D(rat_atlas, conmat = rat_conmat, mesh = file)
+  p3d <- brainconn3D(toy_rat_atlas, conmat = toy_rat_conmat, mesh = file)
   mesh_trace <- plotly::plotly_build(p3d)$x$data[[1]]
   expect_equal(mesh_trace$type, "mesh3d")
   expect_length(mesh_trace$x, nrow(m$vertices))
