@@ -76,10 +76,13 @@
 ## Documentation and infrastructure
 
 * Every included dataset is documented, with references for the atlases.
-* Three vignettes: "Getting started" (focused on `brainconn()`, with a quick
+* Four vignettes: "Getting started" (focused on `brainconn()`, with a quick
   look at everything else), "A guide to every function" (step-by-step
-  examples), and "Custom atlases and other brains" (your own atlas or mesh, and
-  the rat and macaque brains). The README has a new gallery.
+  examples), "Custom atlases and other brains" (your own atlas or mesh, and
+  the rat and macaque brains), and "Animating brain networks" (GIFs of a
+  network diffusion model and a travelling wave). The README has a new gallery,
+  including an animation of the interactive plot, and all figures are high
+  resolution.
 * New R CMD check workflow, an updated pkgdown workflow and a pkgdown
   reference index.
 

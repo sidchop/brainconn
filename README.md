@@ -27,9 +27,11 @@ are included too.
 Start with the [Getting
 started](https://sidchop.github.io/brainconn/articles/brainconn.html)
 guide, then [A guide to every
-function](https://sidchop.github.io/brainconn/articles/guide.html) and
+function](https://sidchop.github.io/brainconn/articles/guide.html),
 [Custom atlases and other
-brains](https://sidchop.github.io/brainconn/articles/other-brains.html).
+brains](https://sidchop.github.io/brainconn/articles/other-brains.html)
+and [Animating brain
+networks](https://sidchop.github.io/brainconn/articles/animations.html).
 
 ## Installation
 
@@ -61,7 +63,7 @@ of an atlas.
 ``` r
 library(brainconn)
 brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
-          view = "ortho", edge.color.weighted = TRUE)
+          view = "ortho", edge.color.weighted = TRUE, res = 1400)
 ```
 
 ![](man/figures/README-render-1.png)<!-- -->
@@ -73,7 +75,7 @@ brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
             edge.color.weighted = TRUE, highlight = TRUE)
 ```
 
-<img src="vignettes/figures/brainconn3D-highlight.png" alt="" width="80%" />
+![](man/figures/README-brainconn3D.gif)
 
 ### Connectivity matrices
 
@@ -100,10 +102,18 @@ conmat <- matrix(0, n, n)
 conmat[sample(which(upper.tri(conmat)), 50)] <- runif(50, -1, 1)
 conmat <- conmat + t(conmat)
 brainconn(atlas = macaque_atlas, conmat = conmat, mesh = macaque_mesh, view = "ortho",
-          edge.color.weighted = TRUE)
+          edge.color.weighted = TRUE, res = 1400)
 ```
 
 ![](man/figures/README-macaque-1.png)<!-- -->
+
+### Animations
+
+A series of renders makes an animation, e.g. a network diffusion model
+spreading from the left temporal pole (see [Animating brain
+networks](https://sidchop.github.io/brainconn/articles/animations.html)):
+
+<img src="vignettes/figures/animation-spread.gif" width="50%" />
 
 ### Report bugs or requests
 

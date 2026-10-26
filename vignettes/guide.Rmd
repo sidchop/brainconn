@@ -9,7 +9,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
-                      fig.align = "center")
+                      fig.align = "center", dpi = 150)
 ```
 
 This guide walks through every brainconn function with small, complete examples. If you're new to brainconn, start with [Getting started](brainconn.html).

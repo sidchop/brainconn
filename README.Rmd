@@ -7,7 +7,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  dpi = 110,
+  dpi = 180,
   warning = FALSE,
   message = FALSE
 )
@@ -30,7 +30,7 @@ brainconn makes publication-ready plots of brain connectivity data in R, so that
 
 Many commonly used atlases are included (see `list_atlases()`), and you can use your own atlas and your own brain mesh. Rat and macaque brains are included too.
 
-Start with the [Getting started](https://sidchop.github.io/brainconn/articles/brainconn.html) guide, then [A guide to every function](https://sidchop.github.io/brainconn/articles/guide.html) and [Custom atlases and other brains](https://sidchop.github.io/brainconn/articles/other-brains.html).
+Start with the [Getting started](https://sidchop.github.io/brainconn/articles/brainconn.html) guide, then [A guide to every function](https://sidchop.github.io/brainconn/articles/guide.html), [Custom atlases and other brains](https://sidchop.github.io/brainconn/articles/other-brains.html) and [Animating brain networks](https://sidchop.github.io/brainconn/articles/animations.html).
 
 ## Installation
 
@@ -56,7 +56,7 @@ See the [vignette](https://sidchop.github.io/brainconn/articles/brainconn.html) 
 ```{r render, fig.width = 10, fig.height = 7}
 library(brainconn)
 brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
-          view = "ortho", edge.color.weighted = TRUE)
+          view = "ortho", edge.color.weighted = TRUE, res = 1400)
 ```
 
 ### Interactive 3D, with highlighting
@@ -66,9 +66,7 @@ brainconn3D(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
             edge.color.weighted = TRUE, highlight = TRUE)
 ```
 
-```{r, echo = FALSE, out.width = "80%"}
-knitr::include_graphics("vignettes/figures/brainconn3D-highlight.png")
-```
+![](man/figures/README-brainconn3D.gif)
 
 ### Connectivity matrices
 
@@ -91,8 +89,14 @@ conmat <- matrix(0, n, n)
 conmat[sample(which(upper.tri(conmat)), 50)] <- runif(50, -1, 1)
 conmat <- conmat + t(conmat)
 brainconn(atlas = macaque_atlas, conmat = conmat, mesh = macaque_mesh, view = "ortho",
-          edge.color.weighted = TRUE)
+          edge.color.weighted = TRUE, res = 1400)
 ```
+
+### Animations
+
+A series of renders makes an animation, e.g. a network diffusion model spreading from the left temporal pole (see [Animating brain networks](https://sidchop.github.io/brainconn/articles/animations.html)):
+
+<img src="vignettes/figures/animation-spread.gif" width="50%" />
 
 ### Report bugs or requests
 

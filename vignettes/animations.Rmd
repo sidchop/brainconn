@@ -1,0 +1,92 @@
+---
+title: "Animating brain networks"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Animating brain networks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
+                      fig.align = "center", dpi = 150)
+```
+
+`brainconn()` draws one image, so an animation is a series of images, one per time point, joined into a GIF. Here node colour and size show a value that changes over time. The [gifski](https://cran.r-project.org/package=gifski) package joins the images.
+
+```{r}
+library(brainconn)
+atlas <- schaefer300_n7
+```
+
+## Spreading through the network
+
+A network diffusion model (NDM) describes something, such as a disease process, spreading from a seed region along the connections of a network: the amount in each region at time `t` is `x(t) = exp(-L * t) %*% x0`, where `L` is the network's Laplacian matrix and `x0` the starting amounts. Adding it up over time gives the total that has reached each region, which only grows, so regions light up as the spread reaches them.
+
+First a network. Here each region keeps its 10 strongest positive connections in the simulated `example_fc_schaefer300`; in practice you would use a structural connectome.
+
+```{r}
+A <- pmax(example_fc_schaefer300, 0)
+diag(A) <- 0
+strongest <- t(apply(A, 1, function(r) r >= sort(r, decreasing = TRUE)[10]))
+A <- A * (strongest | t(strongest))
+L <- diag(rowSums(A)) - A   # the Laplacian
+```
+
+Then the spread from a seed in the left temporal pole, at 30 time points:
+
+```{r}
+x0 <- as.numeric(atlas$ROI.Name == "Limbic_TempPole_1" & atlas$hemi == "LH")
+e <- eigen(L, symmetric = TRUE)
+total <- function(t) ifelse(e$values > 1e-9, (1 - exp(-e$values * t)) / e$values, t)
+times <- seq(0, 20, length.out = 30)
+x <- sapply(times, function(t) e$vectors %*% (total(t) * crossprod(e$vectors, x0)))
+x <- pmin(pmax(x / max(x[x0 == 0, ]), 0), 1)   # 0 to 1 for colouring
+```
+
+Each time point is one image. Here is the 12th:
+
+```{r, fig.width = 6, fig.height = 5, out.width = "55%"}
+colours <- colorRampPalette(c("grey85", "gold", "orange", "red", "darkred"))(100)
+frame <- function(value, title) {
+  brainconn(atlas = atlas, all.nodes = TRUE, view = "left", res = 600,
+            node.size = 3 + 9 * value, node.color = colours[1 + round(value * 99)],
+            hemi.labels = FALSE) +
+    ggplot2::ggtitle(title)
+}
+frame(x[, 12], sprintf("t = %.0f", times[12]))
+```
+
+And `gifski::save_gif()` turns them into a GIF:
+
+```{r, eval = FALSE}
+gifski::save_gif({
+  for (i in seq_along(times)) print(frame(x[, i], sprintf("t = %.0f", times[i])))
+}, "spread.gif", width = 600, height = 500, delay = 0.15)
+```
+
+```{r, echo = FALSE, out.width = "60%"}
+knitr::include_graphics("figures/animation-spread.gif")
+```
+
+## A travelling wave
+
+Any value per region and time point works the same way. Here a wave of activity sweeps from the back of the brain to the front. Because it is periodic, the GIF loops smoothly.
+
+```{r}
+y <- (atlas$y.mni - min(atlas$y.mni)) / diff(range(atlas$y.mni))   # 0 = back, 1 = front
+phases <- seq(0, 1, length.out = 25)[-25]
+wave <- sapply(phases, function(p) (1 + cos(2 * pi * (y - p))) / 2)
+```
+
+```{r, eval = FALSE}
+gifski::save_gif({
+  for (i in seq_along(phases)) print(frame(wave[, i], ""))
+}, "wave.gif", width = 600, height = 500, delay = 0.08)
+```
+
+```{r, echo = FALSE, out.width = "60%"}
+knitr::include_graphics("figures/animation-wave.gif")
+```
+
+Other ideas: activity time courses from fMRI or EEG, a seed's connectivity at different thresholds, or a slowly rotating camera with `view = c(azimuth, 20)` for azimuths from 0 to 360.

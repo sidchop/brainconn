@@ -9,7 +9,7 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
-                      fig.align = "center")
+                      fig.align = "center", dpi = 150)
 ```
 
 brainconn isn't limited to the included atlases or to the human brain. This page shows how to use your own atlas, your own brain surface, and the rat and macaque brains that come with brainconn.

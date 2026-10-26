@@ -9,13 +9,14 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
-                      fig.align = "center")
+                      fig.align = "center", dpi = 150)
 ```
 
 brainconn plots brain connectivity data in R, so your figures can live in the same script as your analysis. This page shows the main function, `brainconn()`, and gives a quick look at everything else. Two more guides go further:
 
 * [A guide to every function](guide.html): step-by-step, beginner-friendly examples of every function, including connectivity matrices, chord diagrams and interactive plots.
 * [Custom atlases and other brains](other-brains.html): use your own atlas or brain surface, including rat and macaque brains.
+* [Animating brain networks](animations.html): make GIFs of activity or disease spreading through the brain.
 
 ## What you need
 
@@ -133,3 +134,13 @@ brainconn(atlas = rat_atlas, conmat = rat_conmat, mesh = rat_mesh, view = c(-60,
 ```
 
 [More on custom atlases and other brains](other-brains.html)
+
+### Animations
+
+A series of `brainconn()` images makes an animation, e.g. a disease process spreading from one region through the network:
+
+```{r, echo = FALSE, out.width = "50%"}
+knitr::include_graphics("figures/animation-spread.gif")
+```
+
+[How to make animations](animations.html)
