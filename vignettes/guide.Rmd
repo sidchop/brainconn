@@ -10,6 +10,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
                       fig.align = "center", dpi = 150)
+# The realistic style is path traced with rayrender (on macOS it also needs XQuartz)
+has_rayrender <- requireNamespace("rayrender", quietly = TRUE)
 ```
 
 This guide walks through every brainconn function with small, complete examples. If you're new to brainconn, start with [Getting started](brainconn.html).
@@ -91,6 +93,20 @@ brainconn(atlas = "schaefer300_n7", conmat = example_weighted_directed, view = "
 ### The brain and the image
 
 `mesh.color` and `mesh.alpha` change the brain's colour and opacity, and `mesh = NULL` removes it. `bg.color = NA` gives a transparent background, which is handy for slides. `res` sets the size in pixels of each view, and `quality` the smoothing of edges (higher is slower).
+
+### A realistic brain (experimental)
+
+`style = "realistic"` replaces the glass brain with a path-traced one, rendered like a photograph: wet, glistening, tissue-coloured cortex with veins (blue) and arteries (red) on its surface, lit by soft studio lights. It uses the [rayrender](https://www.rayrender.net) package, the renderer behind rayshader's high-quality renders; on macOS, rayrender also needs [XQuartz](https://www.xquartz.org). The network is drawn as if seen through the brain, with a soft glow, and nodes and edges further from you are darker, which helps to tell the near hemisphere from the far one. The background is dark and the edges a warm yellow, unless you set `bg.color` and `edge.color`.
+
+```{r, fig.width = 8, fig.height = 5.5, out.width = "85%", dev.args = list(bg = "grey5"), eval = has_rayrender}
+w <- example_fc_schaefer300
+diag(w) <- 0
+w[w < quantile(w[upper.tri(w)], 0.998)] <- 0   # the strongest 0.2% of connections
+brainconn(atlas = "schaefer300_n7", conmat = w, view = "top", style = "realistic",
+          edge.color.weighted = TRUE, edge.palette = c("gold", "orangered"))
+```
+
+The blood vessels are illustrations, not anatomy: they are grown over the surface of the brain, from the places where the main arteries and veins are, the same way every time. They work on any brain surface, such as the macaque and rat brains (see [other brains](other-brains.html)). Path tracing is slow: each view takes about 20 seconds at the default size (`res = 1000`), and the vessels take a few seconds to make the first time a brain is drawn in a session. `quality` sets the number of rays per pixel (in multiples of 64): lower is faster and grainier. For an animation of nodes bouncing off a squishy realistic brain, see `brainconn_bounce()` and [Animating brain networks](animations.html#a-squishy-brain).
 
 ### Saving and combining
 

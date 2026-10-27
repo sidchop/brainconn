@@ -36,6 +36,11 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      # rayrender (for the realistic style) needs X11 on macOS
+      - name: Install XQuartz
+        if: runner.os == 'macOS'
+        run: brew install --cask xquartz
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck

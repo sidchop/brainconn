@@ -11,6 +11,20 @@
 #' front of the subject would see. \code{hemi.labels = TRUE} (the default)
 #' marks the hemispheres with "L" and "R".
 #'
+#' \code{style = "realistic"} (experimental) path traces the brain with the
+#' rayrender package (the renderer behind rayshader's high-quality renders):
+#' wet, glistening, tissue-coloured cortex with blood vessels on its surface,
+#' lit by soft studio lights. The network is drawn as glowing nodes and edges
+#' seen through the brain, as in an x-ray; parts of the network further from
+#' the viewer are darker. The vessels are illustrative, not anatomical: they are
+#' grown over each brain surface, the same way every time. This style needs the
+#' rayrender package (on macOS, rayrender also needs XQuartz,
+#' \url{https://www.xquartz.org}) and is slow: about 20 seconds per view at the
+#' default size, plus a few seconds the first time a brain is drawn. The
+#' default background is near-black and the default edge colour a warm yellow;
+#' \code{mesh.color} and \code{mesh.alpha} are not used. See also
+#' \code{\link{brainconn_bounce}} for an animation.
+#'
 #' Before brainconn 1.0.0, \code{brainconn()} drew 2D plots; that function is
 #' now \code{\link{brainconn2d}}. Calls that use arguments only the 2D plot
 #' has (\code{background}, \code{background.alpha}, \code{bg_xmin},
@@ -26,7 +40,7 @@
 #' @param node.size Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Default 8. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.
 #' @param node.color A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.
 #' @param all.nodes If \code{TRUE}, all nodes are shown. If \code{FALSE}, only nodes with connecting edges are shown.
-#' @param edge.color A colour for the edges, e.g. "black". Ignored when \code{edge.color.weighted = TRUE}.
+#' @param edge.color A colour for the edges, e.g. "black" (the default; "#ffd98a" for \code{style = "realistic"}). Ignored when \code{edge.color.weighted = TRUE}.
 #' @param edge.alpha Number between 0-1 to set the transparency of the edges.
 #' @param edge.width Width of the edges (relative; 1 is a tube about 1 mm wide in a human-sized brain).
 #' @param edge.color.weighted For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}); if \code{FALSE}, edge width shows the weight.
@@ -40,11 +54,12 @@
 #' @param uthr An optional upper threshold: edges with weights above it are not shown.
 #' @param hemi.labels If \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views.
 #' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).
-#' @param mesh.color Colour of the brain surface.
-#' @param mesh.alpha Opacity of the brain surface, from 0 (invisible) to 1 (opaque).
+#' @param mesh.color Colour of the brain surface (glass style only). The default is a warm grey, like the brain of brainconn's original 2D plots (made with NeuroMarvl).
+#' @param mesh.alpha Opacity of the brain surface, from 0 (invisible) to 1 (opaque) (glass style only).
+#' @param style \code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a path-traced, wet-looking brain with blood vessels and a glowing network; see Details.
 #' @param res Size in pixels of the longest side of each rendered view.
-#' @param quality Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough.
-#' @param bg.color Background colour, or \code{NA} for a transparent background.
+#' @param quality Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough. For \code{style = "realistic"}, also the number of path-tracing rays per pixel, in multiples of 32.
+#' @param bg.color Background colour, or \code{NA} for a transparent background. Default \code{"white"}, or \code{"grey5"} for \code{style = "realistic"}.
 #' @param ... Arguments only used by the 2D plot (see Details); when given, the call is passed on to \code{\link{brainconn2d}}.
 #'
 #' @return A ggplot object.
@@ -55,6 +70,8 @@
 #' brainconn(atlas = "schaefer300_n7", conmat = x, view = "left")
 #' brainconn(atlas = "schaefer300_n7", conmat = example_weighted_undirected,
 #'           edge.color.weighted = TRUE, view = "ortho")
+#' # Experimental: a realistic brain with blood vessels
+#' brainconn(atlas = "schaefer300_n7", conmat = x, view = "left", style = "realistic")
 #' }
 #' @export
 brainconn <- function(atlas,
@@ -78,8 +95,9 @@ brainconn <- function(atlas,
                       uthr = NULL,
                       hemi.labels = TRUE,
                       mesh = "ICBM152",
-                      mesh.color = "grey85",
-                      mesh.alpha = 0.3,
+                      mesh.color = "#d3ccc4",
+                      mesh.alpha = 0.35,
+                      style = c("glass", "realistic"),
                       res = 1000,
                       quality = 2,
                       bg.color = "white") {
@@ -101,8 +119,8 @@ brainconn <- function(atlas,
             ". Call brainconn2d() directly to avoid this warning.", call. = FALSE)
     call <- match.call()
     call[[1]] <- brainconn2d
-    args_3d_only <- c("edge.palette", "edge.limits", "mesh", "mesh.color", "mesh.alpha", "res",
-                      "quality", "bg.color")
+    args_3d_only <- c("edge.palette", "edge.limits", "mesh", "mesh.color", "mesh.alpha", "style",
+                      "res", "quality", "bg.color")
     call <- call[!names(call) %in% args_3d_only]
     return(eval(call, parent.frame()))
   }
@@ -116,13 +134,86 @@ brainconn <- function(atlas,
     brainconn_env$told_3d <- TRUE
   }
 
+  style <- match.arg(style)
+  if (style == "realistic") {
+    if (missing(edge.color)) edge.color <- "#ffd98a"
+    if (missing(bg.color)) bg.color <- "grey5"
+  }
+
   if (is.numeric(view)) {
     if (length(view) != 2) stop("A numeric `view` must be c(azimuth, elevation).", call. = FALSE)
   } else {
     view <- match.arg(view, c(names(camera_views), "ortho", "all"))
   }
 
-  data <- resolve_atlas(atlas, parent.frame())
+  prepared <- prepare_network(resolve_atlas(atlas, parent.frame()), conmat, thr, uthr,
+                              all.nodes, node.size, node.color, edge.color, edge.width,
+                              edge.color.weighted, edge.palette, edge.limits, scale.edge.width,
+                              mesh)
+  data <- prepared$data
+  nodes <- prepared$nodes
+  edges <- prepared$edges
+  mesh <- prepared$mesh
+  unit <- prepared$unit
+  network.colors <- prepared$network.colors
+  frame_points <- prepared$frame_points
+  if (style == "glass") {
+    objects <- scene_objects(mesh, mesh.color, mesh.alpha, nodes, edges$table, edge.alpha)
+    render <- function(camera) {
+      render_scene(objects, camera, res = res, quality = quality, bg.color = bg.color)
+    }
+  } else {
+    parts <- NULL
+    if (!is.null(mesh)) {
+      check_rayrender()
+      parts <- realistic_parts(mesh, unit)
+    }
+    render <- function(camera) {
+      render_realistic(parts, nodes, edges$table, edge.alpha, camera, res, quality, bg.color,
+                       unit, frame_points)
+    }
+  }
+
+  draw_view <- function(v, legend) {
+    camera <- fit_camera(view_camera(v), frame_points)
+    view_plot(render(camera), camera, data, legend, labels, label.size, hemi.labels,
+              network.colors, edges, bg.color)
+  }
+  # Panels of several views share the background colour
+  on_background <- function(p) {
+    if (is.na(bg.color)) return(p)
+    p + theme(plot.background = element_rect(fill = bg.color, colour = NA))
+  }
+
+  if (identical(view, "ortho")) {
+    top <- draw_view("top", show.legend)
+    right_col <- plot_grid(draw_view("left", FALSE), draw_view("front", FALSE),
+                           nrow = 2, rel_heights = c(1, 1.45))
+    return(on_background(plot_grid(top, right_col, rel_widths = c(1.8, 1.2))))
+  }
+  if (identical(view, "all")) {
+    panels <- lapply(c("left", "top", "right", "front", "bottom", "back"),
+                     function(v) draw_view(v, FALSE))
+    grid <- plot_grid(plotlist = panels, nrow = 2)
+    if (!show.legend) return(on_background(grid))
+    legend <- get_legend(draw_legend_only(network.colors, edges, text_color(bg.color)))
+    if (is.null(legend)) return(on_background(grid))
+    return(on_background(plot_grid(grid, legend, rel_widths = c(1, 0.15))))
+  }
+  draw_view(view, show.legend)
+}
+
+# names() that returns "" rather than NULL for unnamed lists
+names2 <- function(x) {
+  n <- names(x)
+  if (is.null(n)) rep("", length(x)) else n
+}
+
+# Nodes, edges, mesh and sizes for a 3D render (shared by brainconn() and
+# brainconn_bounce()). `data` is a resolved atlas.
+prepare_network <- function(data, conmat, thr, uthr, all.nodes, node.size, node.color,
+                            edge.color, edge.width, edge.color.weighted, edge.palette,
+                            edge.limits, scale.edge.width, mesh) {
   conmat <- prepare_conmat(conmat, nrow(data), thr, uthr)
   keep <- nodes_to_keep(conmat, all.nodes)
   node.size <- match_per_node(node.size, keep, "node.size")
@@ -152,42 +243,13 @@ brainconn <- function(atlas,
   edges <- edge_table(conmat, edge.color, edge.width, edge.color.weighted, edge.palette,
                       edge.limits, scale.edge.width, unit)
 
-  objects <- scene_objects(mesh, mesh.color, mesh.alpha, nodes, edges$table, edge.alpha)
   frame_points <- if (is.null(mesh)) {
     rbind(xyz + max(nodes$radius), xyz - max(nodes$radius))
   } else {
     mesh$vertices
   }
-
-  draw_view <- function(v, legend) {
-    camera <- fit_camera(view_camera(v), frame_points)
-    img <- render_scene(objects, camera, res = res, quality = quality, bg.color = bg.color)
-    view_plot(img, camera, data, legend, labels, label.size, hemi.labels,
-              network.colors, edges, bg.color)
-  }
-
-  if (identical(view, "ortho")) {
-    top <- draw_view("top", show.legend)
-    right_col <- plot_grid(draw_view("left", FALSE), draw_view("front", FALSE),
-                           nrow = 2, rel_heights = c(1, 1.45))
-    return(plot_grid(top, right_col, rel_widths = c(1.8, 1.2)))
-  }
-  if (identical(view, "all")) {
-    panels <- lapply(c("left", "top", "right", "front", "bottom", "back"),
-                     function(v) draw_view(v, FALSE))
-    grid <- plot_grid(plotlist = panels, nrow = 2)
-    if (!show.legend) return(grid)
-    legend <- get_legend(draw_legend_only(network.colors, edges))
-    if (is.null(legend)) return(grid)
-    return(plot_grid(grid, legend, rel_widths = c(1, 0.15)))
-  }
-  draw_view(view, show.legend)
-}
-
-# names() that returns "" rather than NULL for unnamed lists
-names2 <- function(x) {
-  n <- names(x)
-  if (is.null(n)) rep("", length(x)) else n
+  list(data = data, nodes = nodes, edges = edges, mesh = mesh, unit = unit,
+       network.colors = network.colors, frame_points = frame_points)
 }
 
 # Edges of conmat with their colours and tube radii. Returns the edge table
@@ -232,22 +294,26 @@ view_plot <- function(img, camera, data, show.legend, labels, label.size, hemi.l
                       network.colors, edges, bg.color) {
   w <- camera$width / 2
   h <- camera$height / 2
+  fg <- text_color(bg.color)
   p <- ggplot() +
     annotation_raster(img, xmin = -w, xmax = w, ymin = -h, ymax = h) +
     coord_fixed(xlim = c(-w, w), ylim = c(-h, h), expand = FALSE) +
     theme_void() +
     theme(plot.background = element_rect(fill = if (is.na(bg.color)) NA else bg.color,
-                                         colour = NA))
+                                         colour = NA),
+          text = element_text(colour = fg),
+          # Room for the last letters of legend labels, which are otherwise clipped
+          legend.margin = margin(0, 8, 0, 0))
   if (labels) {
     pos <- project_points(camera, cbind(data$x.mni, data$y.mni, data$z.mni))
     pos$label <- as.character(data$ROI.Name)
     p <- p + ggrepel::geom_text_repel(data = pos, aes(x = x, y = y, label = label),
                                       size = label.size, seed = 1, max.overlaps = Inf,
-                                      min.segment.length = 0.2)
+                                      min.segment.length = 0.2, colour = fg)
   }
   if (hemi.labels && isTRUE(camera$hemi)) {
     p <- p + annotate("text", x = c(-w, w) * 0.92, y = h * 0.92, label = c("L", "R"),
-                      fontface = "bold", size = 6)
+                      fontface = "bold", size = 6, colour = fg)
   }
   if (show.legend) p <- add_legends(p, network.colors, edges)
   p
@@ -271,8 +337,17 @@ add_legends <- function(p, network.colors, edges) {
   p
 }
 
-draw_legend_only <- function(network.colors, edges) {
-  add_legends(ggplot() + theme_void(), network.colors, edges)
+draw_legend_only <- function(network.colors, edges, fg = "black") {
+  add_legends(ggplot() + theme_void() +
+                theme(text = element_text(colour = fg), legend.margin = margin(0, 8, 0, 0)),
+              network.colors, edges)
+}
+
+# Black text on light backgrounds (and transparent ones), white on dark ones.
+text_color <- function(bg.color) {
+  if (is.na(bg.color)) return("black")
+  rgb <- grDevices::col2rgb(bg.color)[, 1] / 255
+  if (sum(rgb * c(0.299, 0.587, 0.114)) < 0.5) "white" else "black"
 }
 
 utils::globalVariables(c("x", "y", "label"))

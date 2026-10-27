@@ -12,6 +12,28 @@
 
 ## New features
 
+* `brainconn(style = "realistic")` (experimental) path traces the brain with
+  rayrender (the renderer behind rayshader's high-quality renders): wet,
+  glistening, tissue-coloured cortex with blood vessels on its surface, lit by
+  soft studio lights, and the network glowing through it, with nodes and edges
+  further from the viewer darker. The vessels are illustrative, grown over any
+  brain surface (also the rat and macaque brains) the same way every time.
+  Needs the rayrender package (and XQuartz on macOS).
+* `brainconn_bounce()` (experimental) makes a GIF in a white photo studio: a
+  ball for every region drops onto the realistic brain and bounces off it as
+  it squishes and jiggles like jelly. The network's regions stick; the others
+  roll or bounce off onto the floor and away; then the connections grow as
+  arcs between the balls that stuck.
+* The realistic brain has dense capillaries, a slightly uneven surface whose
+  wet highlights break up as on real tissue, and softbox lighting.
+* Path-traced renders use next event estimation and an edge-avoiding
+  denoiser (guided by normals, colours and depth), so they are clean with few
+  rays per pixel.
+* The default brain colour of `brainconn()` is a warm grey (`"#d3ccc4"`, at
+  opacity 0.35), like the brain of the original 2D plots made with NeuroMarvl.
+* Background colours other than white in `brainconn()` now come out as given
+  (rayvertex darkened them), and legend labels are no longer clipped at the
+  right edge. Text is white on dark backgrounds.
 * `brainconn()` defaults to `node.size = 8`; "L" and "R" labels are larger.
 * `brainconn()` views: `"top"`, `"bottom"`, `"left"`, `"right"`, `"front"`,
   `"back"`, `"ortho"`, `"all"` (six panels), or any camera angle as

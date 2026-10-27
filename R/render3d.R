@@ -130,9 +130,20 @@ scene_objects <- function(mesh, mesh.color, mesh.alpha, nodes, edges, edge.alpha
   objects
 }
 
+# rayvertex reads the background colour as sRGB and returns it in linear
+# light, so a mid grey comes out darker. This is the colour to give it so that
+# `color` comes out.
+encode_srgb <- function(color) {
+  linear <- grDevices::col2rgb(color)[, 1] / 255
+  srgb <- ifelse(linear <= 0.0031308, 12.92 * linear, 1.055 * linear^(1 / 2.4) - 0.055)
+  grDevices::rgb(srgb[1], srgb[2], srgb[3])
+}
+
 # Render the scene from a fitted camera. Returns an RGBA array (rows from the
-# top of the image) with the longest side `res` pixels.
-render_scene <- function(objects, camera, res = 1000, quality = 2, bg.color = "white") {
+# top of the image) with the longest side `res` pixels. `...` is passed on to
+# rayvertex::rasterize_scene().
+render_scene <- function(objects, camera, res = 1000, quality = 2, bg.color = "white",
+                         lights = camera_lights(camera), ...) {
   aspect <- camera$height / camera$width
   width <- if (aspect <= 1) res else round(res / aspect)
   height <- if (aspect <= 1) round(res * aspect) else res
@@ -143,7 +154,7 @@ render_scene <- function(objects, camera, res = 1000, quality = 2, bg.color = "w
       fov = 0, ortho_dimensions = c(camera$width, camera$height),
       lookat = camera$lookat, lookfrom = camera$lookfrom, camera_up = camera$up,
       near_plane = 0.1, far_plane = camera$far, fsaa = quality,
-      light_info = camera_lights(camera), shadow_map = FALSE, background = background)
+      light_info = lights, shadow_map = FALSE, background = encode_srgb(background), ...)
     array(pmin(pmax(unclass(img), 0), 1), dim = dim(img))
   }
   if (is.na(bg.color)) {
