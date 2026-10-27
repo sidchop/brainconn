@@ -119,6 +119,25 @@ test_that("text is white on dark backgrounds and black otherwise", {
   expect_identical(text_color(NA), "black")
 })
 
+test_that("the denoiser is guided by real normals, colours and depth", {
+  skip_if_no_rayrender()
+  # rayrender's debug buffers are empty with next event estimation; the guides
+  # must come from a render that fills them
+  guides <- NULL
+  testthat::local_mocked_bindings(denoise_render = function(img, alpha, normals, albedo, depth,
+                                                            ...) {
+    guides <<- list(normals = normals, albedo = albedo, depth = depth)
+    img
+  })
+  parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
+  camera <- fit_camera(view_camera("top"), parts$mesh$vertices)
+  render_pathtraced(parts, camera, res = 60, samples = 4, unit = 22 / 170)
+  centre <- c(30, 30)
+  expect_gt(max(guides$albedo), 0.3)
+  expect_gt(max(guides$depth[is.finite(guides$depth)]), 0)
+  expect_gt(sum(guides$normals[centre[1], centre[2], ]), 0)
+})
+
 test_that("the realistic style works on the human brain", {
   skip_on_cran()
   skip_if_no_rayrender()

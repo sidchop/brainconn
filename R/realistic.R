@@ -399,7 +399,8 @@ pathtraced_scene <- function(parts, camera, unit, vertices = parts$mesh$vertices
 # pixels; `samples` rays per pixel (more is smoother and slower). Next event
 # estimation (sampling the lights directly) keeps the noise low, and what is
 # left is smoothed by denoise_render().
-render_pathtraced <- function(parts, camera, res, samples, unit, denoise = 2, ...) {
+render_pathtraced <- function(parts, camera, res, samples, unit, denoise = 3, smooth.floor = FALSE,
+                              ...) {
   aspect <- camera$height / camera$width
   width <- if (aspect <= 1) res else round(res / aspect)
   height <- if (aspect <= 1) round(res * aspect) else res
@@ -410,7 +411,9 @@ render_pathtraced <- function(parts, camera, res, samples, unit, denoise = 2, ..
       ortho_dimensions = c(camera$width, camera$height), lookfrom = camera$lookfrom,
       lookat = camera$lookat, camera_up = camera$up, aperture = 0,
       tonemap = if (debug == "none") "hbd" else "raw", clamp_value = 10,
-      integrator_type = "nee", transparent_background = TRUE, debug_channel = debug,
+      # (rayrender's debug buffers are empty with next event estimation)
+      integrator_type = if (debug == "none") "nee" else "rtiow",
+      transparent_background = TRUE, debug_channel = debug,
       plot_scene = FALSE, preview = FALSE, interactive = FALSE, progress = FALSE,
       verbose = FALSE)
     img <- unclass(img)
@@ -419,10 +422,26 @@ render_pathtraced <- function(parts, camera, res, samples, unit, denoise = 2, ..
   }
   img <- render(samples)
   # Guides for the denoiser: surface normals, colours (albedo) and depth
-  img[, , 1:3] <- denoise_render(img[, , 1:3, drop = FALSE], img[, , 4],
-                                 normals = render(4, "normals")[, , 1:3, drop = FALSE],
-                                 albedo = render(4, "color")[, , 1:3, drop = FALSE],
-                                 depth = render(4, "depth")[, , 1], iterations = denoise)
+  normals <- render(4, "normals")[, , 1:3, drop = FALSE]
+  albedo <- render(4, "color")[, , 1:3, drop = FALSE]
+  sigma <- 0.06
+  if (smooth.floor) {
+    # A flat white floor has no detail to keep, so its noisy soft shadows are smoothed more
+    flat <- albedo[, , 1] > 0.95 & albedo[, , 2] > 0.95 & albedo[, , 3] > 0.95 & normals[, , 3] > 0.99
+    sigma <- ifelse(flat, 0.3, 0.06)
+  }
+  img[, , 1:3] <- denoise_render(img[, , 1:3, drop = FALSE], img[, , 4], normals = normals,
+                                 albedo = albedo, depth = render(4, "depth")[, , 1],
+                                 iterations = denoise, sigma.color = sigma)
+  if (smooth.floor && any(flat)) {
+    # ... and blurred (only floor pixels mix), which keeps its soft shadows
+    blur_sigma <- max(1, res / 250)
+    mask <- blur_image(flat * 1, blur_sigma)
+    for (ch in 1:3) {
+      blurred <- blur_image(img[, , ch] * flat, blur_sigma) / pmax(mask, 1e-6)
+      img[, , ch] <- ifelse(flat, blurred, img[, , ch])
+    }
+  }
   img <- array(pmin(pmax(img, 0), 1), dim = dim(img))
   if (camera$mirror) img <- img[, rev(seq_len(dim(img)[2])), , drop = FALSE]
   img
@@ -439,8 +458,8 @@ shift_matrix <- function(m, dy, dx) {
 # each iteration) that have a similar normal, colour (albedo), depth and
 # rendered colour. So edges, the vessels and the shiny highlights stay sharp
 # while the grain on smooth surfaces is averaged away.
-denoise_render <- function(img, alpha, normals, albedo, depth, iterations = 2,
-                           sigma.normal = 0.1, sigma.albedo = 0.003, sigma.depth = 1.5,
+denoise_render <- function(img, alpha, normals, albedo, depth, iterations = 3,
+                           sigma.normal = 0.4, sigma.albedo = 0.02, sigma.depth = 1.5,
                            sigma.color = 0.06) {
   kernel <- c(1, 4, 6, 4, 1) / 16
   depth[!is.finite(depth)] <- 0

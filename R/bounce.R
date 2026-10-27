@@ -373,8 +373,10 @@ bounce_frame <- function(parts, plan, nodes, edges, camera, t, squish, res, qual
                                 reflectance = 0.06)))
     }
   }
-  # The floor's soft shadows are noisier, so the denoiser does one more pass
+  # The floor's soft shadows are noisier, so the denoiser does one more pass and smooths
+  # the floor more
   img <- render_pathtraced(parts, camera, res, samples = 32 * quality, unit, denoise = 3,
+                           smooth.floor = TRUE,
                            vertices = vertices,
                            normals = vertex_normals(vertices, parts$mesh$faces),
                            vessels = vessels, spheres = spheres, extra = extra)

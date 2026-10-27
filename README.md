@@ -138,5 +138,5 @@ issues](https://github.com/sidchop/brainconn/issues).
 ### Other R packages you might be interested in
 
 - [ggseg](https://github.com/ggsegverse/ggseg) &
-  [ggseg3d](https://github.com/ggsegverse/ggseg3d): plotting tools for brain
-  atlases, in ggplot/plotly
+  [ggseg3d](https://github.com/ggsegverse/ggseg3d): plotting tools for
+  brain atlases, in ggplot/plotly
