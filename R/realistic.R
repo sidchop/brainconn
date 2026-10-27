@@ -1,10 +1,12 @@
-# The experimental "realistic" style of brainconn(): an opaque, tissue-coloured
-# brain with blood vessels, and the network drawn as glowing nodes and edges
-# seen through the brain, like an x-ray.
+# The experimental "realistic" style of brainconn(): a path-traced, wet-looking
+# brain with blood vessels on its surface, and the network drawn as glowing
+# nodes and edges seen through the brain, like an x-ray. The brain is path
+# traced with rayrender (the renderer behind rayshader's high-quality renders);
+# the network is rendered with rayvertex and laid over it.
 #
 # The vessels are illustrative, not anatomical. Each vessel system is a tree of
 # shortest paths over the surface, from a few root points to many random tips:
-# veins drain to the dorsal midline (where the superior sagittal sinus is), and
+# veins drain to the dorsal midline (into the superior sagittal sinus), and
 # arteries spread from roots near the Sylvian fissure, the medial frontal lobe
 # and the posterior-inferior surface. Sizes are given in mm for a human brain
 # and scale with the mesh, like node and edge sizes.
@@ -257,38 +259,38 @@ brain_vessels <- function(geometry, unit) {
   arteries <- vessel_tree(geometry, unique(roots), sample(n, min(n, round(1200 * scale))),
                           noise = 1.2, sulcus.cost = 0.1, gamma = 0.4)
   list(veins = vessel_tubes(geometry, veins, c(0.3, 2.3) * unit),
-       arteries = vessel_tubes(geometry, arteries, c(0.14, 1.3) * unit, min.length = 3))
+       arteries = vessel_tubes(geometry, arteries, c(0.2, 1.6) * unit, min.length = 3),
+       sinus = sinus_tube(v[sinus, , drop = FALSE], centre[1], unit))
 }
 
-# A texture for the brain surface, sampled by sulcal depth (across) and by
-# slowly varying colour patches (down): dark red in sulci, pale pink on gyri.
-tissue_texture <- function() {
-  file <- file.path(tempdir(), "brainconn-tissue.png")
-  if (file.exists(file)) return(file)
-  pink <- grDevices::col2rgb(grDevices::colorRampPalette(
-    c("#5e2422", "#a3554f", "#c9867b", "#ddb0a2"))(256)) / 255
-  grey <- grDevices::col2rgb(grDevices::colorRampPalette(
-    c("#5a2a2c", "#9c5a5e", "#c48e8c", "#d8b4ab"))(256)) / 255
-  img <- array(0, c(64, 256, 3))
-  for (row in 1:64) {
-    t <- (row - 1) / 63
-    for (ch in 1:3) img[row, , ch] <- (1 - t) * pink[ch, ] + t * grey[ch, ]
-  }
-  OpenImageR::writeImage(img, file)
-  file
+# The superior sagittal sinus: a vein along the top of the midline, from the
+# front of the brain to the back, widening towards the back. The veins drain
+# into it.
+sinus_tube <- function(points, midline, unit, bins = 40) {
+  if (nrow(points) < 3) return(NULL)
+  y <- points[, 2]
+  breaks <- seq(min(y), max(y), length.out = bins + 1)
+  bin <- cut(y, breaks, include.lowest = TRUE, labels = FALSE)
+  top <- tapply(points[, 3], bin, max)
+  at <- (breaks[-1] + breaks[-(bins + 1)])[as.integer(names(top))] / 2
+  if (length(top) < 3) return(NULL)
+  # Front to back, with the height smoothed
+  o <- order(-at)
+  z <- stats::filter(as.numeric(top[o]), rep(1 / 5, 5), sides = 2)
+  z[is.na(z)] <- as.numeric(top[o])[is.na(z)]
+  r <- seq(0.8, 3.2, length.out = length(o)) * unit
+  path <- cbind(midline, at[o], z + 0.6 * r)
+  tube_mesh(list(path), list(r), sides = 12)
 }
 
-# rayvertex objects for the realistic brain: the textured surface, a thin
-# glossy membrane over it (it makes the surface look wet), veins and arteries.
-# The last brain is cached, as making the vessels takes a few seconds.
-realistic_brain <- function(mesh, unit) {
+# Everything the realistic style needs for a brain surface: the mesh, its
+# normals, texture coordinates and blood vessels. The last brain is cached, as
+# making the vessels takes a few seconds.
+realistic_parts <- function(mesh, unit) {
   key <- paste(nrow(mesh$vertices), nrow(mesh$faces), signif(sum(mesh$vertices), 10),
                signif(sum(mesh$vertices[, 1] * seq_len(nrow(mesh$vertices))), 10), unit)
-  texture <- tissue_texture()
   cached <- brainconn_env$realistic
-  if (!is.null(cached) && identical(cached$key, key) && identical(cached$texture, texture)) {
-    return(cached$objects)
-  }
+  if (!is.null(cached) && identical(cached$key, key)) return(cached$parts)
   with_seed(1, {
     geometry <- brain_geometry(mesh, unit)
     patches <- smooth_vertex_values(stats::rnorm(nrow(mesh$vertices)), geometry$edges,
@@ -296,49 +298,163 @@ realistic_brain <- function(mesh, unit) {
     vessels <- brain_vessels(geometry, unit)
   })
   patches <- (patches - mean(patches)) / max(stats::sd(patches), 1e-12)
+  # Texture coordinates: sulcal depth across, colour patches down (see tissue_texture())
   uv <- cbind(pmin(pmax((geometry$sulc + 3) / 6, 0.02), 0.98),
               pmin(pmax(0.5 + 0.3 * patches, 0.02), 0.98))
-  surface <- rayvertex::construct_mesh(
-    vertices = mesh$vertices, indices = mesh$faces - 1L, texcoords = uv,
-    tex_indices = mesh$faces - 1L,
-    material = rayvertex::material_list(type = "phong", diffuse = "white",
-                                        texture_location = texture, ambient = "#b8675f",
-                                        ambient_intensity = 0.6, specular = "#fff4ee",
-                                        specular_intensity = 0.15, shininess = 45))
-  env <- geometry$envelope
-  membrane <- rayvertex::construct_mesh(
-    vertices = env$vertices + env$normals * (env$height + 0.4 * unit),
-    indices = mesh$faces - 1L,
-    material = rayvertex::material_list(type = "phong", diffuse = "#f3d6cf",
-                                        ambient = "#f3d6cf", ambient_intensity = 0.2,
-                                        dissolve = 0.15, specular = "white",
-                                        specular_intensity = 0.9, shininess = 90))
-  tubes <- function(m, color) {
-    if (is.null(m)) return(NULL)
-    rayvertex::construct_mesh(
-      vertices = m$vertices, indices = m$faces - 1L, normals = m$normals,
-      norm_indices = m$faces - 1L,
-      material = rayvertex::material_list(type = "phong", diffuse = color, ambient = color,
-                                          ambient_intensity = 0.4, specular = "white",
-                                          specular_intensity = 0.45, shininess = 60))
-  }
-  objects <- c(list(rayvertex::smooth_normals_mesh(surface),
-                    rayvertex::smooth_normals_mesh(membrane)),
-               Filter(Negate(is.null), list(tubes(vessels$veins, "#3f3466"),
-                                            tubes(vessels$arteries, "#a8231c"))))
-  brainconn_env$realistic <- list(key = key, texture = texture, objects = objects)
-  objects
+  parts <- list(mesh = mesh, normals = geometry$normals, uv = uv, vessels = vessels,
+                edges = geometry$edges, envelope = geometry$envelope)
+  brainconn_env$realistic <- list(key = key, parts = parts)
+  parts
 }
 
-# Soft lights from the camera's side: a key light above right, a fill light
-# from the left and a little light from below.
-realistic_lights <- function(camera) {
-  key <- rayvertex::directional_light(camera$dir + 0.6 * camera$up + 0.4 * camera$right,
-                                      intensity = 0.75)
-  fill <- rayvertex::directional_light(camera$dir - 0.5 * camera$right - 0.2 * camera$up,
-                                       intensity = 0.35)
-  below <- rayvertex::directional_light(camera$dir - 0.8 * camera$up, intensity = 0.15)
-  rayvertex::add_light(rayvertex::add_light(key, fill), below)
+# A texture for the brain surface, sampled by sulcal depth (across) and by
+# slowly varying colour patches (down): deep red in sulci, pale pink on gyri.
+tissue_texture <- function() {
+  file <- file.path(tempdir(), "brainconn-tissue.png")
+  if (file.exists(file)) return(file)
+  pink <- grDevices::col2rgb(grDevices::colorRampPalette(
+    c("#a3302c", "#d0584f", "#e8887a", "#f3b3a3"))(256)) / 255
+  rose <- grDevices::col2rgb(grDevices::colorRampPalette(
+    c("#962f3a", "#c75a64", "#e38e8c", "#f0b9ad"))(256)) / 255
+  img <- array(0, c(64, 256, 3))
+  for (row in 1:64) {
+    t <- (row - 1) / 63
+    for (ch in 1:3) img[row, , ch] <- (1 - t) * pink[ch, ] + t * rose[ch, ]
+  }
+  OpenImageR::writeImage(img, file)
+  file
+}
+
+# The realistic style is path traced with rayrender (a suggested package).
+check_rayrender <- function() {
+  if (!requireNamespace("rayrender", quietly = TRUE)) {
+    stop("style = \"realistic\" needs the rayrender package: install.packages(\"rayrender\"). ",
+         "On macOS, rayrender also needs XQuartz (https://www.xquartz.org).", call. = FALSE)
+  }
+}
+
+# An rgl-style mesh3d object, which rayrender reads.
+as_mesh3d <- function(vertices, faces, normals = NULL, texcoords = NULL) {
+  m <- list(vb = rbind(t(vertices), 1), it = t(faces), primitivetype = "triangle",
+            material = list())
+  if (!is.null(normals)) m$normals <- t(normals)
+  if (!is.null(texcoords)) m$texcoords <- t(texcoords)
+  structure(m, class = c("mesh3d", "shape3d"))
+}
+
+# The brain, its vessels and studio lights as a rayrender scene. The surface
+# is glossy (it looks wet); the lights are large and soft, and follow the
+# camera: a key light above and to the right, a fill light on the left and a
+# rim light behind the brain.
+pathtraced_scene <- function(parts, camera, unit, vertices = parts$mesh$vertices,
+                             normals = parts$normals, vessels = parts$vessels, spheres = NULL) {
+  rr <- function(name) getExportedValue("rayrender", name)
+  tube <- function(m, color) {
+    rr("mesh3d_model")(as_mesh3d(m$vertices, m$faces, m$normals), override_material = TRUE,
+                       material = rr("glossy")(color = color, gloss = 0.92, reflectance = 0.05))
+  }
+  scene <- rr("mesh3d_model")(
+    as_mesh3d(vertices, parts$mesh$faces, normals, parts$uv),
+    override_material = TRUE,
+    material = rr("glossy")(image_texture = tissue_texture(), gloss = 0.85, reflectance = 0.04))
+  tubes <- list(list(vessels$veins, "#0e0a22"), list(vessels$sinus, "#0e0a22"),
+                list(vessels$arteries, "#8e1510"))
+  for (v in tubes) {
+    if (!is.null(v[[1]])) scene <- rr("add_object")(scene, tube(v[[1]], v[[2]]))
+  }
+  # Extra shiny spheres (x, y, z, radius, color), e.g. nodes outside the brain
+  for (i in seq_len(if (is.null(spheres)) 0 else nrow(spheres))) {
+    scene <- rr("add_object")(scene, rr("sphere")(
+      x = spheres$x[i], y = spheres$y[i], z = spheres$z[i], radius = spheres$radius[i],
+      material = rr("glossy")(color = spheres$color[i], gloss = 0.9, reflectance = 0.06)))
+  }
+  lamp <- function(direction, size, intensity) {
+    p <- camera$lookat + 400 * unit * unit3(direction)
+    rr("sphere")(x = p[1], y = p[2], z = p[3], radius = size * unit,
+                 material = rr("light")(intensity = intensity))
+  }
+  scene <- rr("add_object")(scene, lamp(camera$dir + 0.8 * camera$up + 0.5 * camera$right, 90, 18))
+  scene <- rr("add_object")(scene, lamp(camera$dir - 0.9 * camera$right + 0.1 * camera$up, 90, 6))
+  rr("add_object")(scene, lamp(-camera$dir + 0.9 * camera$up, 70, 10))
+}
+
+# Path trace the brain from a fitted camera, on a transparent background.
+# Returns an RGBA array like render_scene(), with the longest side `res`
+# pixels; `samples` rays per pixel (more is smoother and slower). Next event
+# estimation (sampling the lights directly) keeps the noise low, and what is
+# left is smoothed by denoise_render().
+render_pathtraced <- function(parts, camera, res, samples, unit, ...) {
+  aspect <- camera$height / camera$width
+  width <- if (aspect <= 1) res else round(res / aspect)
+  height <- if (aspect <= 1) round(res * aspect) else res
+  scene <- pathtraced_scene(parts, camera, unit, ...)
+  render <- function(samples, debug = "none") {
+    img <- rayrender::render_scene(
+      scene, width = width, height = height, samples = samples, fov = 0,
+      ortho_dimensions = c(camera$width, camera$height), lookfrom = camera$lookfrom,
+      lookat = camera$lookat, camera_up = camera$up, aperture = 0,
+      tonemap = if (debug == "none") "hbd" else "raw", clamp_value = 10,
+      integrator_type = "nee", transparent_background = TRUE, debug_channel = debug,
+      plot_scene = FALSE, preview = FALSE, interactive = FALSE, progress = FALSE,
+      verbose = FALSE)
+    img <- unclass(img)
+    if (length(dim(img)) == 2) img <- array(img, c(dim(img), 1))
+    img
+  }
+  img <- render(samples)
+  # Guides for the denoiser: surface normals, colours (albedo) and depth
+  img[, , 1:3] <- denoise_render(img[, , 1:3, drop = FALSE], img[, , 4],
+                                 normals = render(4, "normals")[, , 1:3, drop = FALSE],
+                                 albedo = render(4, "color")[, , 1:3, drop = FALSE],
+                                 depth = render(4, "depth")[, , 1])
+  img <- array(pmin(pmax(img, 0), 1), dim = dim(img))
+  if (camera$mirror) img <- img[, rev(seq_len(dim(img)[2])), , drop = FALSE]
+  img
+}
+
+# Shift a matrix by (dy, dx) pixels, repeating the edge pixels.
+shift_matrix <- function(m, dy, dx) {
+  m[pmin(pmax(seq_len(nrow(m)) + dy, 1), nrow(m)), pmin(pmax(seq_len(ncol(m)) + dx, 1), ncol(m)),
+    drop = FALSE]
+}
+
+# Smooth the remaining path-tracing noise with an edge-avoiding a-trous
+# wavelet filter: each pixel is averaged with nearby pixels (further apart
+# each iteration) that have a similar normal, colour (albedo), depth and
+# rendered colour. So edges, the vessels and the shiny highlights stay sharp
+# while the grain on smooth surfaces is averaged away.
+denoise_render <- function(img, alpha, normals, albedo, depth, iterations = 2,
+                           sigma.normal = 0.1, sigma.albedo = 0.003, sigma.depth = 1.5,
+                           sigma.color = 0.06) {
+  kernel <- c(1, 4, 6, 4, 1) / 16
+  depth[!is.finite(depth)] <- 0
+  for (it in seq_len(iterations) - 1) {
+    step <- 2^it
+    total <- array(0, dim(img))
+    weights <- matrix(0, nrow(alpha), ncol(alpha))
+    for (a in -2:2) {
+      for (b in -2:2) {
+        moved <- function(x) {
+          for (ch in seq_len(dim(x)[3])) x[, , ch] <- shift_matrix(x[, , ch], a * step, b * step)
+          x
+        }
+        near <- moved(img)
+        d_normal <- rowSums((moved(normals) - normals)^2, dims = 2)
+        d_albedo <- rowSums((moved(albedo) - albedo)^2, dims = 2)
+        d_color <- rowSums((near - img)^2, dims = 2)
+        d_depth <- abs(shift_matrix(depth, a * step, b * step) - depth)
+        w <- kernel[a + 3] * kernel[b + 3] * exp(-d_normal / sigma.normal) *
+          exp(-d_albedo / sigma.albedo) * exp(-d_color / (sigma.color^2 * step)) *
+          exp(-d_depth / (sigma.depth * step)) * shift_matrix(alpha, a * step, b * step)
+        for (ch in 1:3) total[, , ch] <- total[, , ch] + w * near[, , ch]
+        weights <- weights + w
+      }
+    }
+    for (ch in 1:3) {
+      img[, , ch] <- ifelse(weights > 0, total[, , ch] / pmax(weights, 1e-12), img[, , ch])
+    }
+  }
+  img
 }
 
 # Gaussian blur of a matrix (sigma in pixels), by FFT, with zero padding.
@@ -364,38 +480,30 @@ shade_colors <- function(colors, factor) {
   grDevices::rgb(t(rgb * rep(factor, each = 3)))
 }
 
-# Render one view in the realistic style. The brain and the network are
-# rendered separately; the network is then laid over the brain, mostly opaque
-# (it is inside the brain, so this shows it as if seen through the tissue),
-# with a glow around it. Parts of the network further from the camera are
-# darker. Returns an RGBA array, like render_scene().
-render_realistic <- function(brain, nodes, edges, edge.alpha, camera, res, quality, bg.color,
-                             unit, depth_points) {
+# The network as an image (RGBA) to lay over the brain. Parts of the network
+# further from the camera are darker.
+network_layer <- function(nodes, edges, edge.alpha, camera, res, quality, depth_points) {
   depth_of <- function(xyz) as.vector(sweep(xyz, 2, camera$lookat) %*% camera$dir)
   depth_range <- range(depth_of(depth_points))
   nearness <- function(xyz) {
     0.35 + 0.65 * pmin(pmax((depth_of(xyz) - depth_range[1]) / max(diff(depth_range), 1e-9), 0), 1)
   }
-  xyz <- as.matrix(nodes[, c("x", "y", "z")])
-  node_near <- nearness(xyz)
+  node_near <- nearness(as.matrix(nodes[, c("x", "y", "z")]))
   nodes$color <- shade_colors(nodes$color, node_near)
   if (nrow(edges) > 0) {
     edges$color <- shade_colors(edges$color, (node_near[edges$from] + node_near[edges$to]) / 2)
   }
-  network <- render_scene(scene_objects(NULL, NULL, NULL, nodes, edges, edge.alpha), camera,
-                          res = res, quality = quality, bg.color = NA)
-  if (length(brain) > 0) {
-    img <- render_scene(brain, camera, res = res, quality = quality, bg.color = bg.color,
-                        lights = realistic_lights(camera), ssao = TRUE, ssao_radius = 3 * unit,
-                        ssao_intensity = 1.5)
-  } else {
-    img <- network
-    background <- if (is.na(bg.color)) c(0, 0, 0, 0) else c(grDevices::col2rgb(bg.color) / 255, 1)
-    for (ch in 1:4) img[, , ch] <- background[ch]
-  }
-  # Composite with premultiplied colours, so it also works on a transparent background
-  ghost <- 0.9
-  glow_strength <- 1.5
+  render_scene(scene_objects(NULL, NULL, NULL, nodes, edges, edge.alpha), camera,
+               res = res, quality = quality, bg.color = NA)
+}
+
+# Lay the network over the brain image, mostly opaque (it is inside the brain,
+# so this shows it as if seen through the tissue), with a glow around it.
+# `fade` (0 to 1) fades the network in. Works with premultiplied colours, so
+# it also works on a transparent background. Returns an RGBA array.
+composite_network <- function(img, network, res, fade = 1) {
+  ghost <- 0.9 * fade
+  glow_strength <- 1.5 * fade
   sigma <- max(1, res / 140)
   a_brain <- img[, , 4]
   a_net <- network[, , 4] * ghost
@@ -412,4 +520,27 @@ render_realistic <- function(brain, nodes, edges, edge.alpha, camera, res, quali
   for (ch in 1:3) out[, , ch] <- ifelse(alpha > 0, pmin(out[, , ch] / pmax(alpha, 1e-6), 1), 0)
   out[, , 4] <- alpha
   pmin(pmax(out, 0), 1)
+}
+
+# Lay an RGBA image over a background colour (NA keeps it transparent).
+over_background <- function(img, bg.color) {
+  if (is.na(bg.color)) return(img)
+  background <- grDevices::col2rgb(bg.color)[, 1] / 255
+  for (ch in 1:3) img[, , ch] <- img[, , ch] * img[, , 4] + background[ch] * (1 - img[, , 4])
+  img[, , 4] <- 1
+  img
+}
+
+# Render one view in the realistic style: the path-traced brain with the
+# network laid over it. Returns an RGBA array, like render_scene().
+render_realistic <- function(parts, nodes, edges, edge.alpha, camera, res, quality, bg.color,
+                             unit, depth_points) {
+  network <- network_layer(nodes, edges, edge.alpha, camera, res, quality, depth_points)
+  if (is.null(parts)) {
+    img <- network
+    img[] <- 0
+  } else {
+    img <- render_pathtraced(parts, camera, res, samples = 32 * quality, unit)
+  }
+  composite_network(over_background(img, bg.color), network, res)
 }

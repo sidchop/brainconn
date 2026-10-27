@@ -10,6 +10,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
                       fig.align = "center", dpi = 150)
+# The realistic style is path traced with rayrender (on macOS it also needs XQuartz)
+has_rayrender <- requireNamespace("rayrender", quietly = TRUE)
 ```
 
 brainconn isn't limited to the included atlases or to the human brain. This page shows how to use your own atlas, your own brain surface, and the rat and macaque brains that come with brainconn.
@@ -136,7 +138,7 @@ brainconn(atlas = macaque_atlas, conmat = mac_conmat, mesh = macaque_mesh, view 
 
 The experimental realistic style (see [the guide](guide.html#a-realistic-brain-experimental)) grows blood vessels over any brain surface:
 
-```{r, fig.width = 7, fig.height = 5, out.width = "70%", dev.args = list(bg = "grey5")}
+```{r, fig.width = 7, fig.height = 5, out.width = "70%", dev.args = list(bg = "grey5"), eval = has_rayrender}
 brainconn(atlas = macaque_atlas, conmat = mac_conmat, mesh = macaque_mesh, view = c(-110, 20),
           style = "realistic", edge.color.weighted = TRUE)
 ```

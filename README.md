@@ -124,6 +124,11 @@ networks](https://sidchop.github.io/brainconn/articles/animations.html)):
 
 ![](vignettes/figures/animation-spread.gif)
 
+Or, just for fun, nodes bouncing off a squishy realistic brain, with
+`brainconn_bounce()`:
+
+![](vignettes/figures/animation-bounce.gif)
+
 ### Report bugs or requests
 
 Don’t hesitate to ask for support or new features using [GitHub

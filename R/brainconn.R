@@ -11,15 +11,19 @@
 #' front of the subject would see. \code{hemi.labels = TRUE} (the default)
 #' marks the hemispheres with "L" and "R".
 #'
-#' \code{style = "realistic"} (experimental) draws the brain as opaque,
-#' tissue-coloured cortex with blood vessels on its surface, and the network as
-#' glowing nodes and edges seen through the brain, as in an x-ray. Parts of the
-#' network further from the viewer are darker. The vessels are illustrative,
-#' not anatomical: they are generated for each brain surface, the same way
-#' every time. This style is slower: making the vessels takes a few seconds
-#' the first time a brain is drawn, and each view is rendered twice. The
+#' \code{style = "realistic"} (experimental) path traces the brain with the
+#' rayrender package (the renderer behind rayshader's high-quality renders):
+#' wet, glistening, tissue-coloured cortex with blood vessels on its surface,
+#' lit by soft studio lights. The network is drawn as glowing nodes and edges
+#' seen through the brain, as in an x-ray; parts of the network further from
+#' the viewer are darker. The vessels are illustrative, not anatomical: they are
+#' grown over each brain surface, the same way every time. This style needs the
+#' rayrender package (on macOS, rayrender also needs XQuartz,
+#' \url{https://www.xquartz.org}) and is slow: about 20 seconds per view at the
+#' default size, plus a few seconds the first time a brain is drawn. The
 #' default background is near-black and the default edge colour a warm yellow;
-#' \code{mesh.color} and \code{mesh.alpha} are not used.
+#' \code{mesh.color} and \code{mesh.alpha} are not used. See also
+#' \code{\link{brainconn_bounce}} for an animation.
 #'
 #' Before brainconn 1.0.0, \code{brainconn()} drew 2D plots; that function is
 #' now \code{\link{brainconn2d}}. Calls that use arguments only the 2D plot
@@ -50,11 +54,11 @@
 #' @param uthr An optional upper threshold: edges with weights above it are not shown.
 #' @param hemi.labels If \code{TRUE}, "L" and "R" are drawn on the top, bottom, front and back views.
 #' @param mesh The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).
-#' @param mesh.color Colour of the brain surface (glass style only).
+#' @param mesh.color Colour of the brain surface (glass style only). The default is a warm grey, like the brain of brainconn's original 2D plots (made with NeuroMarvl).
 #' @param mesh.alpha Opacity of the brain surface, from 0 (invisible) to 1 (opaque) (glass style only).
-#' @param style \code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a tissue-like brain with blood vessels and a glowing network; see Details.
+#' @param style \code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a path-traced, wet-looking brain with blood vessels and a glowing network; see Details.
 #' @param res Size in pixels of the longest side of each rendered view.
-#' @param quality Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough.
+#' @param quality Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough. For \code{style = "realistic"}, also the number of path-tracing rays per pixel, in multiples of 32.
 #' @param bg.color Background colour, or \code{NA} for a transparent background. Default \code{"white"}, or \code{"grey5"} for \code{style = "realistic"}.
 #' @param ... Arguments only used by the 2D plot (see Details); when given, the call is passed on to \code{\link{brainconn2d}}.
 #'
@@ -91,8 +95,8 @@ brainconn <- function(atlas,
                       uthr = NULL,
                       hemi.labels = TRUE,
                       mesh = "ICBM152",
-                      mesh.color = "grey85",
-                      mesh.alpha = 0.3,
+                      mesh.color = "#d3ccc4",
+                      mesh.alpha = 0.35,
                       style = c("glass", "realistic"),
                       res = 1000,
                       quality = 2,
@@ -142,50 +146,30 @@ brainconn <- function(atlas,
     view <- match.arg(view, c(names(camera_views), "ortho", "all"))
   }
 
-  data <- resolve_atlas(atlas, parent.frame())
-  conmat <- prepare_conmat(conmat, nrow(data), thr, uthr)
-  keep <- nodes_to_keep(conmat, all.nodes)
-  node.size <- match_per_node(node.size, keep, "node.size")
-  node.color <- resolve_node_color(node.color, data)
-  network.colors <- NULL
-  if (identical(node.color, "network")) {
-    # Colours and legend order come from the whole atlas, so they don't change with conmat
-    network.colors <- network_colors(data$network)
-    network.colors <- network.colors[names(network.colors) %in% data$network[keep]]
-    node.color <- network.colors[as.character(data$network[keep])]
-  } else {
-    node.color <- match_per_node(node.color, keep, "node.color")
-  }
-  data <- data[keep, , drop = FALSE]
-  conmat <- conmat[keep, keep, drop = FALSE]
-
-  mesh <- resolve_mesh(mesh)
-  xyz <- cbind(data$x.mni, data$y.mni, data$z.mni)
-  extent_points <- if (is.null(mesh)) xyz else mesh$vertices
-  extent <- max(apply(extent_points, 2, function(p) diff(range(p))))
-  # Sizes are in mm for a human brain (about 170 mm long) and scale with the mesh
-  unit <- if (is.null(mesh)) max(extent, 1) / 130 else extent / 170
-
-  nodes <- data.frame(x = xyz[, 1], y = xyz[, 2], z = xyz[, 3],
-                      color = unname(node.color), radius = node.size / 2 * unit,
-                      stringsAsFactors = FALSE)
-  edges <- edge_table(conmat, edge.color, edge.width, edge.color.weighted, edge.palette,
-                      edge.limits, scale.edge.width, unit)
-
-  frame_points <- if (is.null(mesh)) {
-    rbind(xyz + max(nodes$radius), xyz - max(nodes$radius))
-  } else {
-    mesh$vertices
-  }
+  prepared <- prepare_network(resolve_atlas(atlas, parent.frame()), conmat, thr, uthr,
+                              all.nodes, node.size, node.color, edge.color, edge.width,
+                              edge.color.weighted, edge.palette, edge.limits, scale.edge.width,
+                              mesh)
+  data <- prepared$data
+  nodes <- prepared$nodes
+  edges <- prepared$edges
+  mesh <- prepared$mesh
+  unit <- prepared$unit
+  network.colors <- prepared$network.colors
+  frame_points <- prepared$frame_points
   if (style == "glass") {
     objects <- scene_objects(mesh, mesh.color, mesh.alpha, nodes, edges$table, edge.alpha)
     render <- function(camera) {
       render_scene(objects, camera, res = res, quality = quality, bg.color = bg.color)
     }
   } else {
-    brain <- if (is.null(mesh)) list() else realistic_brain(mesh, unit)
+    parts <- NULL
+    if (!is.null(mesh)) {
+      check_rayrender()
+      parts <- realistic_parts(mesh, unit)
+    }
     render <- function(camera) {
-      render_realistic(brain, nodes, edges$table, edge.alpha, camera, res, quality, bg.color,
+      render_realistic(parts, nodes, edges$table, edge.alpha, camera, res, quality, bg.color,
                        unit, frame_points)
     }
   }
@@ -223,6 +207,49 @@ brainconn <- function(atlas,
 names2 <- function(x) {
   n <- names(x)
   if (is.null(n)) rep("", length(x)) else n
+}
+
+# Nodes, edges, mesh and sizes for a 3D render (shared by brainconn() and
+# brainconn_bounce()). `data` is a resolved atlas.
+prepare_network <- function(data, conmat, thr, uthr, all.nodes, node.size, node.color,
+                            edge.color, edge.width, edge.color.weighted, edge.palette,
+                            edge.limits, scale.edge.width, mesh) {
+  conmat <- prepare_conmat(conmat, nrow(data), thr, uthr)
+  keep <- nodes_to_keep(conmat, all.nodes)
+  node.size <- match_per_node(node.size, keep, "node.size")
+  node.color <- resolve_node_color(node.color, data)
+  network.colors <- NULL
+  if (identical(node.color, "network")) {
+    # Colours and legend order come from the whole atlas, so they don't change with conmat
+    network.colors <- network_colors(data$network)
+    network.colors <- network.colors[names(network.colors) %in% data$network[keep]]
+    node.color <- network.colors[as.character(data$network[keep])]
+  } else {
+    node.color <- match_per_node(node.color, keep, "node.color")
+  }
+  data <- data[keep, , drop = FALSE]
+  conmat <- conmat[keep, keep, drop = FALSE]
+
+  mesh <- resolve_mesh(mesh)
+  xyz <- cbind(data$x.mni, data$y.mni, data$z.mni)
+  extent_points <- if (is.null(mesh)) xyz else mesh$vertices
+  extent <- max(apply(extent_points, 2, function(p) diff(range(p))))
+  # Sizes are in mm for a human brain (about 170 mm long) and scale with the mesh
+  unit <- if (is.null(mesh)) max(extent, 1) / 130 else extent / 170
+
+  nodes <- data.frame(x = xyz[, 1], y = xyz[, 2], z = xyz[, 3],
+                      color = unname(node.color), radius = node.size / 2 * unit,
+                      stringsAsFactors = FALSE)
+  edges <- edge_table(conmat, edge.color, edge.width, edge.color.weighted, edge.palette,
+                      edge.limits, scale.edge.width, unit)
+
+  frame_points <- if (is.null(mesh)) {
+    rbind(xyz + max(nodes$radius), xyz - max(nodes$radius))
+  } else {
+    mesh$vertices
+  }
+  list(data = data, nodes = nodes, edges = edges, mesh = mesh, unit = unit,
+       network.colors = network.colors, frame_points = frame_points)
 }
 
 # Edges of conmat with their colours and tube radii. Returns the edge table

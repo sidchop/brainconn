@@ -26,8 +26,8 @@ brainconn(
   uthr = NULL,
   hemi.labels = TRUE,
   mesh = "ICBM152",
-  mesh.color = "grey85",
-  mesh.alpha = 0.3,
+  mesh.color = "#d3ccc4",
+  mesh.alpha = 0.35,
   style = c("glass", "realistic"),
   res = 1000,
   quality = 2,
@@ -77,15 +77,15 @@ brainconn(
 
 \item{mesh}{The brain surface: \code{"ICBM152"} (the default), \code{NULL} for no surface, or a mesh in the same space as the atlas coordinates (any species), given as mesh file path(s) (see \code{\link{read_brain_mesh}}), a mesh from \code{read_brain_mesh()}, an rgl \code{mesh3d} object or a list with \code{vertices} (n x 3) and \code{faces} (f x 3, 1-based vertex indices).}
 
-\item{mesh.color}{Colour of the brain surface (glass style only).}
+\item{mesh.color}{Colour of the brain surface (glass style only). The default is a warm grey, like the brain of brainconn's original 2D plots (made with NeuroMarvl).}
 
 \item{mesh.alpha}{Opacity of the brain surface, from 0 (invisible) to 1 (opaque) (glass style only).}
 
-\item{style}{\code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a tissue-like brain with blood vessels and a glowing network; see Details.}
+\item{style}{\code{"glass"} (the default) for a translucent glass brain, or \code{"realistic"} (experimental) for a path-traced, wet-looking brain with blood vessels and a glowing network; see Details.}
 
 \item{res}{Size in pixels of the longest side of each rendered view.}
 
-\item{quality}{Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough.}
+\item{quality}{Anti-aliasing level, a whole number from 1 (fastest) upwards; 2 is usually enough. For \code{style = "realistic"}, also the number of path-tracing rays per pixel, in multiples of 32.}
 
 \item{bg.color}{Background colour, or \code{NA} for a transparent background. Default \code{"white"}, or \code{"grey5"} for \code{style = "realistic"}.}
 }
@@ -105,15 +105,19 @@ the bottom and front views are mirror images of what a camera below or in
 front of the subject would see. \code{hemi.labels = TRUE} (the default)
 marks the hemispheres with "L" and "R".
 
-\code{style = "realistic"} (experimental) draws the brain as opaque,
-tissue-coloured cortex with blood vessels on its surface, and the network as
-glowing nodes and edges seen through the brain, as in an x-ray. Parts of the
-network further from the viewer are darker. The vessels are illustrative,
-not anatomical: they are generated for each brain surface, the same way
-every time. This style is slower: making the vessels takes a few seconds
-the first time a brain is drawn, and each view is rendered twice. The
+\code{style = "realistic"} (experimental) path traces the brain with the
+rayrender package (the renderer behind rayshader's high-quality renders):
+wet, glistening, tissue-coloured cortex with blood vessels on its surface,
+lit by soft studio lights. The network is drawn as glowing nodes and edges
+seen through the brain, as in an x-ray; parts of the network further from
+the viewer are darker. The vessels are illustrative, not anatomical: they are
+grown over each brain surface, the same way every time. This style needs the
+rayrender package (on macOS, rayrender also needs XQuartz,
+\url{https://www.xquartz.org}) and is slow: about 20 seconds per view at the
+default size, plus a few seconds the first time a brain is drawn. The
 default background is near-black and the default edge colour a warm yellow;
-\code{mesh.color} and \code{mesh.alpha} are not used.
+\code{mesh.color} and \code{mesh.alpha} are not used. See also
+\code{\link{brainconn_bounce}} for an animation.
 
 Before brainconn 1.0.0, \code{brainconn()} drew 2D plots; that function is
 now \code{\link{brainconn2d}}. Calls that use arguments only the 2D plot

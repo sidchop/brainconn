@@ -10,6 +10,11 @@ image_of <- function(p) {
 
 egg <- ellipsoid_mesh(n_lat = 40, n_lon = 60)
 
+# The brain is path traced with rayrender, which needs XQuartz on macOS
+skip_if_no_rayrender <- function() {
+  skip_if_not(requireNamespace("rayrender", quietly = TRUE), "rayrender can't be loaded")
+}
+
 render_realistic_small <- function(...) {
   suppressMessages(brainconn(toy_rat_atlas, toy_rat_conmat, mesh = egg, style = "realistic",
                              res = 160, quality = 1, ...))
@@ -58,6 +63,7 @@ test_that("vessels are the same every time and leave the user's random numbers a
 })
 
 test_that("the realistic style renders a tissue-coloured brain on a dark background", {
+  skip_if_no_rayrender()
   p <- render_realistic_small(view = "left")
   expect_s3_class(p, "ggplot")
   img <- image_of(p)
@@ -72,6 +78,7 @@ test_that("the realistic style renders a tissue-coloured brain on a dark backgro
 })
 
 test_that("the realistic style draws nodes over the opaque brain", {
+  skip_if_no_rayrender()
   # A big green node inside the brain shows through it
   atlas <- toy_rat_atlas
   atlas$network <- "A"
@@ -90,11 +97,13 @@ test_that("realistic renders work without a mesh and on a transparent background
   img <- image_of(p)
   expect_equal(min(img[, , 4]), 0)
   expect_gt(max(img[, , 4]), 0.8)
+  skip_if_no_rayrender()
   p <- render_realistic_small(bg.color = NA)
   expect_gt(mean(image_of(p)[, , 4] > 0.95), 0.3)  # the opaque brain
 })
 
 test_that("background colours come out as given in both styles", {
+  skip_if_no_rayrender()
   for (style in c("glass", "realistic")) {
     p <- suppressMessages(brainconn(toy_rat_atlas, toy_rat_conmat, mesh = egg, style = style,
                                     res = 120, quality = 1, bg.color = "grey40"))
@@ -112,7 +121,75 @@ test_that("text is white on dark backgrounds and black otherwise", {
 
 test_that("the realistic style works on the human brain", {
   skip_on_cran()
+  skip_if_no_rayrender()
   p <- suppressMessages(brainconn("schaefer300_n7", example_unweighted_undirected,
                                   style = "realistic", view = "ortho", res = 150, quality = 1))
   expect_s3_class(p, "ggplot")
+})
+
+test_that("nodes fall, bounce lower each time, and come to rest", {
+  parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
+  plan <- with_seed(1, bounce_plan(parts, data.frame(x = c(-3, 3), y = c(6, -6),
+                                                     z = c(1, 0), radius = 0.3), roll = 0))
+  expect_false(any(plan$roller))
+  for (i in 1:2) {
+    hits <- plan$impacts[plan$impacts$node == i, ]
+    expect_equal(hits$time[1], plan$delay[i] + plan$fall)
+    expect_true(all(diff(hits$time) > 0))
+    expect_equal(hits$speed[-1] / hits$speed[-nrow(hits)], rep(0.5, nrow(hits) - 1))
+    expect_equal(bounce_height(plan, i, plan$delay[i] - 0.01), plan$drop)
+    expect_equal(bounce_height(plan, i, hits$time[1]), 0, tolerance = 1e-9)
+    expect_equal(bounce_height(plan, i, plan$rest[i] + 0.5), 0)
+    heights <- vapply(seq(0, plan$end, by = 0.01), function(t) bounce_height(plan, i, t), 1)
+    expect_true(all(heights >= 0 & heights <= plan$drop))
+  }
+  # Landing points are on the top of the surface
+  expect_true(all(plan$normal[, 3] > 0.2))
+})
+
+test_that("the brain squishes where nodes land and then settles", {
+  parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
+  plan <- with_seed(1, bounce_plan(parts, data.frame(x = 0, y = 0, z = 0, radius = 0.3),
+                                   roll = 0))
+  v <- parts$mesh$vertices
+  hit <- plan$impacts$time[1]
+  expect_identical(squish_points(v, plan, hit + 0.06, squish = 0, unit = 22 / 170), v)
+  moved <- squish_points(v, plan, hit + 0.06, squish = 1, unit = 22 / 170)
+  shift <- sqrt(rowSums((moved - v)^2))
+  near <- which.min(rowSums(sweep(v, 2, plan$point[1, ])^2))
+  # The landing point is pushed in, more than the far side of the brain
+  expect_lt(sum((moved[near, ] - v[near, ]) * plan$normal[1, ]), 0)
+  expect_gt(shift[near], stats::median(shift))
+  expect_equal(squish_points(v, plan, max(plan$impacts$time) + 2, 1, 22 / 170), v)
+})
+
+test_that("some nodes roll downhill and fall off the brain, the others stay", {
+  parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
+  nodes <- data.frame(x = c(-4, 4, -3, 3), y = c(5, -5, -5, 5), z = 0, radius = 0.3)
+  plan <- with_seed(2, bounce_plan(parts, nodes, roll = 1))
+  expect_true(any(plan$roller))
+  for (i in which(plan$roller)) {
+    path <- plan$path[[i]]
+    expect_lt(path[nrow(path), 3], path[1, 3])
+    expect_true(all(diff(plan$path_time[[i]]) >= 0))
+    # Rolling starts where the bouncing stopped
+    expect_equal(node_position(plan, i, plan$rest[i]), plan$centre[i, ])
+    expect_null(node_position(plan, i, plan$gone[i] + 0.01))
+    expect_lt(plan$gone[i], plan$sink[1])
+  }
+  none <- with_seed(2, bounce_plan(parts, nodes, roll = 0))
+  for (i in seq_len(nrow(nodes))) {
+    expect_equal(node_position(none, i, none$end), none$centre[i, ])
+  }
+})
+
+test_that("brainconn_bounce writes a GIF", {
+  skip_on_cran()
+  skip_if_no_rayrender()
+  skip_if_not_installed("gifski")
+  file <- tempfile(fileext = ".gif")
+  out <- brainconn_bounce(toy_rat_atlas, toy_rat_conmat, mesh = egg, file = file, res = 80,
+                          fps = 2)
+  expect_identical(out, file)
+  expect_identical(readBin(file, "raw", 6), charToRaw("GIF89a"))
 })

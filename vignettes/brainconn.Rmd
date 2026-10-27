@@ -10,6 +10,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE, warning = FALSE,
                       fig.align = "center", dpi = 150)
+# The realistic style is path traced with rayrender (on macOS it also needs XQuartz)
+has_rayrender <- requireNamespace("rayrender", quietly = TRUE)
 ```
 
 brainconn plots brain connectivity data in R, so your figures can live in the same script as your analysis. This page shows the main function, `brainconn()`, and gives a quick look at everything else. Two more guides go further:
@@ -79,9 +81,9 @@ See `?brainconn` for every option, and [the guide](guide.html#brainconn) for mor
 
 ### Experimental: a realistic brain
 
-`style = "realistic"` draws the brain as tissue, with blood vessels on its surface, and the network glowing through it. It is slower than the default glass brain.
+`style = "realistic"` path traces a wet, glistening brain with blood vessels on its surface (with the [rayrender](https://www.rayrender.net) package), and draws the network glowing through it. It takes about 20 seconds per view.
 
-```{r, fig.width = 8, fig.height = 5.5, out.width = "85%", dev.args = list(bg = "grey5")}
+```{r, fig.width = 8, fig.height = 5.5, out.width = "85%", dev.args = list(bg = "grey5"), eval = has_rayrender}
 brainconn(atlas = "schaefer300_n7", conmat = x, view = c(-125, 25), style = "realistic")
 ```
 

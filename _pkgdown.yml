@@ -9,6 +9,7 @@ reference:
   - brainconn
   - brainconn3D
   - brainconn2d
+  - brainconn_bounce
 - title: Network matrices and chord diagrams
   contents:
   - brainconn_matrix
