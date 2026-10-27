@@ -256,10 +256,10 @@ brain_vessels <- function(geometry, unit) {
   roots <- nearest_vertices(geometry, rbind(c(-0.58, 0.34, -0.46), c(0.58, 0.34, -0.46),
                                             c(-0.06, 0.55, -0.22), c(0.06, 0.55, -0.22),
                                             c(-0.29, -0.26, -0.46), c(0.29, -0.26, -0.46)))
-  arteries <- vessel_tree(geometry, unique(roots), sample(n, min(n, round(1200 * scale))),
+  arteries <- vessel_tree(geometry, unique(roots), sample(n, min(n, round(3000 * scale))),
                           noise = 1.2, sulcus.cost = 0.1, gamma = 0.4)
   list(veins = vessel_tubes(geometry, veins, c(0.3, 2.3) * unit),
-       arteries = vessel_tubes(geometry, arteries, c(0.2, 1.6) * unit, min.length = 3),
+       arteries = vessel_tubes(geometry, arteries, c(0.12, 1.6) * unit, min.length = 3),
        sinus = sinus_tube(v[sinus, , drop = FALSE], centre[1], unit))
 }
 
@@ -296,13 +296,18 @@ realistic_parts <- function(mesh, unit) {
     patches <- smooth_vertex_values(stats::rnorm(nrow(mesh$vertices)), geometry$edges,
                                     geometry$iterations$patches)[, 1]
     vessels <- brain_vessels(geometry, unit)
+    # Small random tilts of the surface normals, so the surface looks slightly
+    # uneven and its highlights break up, as on real tissue
+    bumps <- smooth_vertex_values(matrix(stats::rnorm(3 * nrow(mesh$vertices)), ncol = 3),
+                                  geometry$edges, 2)
   })
+  bumps <- bumps / max(stats::sd(bumps), 1e-12)
   patches <- (patches - mean(patches)) / max(stats::sd(patches), 1e-12)
   # Texture coordinates: sulcal depth across, colour patches down (see tissue_texture())
   uv <- cbind(pmin(pmax((geometry$sulc + 3) / 6, 0.02), 0.98),
               pmin(pmax(0.5 + 0.3 * patches, 0.02), 0.98))
   parts <- list(mesh = mesh, normals = geometry$normals, uv = uv, vessels = vessels,
-                edges = geometry$edges, envelope = geometry$envelope)
+                bumps = bumps, edges = geometry$edges, envelope = geometry$envelope)
   brainconn_env$realistic <- list(key = key, parts = parts)
   parts
 }
@@ -313,9 +318,9 @@ tissue_texture <- function() {
   file <- file.path(tempdir(), "brainconn-tissue.png")
   if (file.exists(file)) return(file)
   pink <- grDevices::col2rgb(grDevices::colorRampPalette(
-    c("#a3302c", "#d0584f", "#e8887a", "#f3b3a3"))(256)) / 255
+    c("#93322d", "#c75d55", "#e19a8e", "#f1c4b8"))(256)) / 255
   rose <- grDevices::col2rgb(grDevices::colorRampPalette(
-    c("#962f3a", "#c75a64", "#e38e8c", "#f0b9ad"))(256)) / 255
+    c("#8d3a3a", "#c06a66", "#dda59d", "#efcbbf"))(256)) / 255
   img <- array(0, c(64, 256, 3))
   for (row in 1:64) {
     t <- (row - 1) / 63
@@ -343,16 +348,19 @@ as_mesh3d <- function(vertices, faces, normals = NULL, texcoords = NULL) {
 }
 
 # The brain, its vessels and studio lights as a rayrender scene. The surface
-# is glossy (it looks wet); the lights are large and soft, and follow the
-# camera: a key light above and to the right, a fill light on the left and a
-# rim light behind the brain.
+# is glossy (it looks wet); the lights are large, soft rectangles (like a
+# photographer's softboxes) that follow the camera: a key light above and to
+# the right, a fill light on the left and a rim light behind the brain.
 pathtraced_scene <- function(parts, camera, unit, vertices = parts$mesh$vertices,
-                             normals = parts$normals, vessels = parts$vessels, spheres = NULL) {
+                             normals = parts$normals, vessels = parts$vessels, spheres = NULL,
+                             extra = NULL) {
   rr <- function(name) getExportedValue("rayrender", name)
   tube <- function(m, color) {
     rr("mesh3d_model")(as_mesh3d(m$vertices, m$faces, m$normals), override_material = TRUE,
                        material = rr("glossy")(color = color, gloss = 0.92, reflectance = 0.05))
   }
+  normals <- normals + 0.12 * parts$bumps
+  normals <- normals / sqrt(rowSums(normals^2))
   scene <- rr("mesh3d_model")(
     as_mesh3d(vertices, parts$mesh$faces, normals, parts$uv),
     override_material = TRUE,
@@ -368,14 +376,22 @@ pathtraced_scene <- function(parts, camera, unit, vertices = parts$mesh$vertices
       x = spheres$x[i], y = spheres$y[i], z = spheres$z[i], radius = spheres$radius[i],
       material = rr("glossy")(color = spheres$color[i], gloss = 0.9, reflectance = 0.06)))
   }
-  lamp <- function(direction, size, intensity) {
-    p <- camera$lookat + 400 * unit * unit3(direction)
-    rr("sphere")(x = p[1], y = p[2], z = p[3], radius = size * unit,
-                 material = rr("light")(intensity = intensity))
+  # Anything else, e.g. a floor
+  if (!is.null(extra)) scene <- rr("add_object")(scene, extra)
+  softbox <- function(direction, width, height, intensity) {
+    d <- unit3(direction)
+    p <- camera$lookat + 400 * unit * d
+    # Turn the rectangle (in the xy plane) to face the brain
+    angle <- c(asin(-d[2]), atan2(d[1], d[3])) * 180 / pi
+    rr("xy_rect")(x = p[1], y = p[2], z = p[3], xwidth = width * unit, ywidth = height * unit,
+                  angle = c(angle, 0), flipped = TRUE,
+                  material = rr("light")(intensity = intensity))
   }
-  scene <- rr("add_object")(scene, lamp(camera$dir + 0.8 * camera$up + 0.5 * camera$right, 90, 18))
-  scene <- rr("add_object")(scene, lamp(camera$dir - 0.9 * camera$right + 0.1 * camera$up, 90, 6))
-  rr("add_object")(scene, lamp(-camera$dir + 0.9 * camera$up, 70, 10))
+  scene <- rr("add_object")(scene, softbox(camera$dir + 0.8 * camera$up + 0.5 * camera$right,
+                                           220, 140, 7))
+  scene <- rr("add_object")(scene, softbox(camera$dir - 0.9 * camera$right + 0.1 * camera$up,
+                                           200, 200, 2.5))
+  rr("add_object")(scene, softbox(-camera$dir + 0.9 * camera$up, 160, 160, 5))
 }
 
 # Path trace the brain from a fitted camera, on a transparent background.
@@ -383,7 +399,7 @@ pathtraced_scene <- function(parts, camera, unit, vertices = parts$mesh$vertices
 # pixels; `samples` rays per pixel (more is smoother and slower). Next event
 # estimation (sampling the lights directly) keeps the noise low, and what is
 # left is smoothed by denoise_render().
-render_pathtraced <- function(parts, camera, res, samples, unit, ...) {
+render_pathtraced <- function(parts, camera, res, samples, unit, denoise = 2, ...) {
   aspect <- camera$height / camera$width
   width <- if (aspect <= 1) res else round(res / aspect)
   height <- if (aspect <= 1) round(res * aspect) else res
@@ -406,7 +422,7 @@ render_pathtraced <- function(parts, camera, res, samples, unit, ...) {
   img[, , 1:3] <- denoise_render(img[, , 1:3, drop = FALSE], img[, , 4],
                                  normals = render(4, "normals")[, , 1:3, drop = FALSE],
                                  albedo = render(4, "color")[, , 1:3, drop = FALSE],
-                                 depth = render(4, "depth")[, , 1])
+                                 depth = render(4, "depth")[, , 1], iterations = denoise)
   img <- array(pmin(pmax(img, 0), 1), dim = dim(img))
   if (camera$mirror) img <- img[, rev(seq_len(dim(img)[2])), , drop = FALSE]
   img

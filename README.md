@@ -124,8 +124,9 @@ networks](https://sidchop.github.io/brainconn/articles/animations.html)):
 
 ![](vignettes/figures/animation-spread.gif)
 
-Or, just for fun, nodes bouncing off a squishy realistic brain, with
-`brainconn_bounce()`:
+Or, just for fun, with `brainconn_bounce()`: every region drops onto a
+squishy realistic brain, the network’s regions stick, the rest roll
+away, and the connections grow:
 
 ![](vignettes/figures/animation-bounce.gif)
 
@@ -136,6 +137,6 @@ issues](https://github.com/sidchop/brainconn/issues).
 
 ### Other R packages you might be interested in
 
-- [ggseg](https://github.com/ggseg/ggseg) &
-  [ggseg3d](https://github.com/ggseg/ggseg3d): plotting tools for brain
+- [ggseg](https://github.com/ggsegverse/ggseg) &
+  [ggseg3d](https://github.com/ggsegverse/ggseg3d): plotting tools for brain
   atlases, in ggplot/plotly

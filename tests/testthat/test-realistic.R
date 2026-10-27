@@ -127,11 +127,11 @@ test_that("the realistic style works on the human brain", {
   expect_s3_class(p, "ggplot")
 })
 
-test_that("nodes fall, bounce lower each time, and come to rest", {
+test_that("balls fall, bounce lower each time, and come to rest", {
   parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
   plan <- with_seed(1, bounce_plan(parts, data.frame(x = c(-3, 3), y = c(6, -6),
-                                                     z = c(1, 0), radius = 0.3), roll = 0))
-  expect_false(any(plan$roller))
+                                                     z = c(1, 0), radius = 0.3),
+                                   stick = c(TRUE, TRUE)))
   for (i in 1:2) {
     hits <- plan$impacts[plan$impacts$node == i, ]
     expect_equal(hits$time[1], plan$delay[i] + plan$fall)
@@ -147,10 +147,10 @@ test_that("nodes fall, bounce lower each time, and come to rest", {
   expect_true(all(plan$normal[, 3] > 0.2))
 })
 
-test_that("the brain squishes where nodes land and then settles", {
+test_that("the brain squishes where balls land and then settles", {
   parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
   plan <- with_seed(1, bounce_plan(parts, data.frame(x = 0, y = 0, z = 0, radius = 0.3),
-                                   roll = 0))
+                                   stick = TRUE))
   v <- parts$mesh$vertices
   hit <- plan$impacts$time[1]
   expect_identical(squish_points(v, plan, hit + 0.06, squish = 0, unit = 22 / 170), v)
@@ -163,24 +163,39 @@ test_that("the brain squishes where nodes land and then settles", {
   expect_equal(squish_points(v, plan, max(plan$impacts$time) + 2, 1, 22 / 170), v)
 })
 
-test_that("some nodes roll downhill and fall off the brain, the others stay", {
+test_that("network balls stay on the brain; the others leave over the floor", {
   parts <- realistic_parts(resolve_mesh(egg), 22 / 170)
-  nodes <- data.frame(x = c(-4, 4, -3, 3), y = c(5, -5, -5, 5), z = 0, radius = 0.3)
-  plan <- with_seed(2, bounce_plan(parts, nodes, roll = 1))
-  expect_true(any(plan$roller))
-  for (i in which(plan$roller)) {
-    path <- plan$path[[i]]
-    expect_lt(path[nrow(path), 3], path[1, 3])
-    expect_true(all(diff(plan$path_time[[i]]) >= 0))
-    # Rolling starts where the bouncing stopped
-    expect_equal(node_position(plan, i, plan$rest[i]), plan$centre[i, ])
+  nodes <- data.frame(x = c(-4, 4, -3, 3, 0), y = c(5, -5, -5, 5, 0), z = 0, radius = 0.3)
+  stick <- c(TRUE, FALSE, FALSE, TRUE, FALSE)
+  plan <- with_seed(2, bounce_plan(parts, nodes, stick))
+  for (i in which(stick)) {
+    at_end <- node_position(plan, i, plan$end)
+    expect_equal(at_end$xyz, plan$centre[i, ])
+    expect_true(at_end$on_brain)
+  }
+  for (i in which(!stick)) {
+    expect_true(is.finite(plan$gone[i]))
+    expect_lt(plan$gone[i], plan$grow[1])
     expect_null(node_position(plan, i, plan$gone[i] + 0.01))
-    expect_lt(plan$gone[i], plan$sink[1])
+    # Just before it leaves the image, it is on the floor, away from the brain
+    late <- node_position(plan, i, plan$gone[i] - 0.01)
+    expect_false(late$on_brain)
+    expect_lt(late$xyz[3], plan$floor + 0.3 + 0.2)
+    path <- plan$path[[i]]
+    if (nrow(path) > 1) expect_lt(path[nrow(path), 3], path[1, 3])   # rolled downhill
   }
-  none <- with_seed(2, bounce_plan(parts, nodes, roll = 0))
-  for (i in seq_len(nrow(nodes))) {
-    expect_equal(node_position(none, i, none$end), none$centre[i, ])
-  }
+})
+
+test_that("connections grow as arcs over the brain", {
+  from <- c(-3, 0, 4)
+  to <- c(3, 0, 4)
+  arc <- connection_arc(from, to, middle = c(0, 0, 0), unit = 0.1)
+  expect_equal(arc[1, ], from)
+  expect_equal(arc[nrow(arc), ], to)
+  expect_gt(max(arc[, 3]), 4.5)   # bows outwards, away from the middle
+  half <- connection_arc(from, to, middle = c(0, 0, 0), unit = 0.1, grown = 0.5)
+  expect_equal(half[1, ], from)
+  expect_lt(half[nrow(half), 1], 0.5)
 })
 
 test_that("brainconn_bounce writes a GIF", {

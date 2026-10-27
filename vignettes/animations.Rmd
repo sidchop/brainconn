@@ -132,7 +132,7 @@ knitr::include_graphics("figures/animation-wave.gif")
 
 ## A squishy brain
 
-Just for fun: `brainconn_bounce()` drops the nodes onto a path-traced realistic brain (see `brainconn(style = "realistic")`). They bounce off it, and the brain squishes and jiggles like jelly where they land. Some of them roll down the brain and fall off (`roll` sets how many); the others stick, then sink in, and the network glows through the brain. Every frame is path traced, so this takes about 10 minutes; it needs the rayrender and gifski packages.
+Just for fun: `brainconn_bounce()` drops a ball for every region of the atlas onto a path-traced realistic brain (see `brainconn(style = "realistic")`), in a white photo studio. The balls bounce off the brain, which squishes and jiggles like jelly where they land. The regions in the network stick where they land; the others roll down the brain, or bounce off it, onto the floor and away. Then the network's connections grow between the balls that stuck. Every frame is path traced, so this takes about 20 minutes; it needs the rayrender and gifski packages.
 
 ```{r, eval = FALSE}
 brainconn_bounce("schaefer300_n7", example_unweighted_undirected, file = "bounce.gif",

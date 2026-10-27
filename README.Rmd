@@ -105,7 +105,7 @@ A series of renders makes an animation, e.g. a network diffusion model spreading
 
 ![](vignettes/figures/animation-spread.gif)
 
-Or, just for fun, nodes bouncing off a squishy realistic brain, with `brainconn_bounce()`:
+Or, just for fun, with `brainconn_bounce()`: every region drops onto a squishy realistic brain, the network's regions stick, the rest roll away, and the connections grow:
 
 ![](vignettes/figures/animation-bounce.gif)
 
@@ -115,4 +115,4 @@ Don't hesitate to ask for support or new features using [GitHub issues](https://
 
 ### Other R packages you might be interested in
 
-* [ggseg](https://github.com/ggseg/ggseg) & [ggseg3d](https://github.com/ggseg/ggseg3d): plotting tools for brain atlases, in ggplot/plotly
+* [ggseg](https://github.com/ggsegverse/ggseg) & [ggseg3d](https://github.com/ggsegverse/ggseg3d): plotting tools for brain atlases, in ggplot/plotly

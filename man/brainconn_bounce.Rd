@@ -9,12 +9,10 @@ brainconn_bounce(
   conmat = NULL,
   file = "brainconn-bounce.gif",
   view = c(-125, 25),
-  node.size = 8,
+  node.size = 6,
   node.color = "network",
-  all.nodes = FALSE,
-  edge.color = "#ffd98a",
-  edge.alpha = 0.8,
-  edge.width = 1,
+  edge.color = "#f2b632",
+  edge.width = 2,
   edge.color.weighted = FALSE,
   edge.palette = NULL,
   edge.limits = NULL,
@@ -23,34 +21,28 @@ brainconn_bounce(
   uthr = NULL,
   mesh = "ICBM152",
   squish = 1,
-  roll = 0.5,
   fps = 15,
   res = 600,
   quality = 2,
-  bg.color = "white",
   seed = 1
 )
 }
 \arguments{
 \item{atlas}{Either a string of one of the included atlases (see \code{list_atlases()}) or a \code{data.frame()} that meets specifications, see \code{vignette("brainconn")}.}
 
-\item{conmat}{An adjacency matrix. Can be binary, weighted, directed or undirected; see the example_* data. If \code{NULL}, only the nodes are plotted.}
+\item{conmat}{An adjacency matrix, as in \code{\link{brainconn}}. Its regions with connections stick to the brain. If \code{NULL}, all regions stick.}
 
 \item{file}{The GIF file to write.}
 
-\item{view}{The camera angle, as in \code{\link{brainconn}}. Views from above (elevation above 0) work best, so the nodes fall down the image.}
+\item{view}{The camera angle, as in \code{\link{brainconn}}. Views from above (elevation above 0) work best, so the balls fall down the image.}
 
-\item{node.size}{Size of the nodes (diameter in mm for a human-sized brain; sizes scale with the size of the mesh). Default 8. Can also be a vector with one value per ROI in the atlas, or one value per plotted node.}
+\item{node.size}{Size of the balls (diameter in mm for a human-sized brain).}
 
 \item{node.color}{A colour for all nodes, e.g. "blue", or "network" to colour nodes by the network column of the atlas (see \code{\link{network_colors}}). Can also be a vector with one colour per ROI in the atlas, or per plotted node.}
 
-\item{all.nodes}{If \code{TRUE}, all nodes are shown. If \code{FALSE}, only nodes with connecting edges are shown.}
+\item{edge.color}{A colour for the connections. Ignored when \code{edge.color.weighted = TRUE}.}
 
-\item{edge.color}{A colour for the edges, e.g. "white". Ignored when \code{edge.color.weighted = TRUE}.}
-
-\item{edge.alpha}{Number between 0-1 to set the transparency of the edges.}
-
-\item{edge.width}{Width of the edges (relative; 1 is a tube about 1 mm wide in a human-sized brain).}
+\item{edge.width}{Width of the connections (relative; 1 is a tube about 1 mm wide in a human-sized brain).}
 
 \item{edge.color.weighted}{For weighted matrices: if \code{TRUE}, edges are coloured by weight (see \code{edge.palette}); if \code{FALSE}, edge width shows the weight.}
 
@@ -68,33 +60,31 @@ brainconn_bounce(
 
 \item{squish}{How squishy the brain is: 0 for solid, 1 (the default) for jelly, and more for wobblier.}
 
-\item{roll}{The chance (0 to 1) that a node landing on a slope rolls off the brain rather than sticking.}
-
 \item{fps}{Frames per second.}
 
 \item{res}{Size in pixels of the longest side of the GIF.}
 
 \item{quality}{Rays per pixel when path tracing, in multiples of 32. Lower is faster and grainier.}
 
-\item{bg.color}{Background colour.}
-
-\item{seed}{Random seed for when each node drops and which ones roll.}
+\item{seed}{Random seed for when each ball drops.}
 }
 \value{
 The path of the GIF, invisibly.
 }
 \description{
 \code{brainconn_bounce} makes a GIF in the realistic style of
-\code{\link{brainconn}}: the nodes drop in from above and bounce off the
-brain, which squishes where they land and jiggles like jelly. Some of them
-roll down the brain and fall off; the others stick, then sink in, and the
-network glows through the brain. It's just for fun, e.g. for the first slide
-of a talk.
+\code{\link{brainconn}}, in a white photo studio: a ball for every region
+of the atlas drops onto the brain and bounces off it, and the brain squishes
+and jiggles like jelly where they land. The regions in the network (those
+with connections in \code{conmat}) stick where they land; the others roll
+down the brain, or bounce off it, onto the floor and away. The connections
+of the network then grow between the balls that stuck. It's just for fun,
+e.g. for the first slide of a talk.
 }
 \details{
-Each node lands on the top of the brain surface above its own position.
-Every frame is path traced (see \code{\link{brainconn}}), so making a GIF
-takes a few minutes. This needs the rayrender and gifski packages.
+Each ball lands on the top of the brain surface above its region. Every
+frame is path traced (see \code{\link{brainconn}}), so making a GIF takes
+several minutes. This needs the rayrender and gifski packages.
 }
 \examples{
 \dontrun{
@@ -102,5 +92,5 @@ brainconn_bounce("schaefer300_n7", example_unweighted_undirected, file = "bounce
 }
 }
 \seealso{
-\code{\link{brainconn}}, whose \code{style = "realistic"} is the last frame.
+\code{\link{brainconn}}, whose \code{style = "realistic"} this uses.
 }

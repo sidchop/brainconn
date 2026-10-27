@@ -19,10 +19,13 @@
   further from the viewer darker. The vessels are illustrative, grown over any
   brain surface (also the rat and macaque brains) the same way every time.
   Needs the rayrender package (and XQuartz on macOS).
-* `brainconn_bounce()` (experimental) makes a GIF of the nodes dropping onto
-  the realistic brain and bouncing off it as it squishes and jiggles like
-  jelly. Some roll down the brain and fall off; the others stick, then sink in
-  as the network glows through the brain.
+* `brainconn_bounce()` (experimental) makes a GIF in a white photo studio: a
+  ball for every region drops onto the realistic brain and bounces off it as
+  it squishes and jiggles like jelly. The network's regions stick; the others
+  roll or bounce off onto the floor and away; then the connections grow as
+  arcs between the balls that stuck.
+* The realistic brain has dense capillaries, a slightly uneven surface whose
+  wet highlights break up as on real tissue, and softbox lighting.
 * Path-traced renders use next event estimation and an edge-avoiding
   denoiser (guided by normals, colours and depth), so they are clean with few
   rays per pixel.
